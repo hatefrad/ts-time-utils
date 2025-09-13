@@ -1,0 +1,110 @@
+{
+  "name": "ts-time-utils",
+  "version": "0.0.1",
+  "description": "A lightweight TypeScript utility library for time formatting, calculations, and validation with tree-shaking support",
+  "main": "dist/index.js",
+  "module": "dist/esm/index.js",
+  "types": "dist/index.d.ts",
+  "sideEffects": false,
+  "exports": {
+    ".": {
+      "import": "./dist/esm/index.js",
+      "require": "./dist/index.js",
+      "types": "./dist/index.d.ts"
+    },
+    "./format": {
+      "import": "./dist/esm/format.js",
+      "require": "./dist/format.js",
+      "types": "./dist/format.d.ts"
+    },
+    "./calculate": {
+      "import": "./dist/esm/calculate.js",
+      "require": "./dist/calculate.js",
+      "types": "./dist/calculate.d.ts"
+    },
+    "./validate": {
+      "import": "./dist/esm/validate.js",
+      "require": "./dist/validate.js",
+      "types": "./dist/validate.d.ts"
+    },
+    "./constants": {
+      "import": "./dist/esm/constants.js",
+      "require": "./dist/constants.js",
+      "types": "./dist/constants.d.ts"
+    },
+    "./age": {
+      "import": "./dist/esm/age.js",
+      "require": "./dist/age.js",
+      "types": "./dist/age.d.ts"
+    },
+    "./calendar": {
+      "import": "./dist/esm/calendar.js",
+      "require": "./dist/calendar.js",
+      "types": "./dist/calendar.d.ts"
+    },
+    "./parse": {
+      "import": "./dist/esm/parse.js",
+      "require": "./dist/parse.js",
+      "types": "./dist/parse.d.ts"
+    },
+    "./performance": {
+      "import": "./dist/esm/performance.js",
+      "require": "./dist/performance.js",
+      "types": "./dist/performance.d.ts"
+    },
+    "./interval": {
+      "import": "./dist/esm/interval.js",
+      "require": "./dist/interval.js",
+      "types": "./dist/interval.d.ts"
+    },
+    "./timezone": {
+      "import": "./dist/esm/timezone.js",
+      "require": "./dist/timezone.js",
+      "types": "./dist/timezone.d.ts"
+    },
+    "./workingHours": {
+      "import": "./dist/esm/workingHours.js",
+      "require": "./dist/workingHours.js",
+      "types": "./dist/workingHours.d.ts"
+    },
+    "./rangePresets": {
+      "import": "./dist/esm/rangePresets.js",
+      "require": "./dist/rangePresets.js",
+      "types": "./dist/rangePresets.d.ts"
+    }
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "npm run build:cjs && npm run build:esm",
+    "build:cjs": "tsc -p tsconfig.json",
+    "build:esm": "tsc -p tsconfig.esm.json",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "lint": "eslint src --ext .ts",
+    "prepublishOnly": "npm run build"
+  },
+  "keywords": [
+    "time",
+    "date",
+    "utilities",
+    "formatting",
+    "typescript",
+    "tree-shaking"
+  ],
+  "author": "",
+  "license": "MIT",
+  "devDependencies": {
+    "typescript": "^5.9.2",
+    "vitest": "^3.2.4"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/hatefrad/ts-time-utils.git"
+  },
+  "homepage": "https://github.com/hatefrad/ts-time-utils#readme",
+  "bugs": {
+    "url": "https://github.com/hatefrad/ts-time-utils/issues"
+  }
+}
