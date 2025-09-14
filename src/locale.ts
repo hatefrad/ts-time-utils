@@ -327,6 +327,98 @@ const DEFAULT_LOCALES: Record<string, LocaleConfig> = {
       decimal: '.',
       thousands: ','
     }
+  },
+  'nl': {
+    locale: 'nl',
+    dateFormats: {
+      short: 'd-M-yyyy',
+      medium: 'd MMM yyyy',
+      long: 'd MMMM yyyy',
+      full: 'EEEE d MMMM yyyy'
+    },
+    timeFormats: {
+      short: 'HH:mm',
+      medium: 'HH:mm:ss',
+      long: 'HH:mm:ss z',
+      full: 'HH:mm:ss zzzz'
+    },
+    relativeTime: {
+      future: 'over {0}',
+      past: '{0} geleden',
+      units: {
+        second: 'seconde',
+        seconds: 'seconden',
+        minute: 'minuut',
+        minutes: 'minuten',
+        hour: 'uur',
+        hours: 'uur',
+        day: 'dag',
+        days: 'dagen',
+        week: 'week',
+        weeks: 'weken',
+        month: 'maand',
+        months: 'maanden',
+        year: 'jaar',
+        years: 'jaar'
+      }
+    },
+    calendar: {
+      weekStartsOn: 1, // Monday starts the week in Netherlands
+      monthNames: ['januari', 'februari', 'maart', 'april', 'mei', 'juni', 'juli', 'augustus', 'september', 'oktober', 'november', 'december'],
+      monthNamesShort: ['jan', 'feb', 'mrt', 'apr', 'mei', 'jun', 'jul', 'aug', 'sep', 'okt', 'nov', 'dec'],
+      dayNames: ['zondag', 'maandag', 'dinsdag', 'woensdag', 'donderdag', 'vrijdag', 'zaterdag'],
+      dayNamesShort: ['zo', 'ma', 'di', 'wo', 'do', 'vr', 'za']
+    },
+    numbers: {
+      decimal: ',',
+      thousands: '.'
+    }
+  },
+  'it': {
+    locale: 'it',
+    dateFormats: {
+      short: 'dd/MM/yyyy',
+      medium: 'd MMM yyyy',
+      long: 'd MMMM yyyy',
+      full: 'EEEE d MMMM yyyy'
+    },
+    timeFormats: {
+      short: 'HH:mm',
+      medium: 'HH:mm:ss',
+      long: 'HH:mm:ss z',
+      full: 'HH:mm:ss zzzz'
+    },
+    relativeTime: {
+      future: 'tra {0}',
+      past: '{0} fa',
+      units: {
+        second: 'secondo',
+        seconds: 'secondi',
+        minute: 'minuto',
+        minutes: 'minuti',
+        hour: 'ora',
+        hours: 'ore',
+        day: 'giorno',
+        days: 'giorni',
+        week: 'settimana',
+        weeks: 'settimane',
+        month: 'mese',
+        months: 'mesi',
+        year: 'anno',
+        years: 'anni'
+      }
+    },
+    calendar: {
+      weekStartsOn: 1, // Monday starts the week in Italy
+      monthNames: ['gennaio', 'febbraio', 'marzo', 'aprile', 'maggio', 'giugno', 'luglio', 'agosto', 'settembre', 'ottobre', 'novembre', 'dicembre'],
+      monthNamesShort: ['gen', 'feb', 'mar', 'apr', 'mag', 'giu', 'lug', 'ago', 'set', 'ott', 'nov', 'dic'],
+      dayNames: ['domenica', 'lunedì', 'martedì', 'mercoledì', 'giovedì', 'venerdì', 'sabato'],
+      dayNamesShort: ['dom', 'lun', 'mar', 'mer', 'gio', 'ven', 'sab']
+    },
+    numbers: {
+      decimal: ',',
+      thousands: '.'
+    }
   }
 };
 
@@ -729,6 +821,14 @@ function getRelativeWords(
     'fa': {
       'day': { past: 'دیروز', future: 'فردا' },
       'days': { past: 'دیروز', future: 'فردا' }
+    },
+    'nl': {
+      'day': { past: 'gisteren', future: 'morgen' },
+      'days': { past: 'gisteren', future: 'morgen' }
+    },
+    'it': {
+      'day': { past: 'ieri', future: 'domani' },
+      'days': { past: 'ieri', future: 'domani' }
     }
   };
   

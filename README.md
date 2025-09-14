@@ -111,7 +111,7 @@ A lightweight TypeScript utility library for time formatting, calculations, and 
 
 - Multi-language relative time formatting
 - Locale-specific date and time formatting
-- Support for 35+ locales with built-in configurations
+- Support for 40+ locales with built-in configurations
 - Auto-detection of system/browser locale
 - Custom locale registration
 - Internationalization (i18n) support
@@ -448,6 +448,8 @@ formatRelativeTime(pastDate, { locale: "en" }); // "2 hours ago"
 formatRelativeTime(pastDate, { locale: "es" }); // "hace 2 horas"
 formatRelativeTime(pastDate, { locale: "fr" }); // "il y a 2 heures"
 formatRelativeTime(pastDate, { locale: "de" }); // "vor 2 Stunden"
+formatRelativeTime(pastDate, { locale: "nl" }); // "2 uur geleden"
+formatRelativeTime(pastDate, { locale: "it" }); // "2 ore fa"
 formatRelativeTime(pastDate, { locale: "zh" }); // "2小时前"
 formatRelativeTime(pastDate, { locale: "ja" }); // "2時間前"
 formatRelativeTime(pastDate, { locale: "fa" }); // "2 ساعت پیش"
@@ -456,6 +458,8 @@ formatRelativeTime(pastDate, { locale: "fa" }); // "2 ساعت پیش"
 const futureDate = new Date(Date.now() + 3 * 24 * 60 * 60 * 1000);
 formatRelativeTime(futureDate, { locale: "en" }); // "in 3 days"
 formatRelativeTime(futureDate, { locale: "es" }); // "en 3 días"
+formatRelativeTime(futureDate, { locale: "nl" }); // "over 3 dagen"
+formatRelativeTime(futureDate, { locale: "it" }); // "tra 3 giorni"
 formatRelativeTime(futureDate, { locale: "fa" }); // "3 روز دیگر"
 
 // Relative time options
@@ -553,6 +557,8 @@ import {
 convertRelativeTime("2 hours ago", "en", "es"); // "hace 2 horas"
 convertRelativeTime("hace 3 días", "es", "fr"); // "il y a 3 jours"
 convertRelativeTime("2h ago", "en", "de"); // "vor 2h"
+convertRelativeTime("2 hours ago", "en", "nl"); // "2 uur geleden"
+convertRelativeTime("2 hours ago", "en", "it"); // "2 ore fa"
 convertRelativeTime("2 hours ago", "en", "fa"); // "2 ساعت پیش"
 convertRelativeTime("2 ساعت پیش", "fa", "en"); // "2 hours ago"
 
@@ -560,6 +566,8 @@ convertRelativeTime("2 ساعت پیش", "fa", "en"); // "2 hours ago"
 detectLocaleFromRelativeTime("2 hours ago"); // "en"
 detectLocaleFromRelativeTime("hace 2 horas"); // "es"
 detectLocaleFromRelativeTime("il y a 2 heures"); // "fr"
+detectLocaleFromRelativeTime("2 uur geleden"); // "nl"
+detectLocaleFromRelativeTime("2 ore fa"); // "it"
 detectLocaleFromRelativeTime("2 ساعت پیش"); // "fa"
 detectLocaleFromRelativeTime("vor 2 Stunden"); // "de"
 
@@ -661,6 +669,8 @@ console.log(comparison.weekStartsOn);
 
 - `convertRelativeTime(text, fromLocale, toLocale)` - Convert relative time between locales
   - Example: `convertRelativeTime("2 hours ago", "en", "es")` → `"hace 2 horas"`
+  - Example: `convertRelativeTime("2 hours ago", "en", "nl")` → `"2 uur geleden"`
+  - Example: `convertRelativeTime("2 hours ago", "en", "it")` → `"2 ore fa"`
   - Example: `convertRelativeTime("2 hours ago", "en", "fa")` → `"2 ساعت پیش"`
 - `detectLocaleFromRelativeTime(text)` - Detect locale from relative time string
   - Returns most likely locale or null if detection fails

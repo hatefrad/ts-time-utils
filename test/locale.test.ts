@@ -826,4 +826,124 @@ describe('Locale Module', () => {
       expect(comparison.timeFormats).toBeDefined();
     });
   });
+
+  describe('Dutch Locale Support', () => {
+    it('should format relative time in Dutch', () => {
+      withCurrentTime(() => {
+        const result = formatRelativeTime(pastDate, { locale: 'nl' });
+        expect(result).toContain('geleden'); // "ago" in Dutch
+      });
+    });
+
+    it('should format future time in Dutch', () => {
+      withCurrentTime(() => {
+        const result = formatRelativeTime(futureDate, { locale: 'nl' });
+        expect(result).toContain('over'); // "in" in Dutch
+      });
+    });
+
+    it('should get Dutch month names', () => {
+      const months = getMonthNames('nl');
+      expect(months).toHaveLength(12);
+      expect(months[0]).toBe('januari'); // January in Dutch
+      expect(months[11]).toBe('december'); // December in Dutch
+    });
+
+    it('should get Dutch day names', () => {
+      const days = getDayNames('nl');
+      expect(days).toHaveLength(7);
+      expect(days[0]).toBe('zondag'); // Sunday in Dutch
+      expect(days[1]).toBe('maandag'); // Monday in Dutch
+    });
+
+    it('should detect Dutch as supported locale', () => {
+      expect(isLocaleSupported('nl')).toBe(true);
+      expect(isLocaleSupported('nl-NL')).toBe(true);
+    });
+
+    it('should convert relative time from English to Dutch', () => {
+      const result = convertRelativeTime('2 hours ago', 'en', 'nl');
+      expect(result).toContain('uur'); // "hour" in Dutch
+      expect(result).toContain('geleden'); // "ago" in Dutch
+    });
+
+    it('should handle Dutch yesterday/tomorrow', () => {
+      const yesterday = new Date(now - 24 * 60 * 60 * 1000);
+      const tomorrow = new Date(now + 24 * 60 * 60 * 1000);
+
+      withCurrentTime(() => {
+        const yesterdayResult = formatRelativeTime(yesterday, { 
+          locale: 'nl', 
+          numeric: 'auto' 
+        });
+        const tomorrowResult = formatRelativeTime(tomorrow, { 
+          locale: 'nl', 
+          numeric: 'auto' 
+        });
+
+        expect(typeof yesterdayResult).toBe('string');
+        expect(typeof tomorrowResult).toBe('string');
+      });
+    });
+  });
+
+  describe('Italian Locale Support', () => {
+    it('should format relative time in Italian', () => {
+      withCurrentTime(() => {
+        const result = formatRelativeTime(pastDate, { locale: 'it' });
+        expect(result).toContain('fa'); // "ago" in Italian
+      });
+    });
+
+    it('should format future time in Italian', () => {
+      withCurrentTime(() => {
+        const result = formatRelativeTime(futureDate, { locale: 'it' });
+        expect(result).toContain('tra'); // "in" in Italian
+      });
+    });
+
+    it('should get Italian month names', () => {
+      const months = getMonthNames('it');
+      expect(months).toHaveLength(12);
+      expect(months[0]).toBe('gennaio'); // January in Italian
+      expect(months[11]).toBe('dicembre'); // December in Italian
+    });
+
+    it('should get Italian day names', () => {
+      const days = getDayNames('it');
+      expect(days).toHaveLength(7);
+      expect(days[0]).toBe('domenica'); // Sunday in Italian
+      expect(days[1]).toBe('lunedì'); // Monday in Italian
+    });
+
+    it('should detect Italian as supported locale', () => {
+      expect(isLocaleSupported('it')).toBe(true);
+      expect(isLocaleSupported('it-IT')).toBe(true);
+    });
+
+    it('should convert relative time from English to Italian', () => {
+      const result = convertRelativeTime('2 hours ago', 'en', 'it');
+      expect(result).toContain('ore'); // "hours" in Italian
+      expect(result).toContain('fa'); // "ago" in Italian
+    });
+
+    it('should handle Italian yesterday/tomorrow', () => {
+      const yesterday = new Date(now - 24 * 60 * 60 * 1000);
+      const tomorrow = new Date(now + 24 * 60 * 60 * 1000);
+
+      withCurrentTime(() => {
+        const yesterdayResult = formatRelativeTime(yesterday, { 
+          locale: 'it', 
+          numeric: 'auto' 
+        });
+        const tomorrowResult = formatRelativeTime(tomorrow, { 
+          locale: 'it', 
+          numeric: 'auto' 
+        });
+
+        expect(typeof yesterdayResult).toBe('string');
+        expect(typeof tomorrowResult).toBe('string');
+      });
+    });
+  });
 });
