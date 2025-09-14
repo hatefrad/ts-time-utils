@@ -220,7 +220,8 @@ export type SupportedLocale =
   | 'sv' | 'sv-SE'
   | 'da' | 'da-DK'
   | 'no' | 'no-NO'
-  | 'fi' | 'fi-FI';
+  | 'fi' | 'fi-FI'
+  | 'fa' | 'fa-IR';
 
 /** Relative time units for localization */
 export type RelativeTimeUnit = 

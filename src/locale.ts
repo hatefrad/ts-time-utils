@@ -281,6 +281,52 @@ const DEFAULT_LOCALES: Record<string, LocaleConfig> = {
       decimal: '.',
       thousands: ','
     }
+  },
+  'fa': {
+    locale: 'fa',
+    dateFormats: {
+      short: 'yyyy/M/d',
+      medium: 'd MMM yyyy',
+      long: 'd MMMM yyyy',
+      full: 'EEEE، d MMMM yyyy'
+    },
+    timeFormats: {
+      short: 'H:mm',
+      medium: 'H:mm:ss',
+      long: 'H:mm:ss z',
+      full: 'H:mm:ss zzzz'
+    },
+    relativeTime: {
+      future: '{0} دیگر',
+      past: '{0} پیش',
+      units: {
+        second: 'ثانیه',
+        seconds: 'ثانیه',
+        minute: 'دقیقه',
+        minutes: 'دقیقه',
+        hour: 'ساعت',
+        hours: 'ساعت',
+        day: 'روز',
+        days: 'روز',
+        week: 'هفته',
+        weeks: 'هفته',
+        month: 'ماه',
+        months: 'ماه',
+        year: 'سال',
+        years: 'سال'
+      }
+    },
+    calendar: {
+      weekStartsOn: 6, // Saturday starts the week in Persian calendar
+      monthNames: ['فروردین', 'اردیبهشت', 'خرداد', 'تیر', 'مرداد', 'شهریور', 'مهر', 'آبان', 'آذر', 'دی', 'بهمن', 'اسفند'],
+      monthNamesShort: ['فرو', 'ارد', 'خرد', 'تیر', 'مرد', 'شهر', 'مهر', 'آبا', 'آذر', 'دی', 'بهم', 'اسف'],
+      dayNames: ['یکشنبه', 'دوشنبه', 'سه‌شنبه', 'چهارشنبه', 'پنج‌شنبه', 'جمعه', 'شنبه'],
+      dayNamesShort: ['یک', 'دو', 'سه', 'چهار', 'پنج', 'جمع', 'شنب']
+    },
+    numbers: {
+      decimal: '.',
+      thousands: ','
+    }
   }
 };
 
@@ -679,6 +725,10 @@ function getRelativeWords(
     'de': {
       'day': { past: 'gestern', future: 'morgen' },
       'days': { past: 'gestern', future: 'morgen' }
+    },
+    'fa': {
+      'day': { past: 'دیروز', future: 'فردا' },
+      'days': { past: 'دیروز', future: 'فردا' }
     }
   };
   
@@ -1039,8 +1089,9 @@ function findRelativeTimeUnit(unitText: string, config: LocaleConfig): RelativeT
     }
   }
 
-  // Check abbreviations for English (common case)
+  // Check abbreviations for English and other common cases
   const abbreviations: Record<string, RelativeTimeUnit> = {
+    // English abbreviations
     's': 'seconds',
     'sec': 'seconds',
     'secs': 'seconds',
@@ -1060,7 +1111,15 @@ function findRelativeTimeUnit(unitText: string, config: LocaleConfig): RelativeT
     'mos': 'months',
     'y': 'years',
     'yr': 'years',
-    'yrs': 'years'
+    'yrs': 'years',
+    // Persian abbreviations
+    'ث': 'seconds',
+    'د': 'minutes',
+    'س': 'hours',
+    'ر': 'days',
+    'ه': 'weeks',
+    'م': 'months',
+    'ل': 'years'
   };
 
   return abbreviations[unitText] || null;

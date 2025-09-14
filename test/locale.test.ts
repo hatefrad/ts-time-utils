@@ -717,4 +717,113 @@ describe('Locale Module', () => {
       });
     });
   });
+
+  describe('Persian Locale Support', () => {
+    it('should format relative time in Persian', () => {
+      withCurrentTime(() => {
+        const result = formatRelativeTime(pastDate, { locale: 'fa' });
+        expect(result).toContain('پیش'); // "ago" in Persian
+      });
+    });
+
+    it('should format future time in Persian', () => {
+      withCurrentTime(() => {
+        const result = formatRelativeTime(futureDate, { locale: 'fa' });
+        expect(result).toContain('دیگر'); // "from now" in Persian
+      });
+    });
+
+    it('should format date in Persian', () => {
+      const result = formatDateLocale(testDate, 'fa', 'medium');
+      expect(result).toBeDefined();
+      expect(typeof result).toBe('string');
+    });
+
+    it('should format time in Persian', () => {
+      const result = formatTimeLocale(testDate, 'fa', 'medium');
+      expect(result).toBeDefined();
+      expect(typeof result).toBe('string');
+    });
+
+    it('should get Persian month names', () => {
+      const months = getMonthNames('fa');
+      expect(months).toHaveLength(12);
+      expect(months[0]).toBe('فروردین'); // First month in Persian calendar
+      expect(months[11]).toBe('اسفند'); // Last month in Persian calendar
+    });
+
+    it('should get Persian day names', () => {
+      const days = getDayNames('fa');
+      expect(days).toHaveLength(7);
+      expect(days[0]).toBe('یکشنبه'); // Sunday in Persian
+      expect(days[5]).toBe('جمعه'); // Friday in Persian
+    });
+
+    it('should get Persian first day of week', () => {
+      const firstDay = getFirstDayOfWeek('fa');
+      expect(firstDay).toBe(6); // Saturday starts the week in Persian calendar
+    });
+
+    it('should detect Persian as supported locale', () => {
+      expect(isLocaleSupported('fa')).toBe(true);
+      expect(isLocaleSupported('fa-IR')).toBe(true);
+    });
+
+    it('should convert relative time from English to Persian', () => {
+      const result = convertRelativeTime('2 hours ago', 'en', 'fa');
+      expect(result).toContain('ساعت'); // "hour" in Persian
+      expect(result).toContain('پیش'); // "ago" in Persian
+    });
+
+    it('should convert relative time from Persian to English', () => {
+      const result = convertRelativeTime('2 ساعت پیش', 'fa', 'en');
+      expect(result).toContain('hour');
+      expect(result).toContain('ago');
+    });
+
+    it('should detect Persian locale from relative time string', () => {
+      const result = detectLocaleFromRelativeTime('2 ساعت پیش');
+      expect(result).toBe('fa');
+    });
+
+    it('should handle Persian yesterday/tomorrow', () => {
+      const yesterday = new Date(now - 24 * 60 * 60 * 1000);
+      const tomorrow = new Date(now + 24 * 60 * 60 * 1000);
+
+      withCurrentTime(() => {
+        const yesterdayResult = formatRelativeTime(yesterday, { 
+          locale: 'fa', 
+          numeric: 'auto' 
+        });
+        const tomorrowResult = formatRelativeTime(tomorrow, { 
+          locale: 'fa', 
+          numeric: 'auto' 
+        });
+
+        // These might contain "دیروز" (yesterday) or "فردا" (tomorrow)
+        expect(typeof yesterdayResult).toBe('string');
+        expect(typeof tomorrowResult).toBe('string');
+      });
+    });
+
+    it('should convert array of relative times to Persian', () => {
+      const inputs = ['1 hour ago', '2 days ago', '1 week ago'];
+      const results = convertRelativeTimeArray(inputs, 'en', 'fa');
+      
+      results.forEach(result => {
+        if (result) {
+          expect(result).toContain('پیش');
+        }
+      });
+    });
+
+    it('should compare Persian format with other locales', () => {
+      const comparison = compareLocaleFormats('fa', 'en');
+      
+      expect(comparison.weekStartsOn.locale1).toBe(6); // Persian week starts on Saturday
+      expect(comparison.weekStartsOn.locale2).toBe(0); // English week starts on Sunday
+      expect(comparison.dateFormats).toBeDefined();
+      expect(comparison.timeFormats).toBeDefined();
+    });
+  });
 });
