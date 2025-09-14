@@ -199,3 +199,92 @@ export interface EpochTimestamp {
   precision: 'milliseconds' | 'seconds' | 'microseconds';
   timezone?: string;
 }
+
+/** Supported locales for internationalization */
+export type SupportedLocale = 
+  | 'en' | 'en-US' | 'en-GB' | 'en-CA' | 'en-AU'
+  | 'es' | 'es-ES' | 'es-MX' | 'es-AR'
+  | 'fr' | 'fr-FR' | 'fr-CA'
+  | 'de' | 'de-DE' | 'de-AT' | 'de-CH'
+  | 'it' | 'it-IT'
+  | 'pt' | 'pt-PT' | 'pt-BR'
+  | 'ru' | 'ru-RU'
+  | 'zh' | 'zh-CN' | 'zh-TW'
+  | 'ja' | 'ja-JP'
+  | 'ko' | 'ko-KR'
+  | 'ar' | 'ar-SA'
+  | 'hi' | 'hi-IN'
+  | 'tr' | 'tr-TR'
+  | 'pl' | 'pl-PL'
+  | 'nl' | 'nl-NL'
+  | 'sv' | 'sv-SE'
+  | 'da' | 'da-DK'
+  | 'no' | 'no-NO'
+  | 'fi' | 'fi-FI';
+
+/** Relative time units for localization */
+export type RelativeTimeUnit = 
+  | 'second' | 'seconds'
+  | 'minute' | 'minutes'
+  | 'hour' | 'hours'
+  | 'day' | 'days'
+  | 'week' | 'weeks'
+  | 'month' | 'months'
+  | 'year' | 'years';
+
+/** Locale-specific configuration */
+export interface LocaleConfig {
+  /** Locale identifier */
+  locale: SupportedLocale;
+  /** Date format patterns */
+  dateFormats?: {
+    short?: string;
+    medium?: string;  
+    long?: string;
+    full?: string;
+  };
+  /** Time format patterns */
+  timeFormats?: {
+    short?: string;
+    medium?: string;
+    long?: string;
+    full?: string;
+  };
+  /** Relative time translations */
+  relativeTime?: {
+    future?: string; // "{0} from now"
+    past?: string;   // "{0} ago"
+    units?: Partial<Record<RelativeTimeUnit, string>>;
+  };
+  /** Calendar-specific settings */
+  calendar?: {
+    weekStartsOn?: 0 | 1 | 2 | 3 | 4 | 5 | 6; // 0 = Sunday
+    monthNames?: string[];
+    monthNamesShort?: string[];
+    dayNames?: string[];
+    dayNamesShort?: string[];
+  };
+  /** Number formatting */
+  numbers?: {
+    decimal?: string;
+    thousands?: string;
+  };
+}
+
+/** Relative time formatting options */
+export interface RelativeTimeOptions {
+  /** Locale to use for formatting */
+  locale?: SupportedLocale;
+  /** Maximum unit to display (e.g., don't show years) */
+  maxUnit?: RelativeTimeUnit;
+  /** Minimum unit to display (e.g., don't show seconds) */
+  minUnit?: RelativeTimeUnit;
+  /** Number of decimal places for precise units */
+  precision?: number;
+  /** Use short forms (1h vs 1 hour) */
+  short?: boolean;
+  /** Use numeric format when possible */
+  numeric?: 'always' | 'auto';
+  /** Custom formatting style */
+  style?: 'long' | 'short' | 'narrow';
+}

@@ -81,6 +81,11 @@
       "import": "./dist/esm/serialize.js",
       "require": "./dist/serialize.js",
       "types": "./dist/serialize.d.ts"
+    },
+    "./locale": {
+      "import": "./dist/esm/locale.js",
+      "require": "./dist/locale.js",
+      "types": "./dist/locale.d.ts"
     }
   },
   "files": [
@@ -109,7 +114,12 @@
     "intervals",
     "age-calculation",
     "business-days",
-    "date-parsing"
+    "date-parsing",
+    "serialization",
+    "internationalization",
+    "i18n",
+    "locale",
+    "relative-time"
   ],
   "author": "",
   "license": "MIT",

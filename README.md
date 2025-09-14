@@ -8,7 +8,7 @@ A lightweight TypeScript utility library for time formatting, calculations, and 
 - **⚡ Fast** - Zero dependencies, pure JavaScript functions
 - **🔧 TypeScript** - Full type safety and IntelliSense support
 - **🌳 Tree-shakable** - Import individual functions to minimize bundle size
-- **📚 Comprehensive** - 14 utility categories with 95+ functions
+- **📚 Comprehensive** - 15 utility categories with 105+ functions
 
 ### ⏱️ Duration utilities
 
@@ -107,6 +107,15 @@ A lightweight TypeScript utility library for time formatting, calculations, and 
 - This/last/next week, month, quarter, year
 - Rolling windows and quarter helpers
 
+### 🌍 Locale utilities
+
+- Multi-language relative time formatting
+- Locale-specific date and time formatting
+- Support for 30+ locales with built-in configurations
+- Auto-detection of system/browser locale
+- Custom locale registration
+- Internationalization (i18n) support
+
 ### 🧱 Constants
 
 - Milliseconds & seconds per unit
@@ -142,6 +151,11 @@ import { isWorkingTime, addWorkingHours } from "ts-time-utils/workingHours";
 import { today, lastNDays } from "ts-time-utils/rangePresets";
 import { Duration, createDuration } from "ts-time-utils/duration";
 import { serializeDate, parseJSONWithDates } from "ts-time-utils/serialize";
+import {
+  formatRelativeTime,
+  formatDateLocale,
+  detectLocale,
+} from "ts-time-utils/locale";
 ```
 
 ## 📖 Examples
@@ -413,6 +427,116 @@ const week = thisWeek();
 const quarter = quarterRange();
 ```
 
+### Locale Utilities
+
+```ts
+import {
+  formatRelativeTime,
+  formatDateLocale,
+  formatTimeLocale,
+  formatDateTimeLocale,
+  registerLocale,
+  getLocaleConfig,
+  detectLocale,
+  getSupportedLocales,
+} from "ts-time-utils/locale";
+
+// Relative time formatting in multiple languages
+const pastDate = new Date(Date.now() - 2 * 60 * 60 * 1000); // 2 hours ago
+formatRelativeTime(pastDate, { locale: "en" }); // "2 hours ago"
+formatRelativeTime(pastDate, { locale: "es" }); // "hace 2 horas"
+formatRelativeTime(pastDate, { locale: "fr" }); // "il y a 2 heures"
+formatRelativeTime(pastDate, { locale: "de" }); // "vor 2 Stunden"
+formatRelativeTime(pastDate, { locale: "zh" }); // "2小时前"
+formatRelativeTime(pastDate, { locale: "ja" }); // "2時間前"
+
+// Future dates
+const futureDate = new Date(Date.now() + 3 * 24 * 60 * 60 * 1000);
+formatRelativeTime(futureDate, { locale: "en" }); // "in 3 days"
+formatRelativeTime(futureDate, { locale: "es" }); // "en 3 días"
+
+// Relative time options
+formatRelativeTime(pastDate, {
+  locale: "en",
+  maxUnit: "days", // Don't use units larger than days
+  minUnit: "minutes", // Don't use units smaller than minutes
+  precision: 1, // Show 1 decimal place: "2.0 hours ago"
+  short: true, // Use abbreviated format: "2h ago"
+  numeric: "auto", // Use words when appropriate: "yesterday"
+});
+
+// Date formatting
+const date = new Date("2024-01-15T14:30:45Z");
+formatDateLocale(date, "en", "medium"); // "Jan 15, 2024"
+formatDateLocale(date, "es", "medium"); // "15 ene 2024"
+formatDateLocale(date, "fr", "long"); // "15 janvier 2024"
+formatDateLocale(date, "de", "short"); // "15.1.2024"
+
+// Time formatting
+formatTimeLocale(date, "en", "short"); // "2:30 PM"
+formatTimeLocale(date, "de", "medium"); // "14:30:45"
+formatTimeLocale(date, "fr", "long"); // "14:30:45 UTC"
+
+// Combined date and time
+formatDateTimeLocale(date, "en"); // "Jan 15, 2024 2:30:45 PM"
+
+// Auto-detect locale from browser/system
+const userLocale = detectLocale(); // e.g., 'en-US' or 'fr-FR'
+formatRelativeTime(pastDate, { locale: userLocale });
+
+// Get supported locales
+const locales = getSupportedLocales();
+// ['en', 'es', 'fr', 'de', 'zh', 'ja', ...]
+
+// Register custom locale
+registerLocale("custom", {
+  locale: "custom",
+  dateFormats: {
+    short: "M/d/yyyy",
+    medium: "MMM d, yyyy",
+    long: "MMMM d, yyyy",
+    full: "EEEE, MMMM d, yyyy",
+  },
+  timeFormats: {
+    short: "h:mm a",
+    medium: "h:mm:ss a",
+    long: "h:mm:ss a z",
+    full: "h:mm:ss a zzzz",
+  },
+  relativeTime: {
+    future: "in {0}",
+    past: "{0} ago",
+    units: {
+      second: "sec",
+      seconds: "secs",
+      minute: "min",
+      minutes: "mins",
+      hour: "hr",
+      hours: "hrs",
+      day: "day",
+      days: "days",
+      week: "wk",
+      weeks: "wks",
+      month: "mo",
+      months: "mos",
+      year: "yr",
+      years: "yrs",
+    },
+  },
+  calendar: {
+    weekStartsOn: 0, // Sunday
+    monthNames: ["Jan", "Feb", "Mar" /* ... */],
+    monthNamesShort: ["J", "F", "M" /* ... */],
+    dayNames: ["Sun", "Mon", "Tue" /* ... */],
+    dayNamesShort: ["S", "M", "T" /* ... */],
+  },
+  numbers: {
+    decimal: ".",
+    thousands: ",",
+  },
+});
+```
+
 ## 📊 API Reference
 
 ### Duration Functions
@@ -468,6 +592,23 @@ const quarter = quarterRange();
 - `isWeekend(date)` / `isWeekday(date)` - Check day type
 - `isValidTimeString(time)` - Validate HH:MM time format
 - `isValidISOString(dateString)` - Validate ISO 8601 date string
+
+### Locale Functions
+
+- `formatRelativeTime(date, options?)` - Format relative time with locale support
+  - Options: `locale`, `maxUnit`, `minUnit`, `precision`, `short`, `numeric`, `style`
+  - Supports 30+ locales: en, es, fr, de, it, pt, nl, sv, da, no, fi, pl, cs, sk, hu, ro, bg, hr, sl, et, lv, lt, ru, uk, tr, ar, he, hi, th, ko, zh, ja
+- `formatDateLocale(date, locale?, style?)` - Format date in locale-specific format
+  - Styles: 'short', 'medium', 'long', 'full'
+- `formatTimeLocale(date, locale?, style?)` - Format time in locale-specific format
+- `formatDateTimeLocale(date, locale?, dateStyle?, timeStyle?)` - Format both date and time
+- `registerLocale(locale, config)` - Register a custom locale configuration
+- `getLocaleConfig(locale)` - Get configuration for a specific locale
+- `detectLocale(fallback?)` - Auto-detect system/browser locale
+- `getSupportedLocales()` - Get array of all supported locale codes
+- `getMonthNames(locale?, short?)` - Get localized month names
+- `getDayNames(locale?, short?)` - Get localized day names
+- `getBestMatchingLocale(preferences, fallback?)` - Find best matching locale from preferences
 
 ## 🛠️ Development
 

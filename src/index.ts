@@ -185,6 +185,23 @@ export {
   stringifyWithDates
 } from './serialize.js';
 
+// Locale utilities  
+export {
+  registerLocale,
+  getLocaleConfig,
+  getSupportedLocales,
+  formatRelativeTime,
+  formatDateLocale,
+  formatTimeLocale,
+  formatDateTimeLocale,
+  getMonthNames,
+  getDayNames,
+  getFirstDayOfWeek,
+  isLocaleSupported,
+  getBestMatchingLocale,
+  detectLocale
+} from './locale.js';
+
 // Constants and types
 export { 
   MILLISECONDS_PER_SECOND,
@@ -225,5 +242,9 @@ export type {
   DurationComparison,
   SerializationOptions,
   DateObject,
-  EpochTimestamp
+  EpochTimestamp,
+  SupportedLocale,
+  LocaleConfig,
+  RelativeTimeOptions,
+  RelativeTimeUnit
 } from './types.js';
