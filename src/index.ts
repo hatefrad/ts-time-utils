@@ -199,7 +199,14 @@ export {
   getFirstDayOfWeek,
   isLocaleSupported,
   getBestMatchingLocale,
-  detectLocale
+  detectLocale,
+  // Conversion utilities
+  convertRelativeTime,
+  detectLocaleFromRelativeTime,
+  convertFormatPattern,
+  convertFormattedDate,
+  convertRelativeTimeArray,
+  compareLocaleFormats
 } from './locale.js';
 
 // Constants and types

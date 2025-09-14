@@ -8,7 +8,7 @@ A lightweight TypeScript utility library for time formatting, calculations, and 
 - **⚡ Fast** - Zero dependencies, pure JavaScript functions
 - **🔧 TypeScript** - Full type safety and IntelliSense support
 - **🌳 Tree-shakable** - Import individual functions to minimize bundle size
-- **📚 Comprehensive** - 15 utility categories with 105+ functions
+- **📚 Comprehensive** - 15 utility categories with 115+ functions
 
 ### ⏱️ Duration utilities
 
@@ -115,6 +115,7 @@ A lightweight TypeScript utility library for time formatting, calculations, and 
 - Auto-detection of system/browser locale
 - Custom locale registration
 - Internationalization (i18n) support
+- **Locale conversions** - Convert between different locales and detect locale from text
 
 ### 🧱 Constants
 
@@ -535,6 +536,47 @@ registerLocale("custom", {
     thousands: ",",
   },
 });
+
+// Locale Conversion Utilities
+import {
+  convertRelativeTime,
+  detectLocaleFromRelativeTime,
+  convertFormatPattern,
+  convertFormattedDate,
+  convertRelativeTimeArray,
+  compareLocaleFormats,
+} from "ts-time-utils/locale";
+
+// Convert relative time between locales
+convertRelativeTime("2 hours ago", "en", "es"); // "hace 2 horas"
+convertRelativeTime("hace 3 días", "es", "fr"); // "il y a 3 jours"
+convertRelativeTime("2h ago", "en", "de"); // "vor 2h"
+
+// Detect locale from formatted text
+detectLocaleFromRelativeTime("2 hours ago"); // "en"
+detectLocaleFromRelativeTime("hace 2 horas"); // "es"
+detectLocaleFromRelativeTime("il y a 2 heures"); // "fr"
+detectLocaleFromRelativeTime("vor 2 Stunden"); // "de"
+
+// Convert date format patterns between locales
+convertFormatPattern("M/d/yyyy", "en", "de"); // "dd.MM.yyyy"
+convertFormatPattern("MMM d, yyyy", "en", "fr", "long"); // "d MMMM yyyy"
+
+// Convert formatted dates between locales
+convertFormattedDate("Jan 15, 2024", "en", "es"); // "15 ene 2024"
+convertFormattedDate("15. Januar 2024", "de", "en"); // "Jan 15, 2024"
+
+// Bulk conversion of relative time arrays
+const englishTimes = ["2 hours ago", "in 3 days", "1 week ago"];
+convertRelativeTimeArray(englishTimes, "en", "es");
+// ["hace 2 horas", "en 3 días", "hace 1 semana"]
+
+// Compare format differences between locales
+const comparison = compareLocaleFormats("en", "de");
+console.log(comparison.dateFormats.short);
+// { locale1: "M/d/yyyy", locale2: "dd.MM.yyyy" }
+console.log(comparison.weekStartsOn);
+// { locale1: 0, locale2: 1 } // Sunday vs Monday
 ```
 
 ## 📊 API Reference
@@ -609,6 +651,21 @@ registerLocale("custom", {
 - `getMonthNames(locale?, short?)` - Get localized month names
 - `getDayNames(locale?, short?)` - Get localized day names
 - `getBestMatchingLocale(preferences, fallback?)` - Find best matching locale from preferences
+
+#### Locale Conversion Functions
+
+- `convertRelativeTime(text, fromLocale, toLocale)` - Convert relative time between locales
+  - Example: `convertRelativeTime("2 hours ago", "en", "es")` → `"hace 2 horas"`
+- `detectLocaleFromRelativeTime(text)` - Detect locale from relative time string
+  - Returns most likely locale or null if detection fails
+- `convertFormatPattern(pattern, fromLocale, toLocale, style?)` - Convert date format patterns
+  - Maps common patterns between locales or uses target locale's style
+- `convertFormattedDate(formattedDate, fromLocale, toLocale, targetStyle?)` - Convert formatted dates
+  - Parses date in source locale and reformats in target locale
+- `convertRelativeTimeArray(array, fromLocale, toLocale)` - Bulk convert relative time arrays
+  - Returns array with same length, null for unparseable strings
+- `compareLocaleFormats(locale1, locale2)` - Compare format differences between locales
+  - Returns object with dateFormats, timeFormats, and weekStartsOn comparisons
 
 ## 🛠️ Development
 

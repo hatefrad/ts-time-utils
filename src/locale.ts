@@ -726,3 +726,390 @@ function formatWithPattern(date: Date, pattern: string, config: LocaleConfig): s
 
   return result;
 }
+
+// ========================================
+// LOCALE CONVERSION UTILITIES
+// ========================================
+
+/**
+ * Convert a relative time string from one locale to another
+ * Attempts to parse the relative time and reformat in target locale
+ */
+export function convertRelativeTime(
+  relativeTimeString: string,
+  fromLocale: SupportedLocale,
+  toLocale: SupportedLocale
+): string | null {
+  if (fromLocale === toLocale) {
+    return relativeTimeString;
+  }
+
+  const parsedTime = parseRelativeTime(relativeTimeString, fromLocale);
+  if (!parsedTime) {
+    return null;
+  }
+
+  return formatRelativeTime(parsedTime.date, { 
+    locale: toLocale,
+    maxUnit: parsedTime.unit,
+    precision: parsedTime.precision,
+    short: parsedTime.isShort,
+    numeric: parsedTime.numeric
+  });
+}
+
+/**
+ * Detect the locale of a formatted relative time string
+ * Returns the most likely locale or null if detection fails
+ */
+export function detectLocaleFromRelativeTime(relativeTimeString: string): SupportedLocale | null {
+  const supportedLocales = getSupportedLocales();
+  
+  for (const locale of supportedLocales) {
+    if (parseRelativeTime(relativeTimeString, locale)) {
+      return locale;
+    }
+  }
+  
+  return null;
+}
+
+/**
+ * Convert a date format pattern from one locale's convention to another
+ */
+export function convertFormatPattern(
+  pattern: string,
+  fromLocale: SupportedLocale,
+  toLocale: SupportedLocale,
+  style?: 'short' | 'medium' | 'long' | 'full'
+): string {
+  if (fromLocale === toLocale) {
+    return pattern;
+  }
+
+  const toConfig = getLocaleConfig(toLocale);
+  
+  // If style is specified, return the target locale's pattern for that style
+  if (style && toConfig.dateFormats?.[style]) {
+    return toConfig.dateFormats[style];
+  }
+
+  // Try to map common patterns between locales
+  const patternMappings: Record<string, Record<string, string>> = {
+    'en': {
+      'M/d/yyyy': 'short',
+      'MMM d, yyyy': 'medium',
+      'MMMM d, yyyy': 'long',
+      'EEEE, MMMM d, yyyy': 'full'
+    },
+    'es': {
+      'd/M/yyyy': 'short',
+      'd MMM yyyy': 'medium', 
+      'd \'de\' MMMM \'de\' yyyy': 'long',
+      'EEEE, d \'de\' MMMM \'de\' yyyy': 'full'
+    },
+    'fr': {
+      'dd/MM/yyyy': 'short',
+      'd MMM yyyy': 'medium',
+      'd MMMM yyyy': 'long',
+      'EEEE d MMMM yyyy': 'full'
+    },
+    'de': {
+      'd.M.yyyy': 'short',
+      'd. MMM yyyy': 'medium',
+      'd. MMMM yyyy': 'long',
+      'EEEE, d. MMMM yyyy': 'full'
+    }
+  };
+
+  // Find matching style from source pattern
+  const fromMappings = patternMappings[fromLocale];
+  if (fromMappings) {
+    const matchedStyle = fromMappings[pattern];
+    if (matchedStyle && toConfig.dateFormats?.[matchedStyle as keyof typeof toConfig.dateFormats]) {
+      return toConfig.dateFormats[matchedStyle as keyof typeof toConfig.dateFormats]!;
+    }
+  }
+
+  // Fallback: return target locale's medium format
+  return toConfig.dateFormats?.medium || pattern;
+}
+
+/**
+ * Convert a formatted date string from one locale to another
+ * Attempts to parse the date and reformat in target locale
+ */
+export function convertFormattedDate(
+  formattedDate: string,
+  fromLocale: SupportedLocale,
+  toLocale: SupportedLocale,
+  targetStyle?: 'short' | 'medium' | 'long' | 'full'
+): string | null {
+  if (fromLocale === toLocale) {
+    return formattedDate;
+  }
+
+  const parsedDate = parseFormattedDate(formattedDate, fromLocale);
+  if (!parsedDate) {
+    return null;
+  }
+
+  return formatDateLocale(parsedDate, toLocale, targetStyle || 'medium');
+}
+
+/**
+ * Bulk convert an array of relative time strings to a different locale
+ */
+export function convertRelativeTimeArray(
+  relativeTimeStrings: string[],
+  fromLocale: SupportedLocale,
+  toLocale: SupportedLocale
+): (string | null)[] {
+  return relativeTimeStrings.map(str => convertRelativeTime(str, fromLocale, toLocale));
+}
+
+/**
+ * Get format pattern differences between two locales
+ */
+export function compareLocaleFormats(
+  locale1: SupportedLocale,
+  locale2: SupportedLocale
+): {
+  dateFormats: Record<string, { locale1: string; locale2: string }>;
+  timeFormats: Record<string, { locale1: string; locale2: string }>;
+  weekStartsOn: { locale1: number; locale2: number };
+} {
+  const config1 = getLocaleConfig(locale1);
+  const config2 = getLocaleConfig(locale2);
+
+  const result = {
+    dateFormats: {} as Record<string, { locale1: string; locale2: string }>,
+    timeFormats: {} as Record<string, { locale1: string; locale2: string }>,
+    weekStartsOn: { 
+      locale1: config1.calendar?.weekStartsOn || 0, 
+      locale2: config2.calendar?.weekStartsOn || 0 
+    }
+  };
+
+  // Compare date formats
+  const styles = ['short', 'medium', 'long', 'full'] as const;
+  for (const style of styles) {
+    if (config1.dateFormats?.[style] || config2.dateFormats?.[style]) {
+      result.dateFormats[style] = {
+        locale1: config1.dateFormats?.[style] || 'N/A',
+        locale2: config2.dateFormats?.[style] || 'N/A'
+      };
+    }
+  }
+
+  // Compare time formats
+  for (const style of styles) {
+    if (config1.timeFormats?.[style] || config2.timeFormats?.[style]) {
+      result.timeFormats[style] = {
+        locale1: config1.timeFormats?.[style] || 'N/A',
+        locale2: config2.timeFormats?.[style] || 'N/A'
+      };
+    }
+  }
+
+  return result;
+}
+
+// ========================================
+// HELPER FUNCTIONS FOR CONVERSIONS
+// ========================================
+
+/**
+ * Parse a relative time string and extract its components
+ */
+function parseRelativeTime(
+  relativeTimeString: string,
+  locale: SupportedLocale
+): {
+  date: Date;
+  unit: RelativeTimeUnit;
+  precision: number;
+  isShort: boolean;
+  numeric: 'always' | 'auto';
+} | null {
+  const config = getLocaleConfig(locale);
+  const trimmed = relativeTimeString.trim();
+  
+  // Try simple patterns first: "2 hours ago", "hace 2 horas", etc.
+  const pastTemplate = config.relativeTime?.past || '{0} ago';
+  const futureTemplate = config.relativeTime?.future || 'in {0}';
+  
+  // Check if it matches past pattern
+  const pastPrefix = pastTemplate.split('{0}')[0];
+  const pastSuffix = pastTemplate.split('{0}')[1] || '';
+  const futurePrefix = futureTemplate.split('{0}')[0];
+  const futureSuffix = futureTemplate.split('{0}')[1] || '';
+  
+  let valueAndUnit = '';
+  let isPast = false;
+  
+  // Try to extract the value and unit part
+  if (pastPrefix && trimmed.startsWith(pastPrefix.trim())) {
+    const remaining = trimmed.substring(pastPrefix.trim().length).trim();
+    if (!pastSuffix || remaining.endsWith(pastSuffix.trim())) {
+      valueAndUnit = pastSuffix ? remaining.substring(0, remaining.length - pastSuffix.trim().length).trim() : remaining;
+      isPast = true;
+    }
+  } else if (pastSuffix && trimmed.endsWith(pastSuffix.trim())) {
+    const remaining = trimmed.substring(0, trimmed.length - pastSuffix.trim().length).trim();
+    if (!pastPrefix || remaining.startsWith(pastPrefix.trim())) {
+      valueAndUnit = pastPrefix ? remaining.substring(pastPrefix.trim().length).trim() : remaining;
+      isPast = true;
+    }
+  } else if (futurePrefix && trimmed.startsWith(futurePrefix.trim())) {
+    const remaining = trimmed.substring(futurePrefix.trim().length).trim();
+    if (!futureSuffix || remaining.endsWith(futureSuffix.trim())) {
+      valueAndUnit = futureSuffix ? remaining.substring(0, remaining.length - futureSuffix.trim().length).trim() : remaining;
+      isPast = false;
+    }
+  } else if (futureSuffix && trimmed.endsWith(futureSuffix.trim())) {
+    const remaining = trimmed.substring(0, trimmed.length - futureSuffix.trim().length).trim();
+    if (!futurePrefix || remaining.startsWith(futurePrefix.trim())) {
+      valueAndUnit = futurePrefix ? remaining.substring(futurePrefix.trim().length).trim() : remaining;
+      isPast = false;
+    }
+  }
+  
+  if (!valueAndUnit) return null;
+
+  // Extract number and unit from something like "2 hours" or "2h"
+  const match = valueAndUnit.match(/^(\d+(?:\.\d+)?)\s*(.+)$/);
+  if (!match) return null;
+  
+  const value = parseFloat(match[1]);
+  const unitText = match[2].trim();
+  
+  if (isNaN(value)) return null;
+
+  // Find matching unit
+  const unit = findRelativeTimeUnit(unitText, config);
+  if (!unit) return null;
+
+  // Calculate the date
+  const now = new Date();
+  const unitMs = getUnitMilliseconds(unit);
+  const offsetMs = value * unitMs * (isPast ? -1 : 1);
+  const date = new Date(now.getTime() + offsetMs);
+
+  return {
+    date,
+    unit,
+    precision: value % 1 === 0 ? 0 : 1,
+    isShort: unitText.length <= 2, // heuristic for short format like "h", "m", "d"
+    numeric: 'always' as const
+  };
+}
+
+/**
+ * Parse a formatted date string using locale-specific patterns
+ */
+function parseFormattedDate(formattedDate: string, locale: SupportedLocale): Date | null {
+  const config = getLocaleConfig(locale);
+  const trimmed = formattedDate.trim();
+
+  // Try different date format patterns
+  const patterns = Object.values(config.dateFormats || {});
+  
+  for (const pattern of patterns) {
+    const date = tryParseWithPattern(trimmed, pattern, config);
+    if (date) {
+      return date;
+    }
+  }
+
+  return null;
+}
+
+/**
+ * Find a RelativeTimeUnit from unit text
+ */
+function findRelativeTimeUnit(unitText: string, config: LocaleConfig): RelativeTimeUnit | null {
+  const units = config.relativeTime?.units;
+  if (!units) return null;
+
+  // Check exact matches first
+  for (const [key, value] of Object.entries(units)) {
+    if (value === unitText) {
+      return key as RelativeTimeUnit;
+    }
+  }
+
+  // Check abbreviations for English (common case)
+  const abbreviations: Record<string, RelativeTimeUnit> = {
+    's': 'seconds',
+    'sec': 'seconds',
+    'secs': 'seconds',
+    'm': 'minutes',
+    'min': 'minutes',
+    'mins': 'minutes',
+    'h': 'hours',
+    'hr': 'hours',
+    'hrs': 'hours',
+    'd': 'days',
+    'day': 'day',
+    'days': 'days',
+    'w': 'weeks',
+    'wk': 'weeks',
+    'wks': 'weeks',
+    'mo': 'months',
+    'mos': 'months',
+    'y': 'years',
+    'yr': 'years',
+    'yrs': 'years'
+  };
+
+  return abbreviations[unitText] || null;
+}
+
+/**
+ * Get milliseconds for a time unit
+ */
+function getUnitMilliseconds(unit: RelativeTimeUnit): number {
+  const unitMap: Record<string, number> = {
+    'second': 1000,
+    'seconds': 1000,
+    'minute': 60 * 1000,
+    'minutes': 60 * 1000,
+    'hour': 60 * 60 * 1000,
+    'hours': 60 * 60 * 1000,
+    'day': 24 * 60 * 60 * 1000,
+    'days': 24 * 60 * 60 * 1000,
+    'week': 7 * 24 * 60 * 60 * 1000,
+    'weeks': 7 * 24 * 60 * 60 * 1000,
+    'month': 30.44 * 24 * 60 * 60 * 1000,
+    'months': 30.44 * 24 * 60 * 60 * 1000,
+    'year': 365.25 * 24 * 60 * 60 * 1000,
+    'years': 365.25 * 24 * 60 * 60 * 1000
+  };
+
+  return unitMap[unit] || 1000;
+}
+
+/**
+ * Try to parse a date string with a specific pattern
+ */
+function tryParseWithPattern(dateString: string, pattern: string, config: LocaleConfig): Date | null {
+  // This is a simplified parser - could be made more sophisticated
+  // For now, try common patterns
+  
+  if (pattern === 'M/d/yyyy' || pattern === 'd/M/yyyy') {
+    const parts = dateString.split('/');
+    if (parts.length === 3) {
+      const [first, second, year] = parts.map(p => parseInt(p, 10));
+      if (!isNaN(first) && !isNaN(second) && !isNaN(year)) {
+        const month = pattern === 'M/d/yyyy' ? first - 1 : second - 1;
+        const day = pattern === 'M/d/yyyy' ? second : first;
+        return new Date(year, month, day);
+      }
+    }
+  }
+
+  // Try ISO date parsing as fallback
+  const isoDate = new Date(dateString);
+  return isNaN(isoDate.getTime()) ? null : isoDate;
+}
