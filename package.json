@@ -71,6 +71,11 @@
       "import": "./dist/esm/rangePresets.js",
       "require": "./dist/rangePresets.js",
       "types": "./dist/rangePresets.d.ts"
+    },
+    "./duration": {
+      "import": "./dist/esm/duration.js",
+      "require": "./dist/duration.js",
+      "types": "./dist/duration.d.ts"
     }
   },
   "files": [

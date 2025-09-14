@@ -148,3 +148,21 @@ export interface BusinessConfig {
   /** Country code for built-in holidays */
   country?: string;
 }
+
+/** Duration unit types */
+export type DurationUnit = 'milliseconds' | 'seconds' | 'minutes' | 'hours' | 'days' | 'weeks' | 'months' | 'years';
+
+/** Duration input configuration */
+export interface DurationInput {
+  milliseconds?: number;
+  seconds?: number;
+  minutes?: number;
+  hours?: number;
+  days?: number;
+  weeks?: number;
+  months?: number;
+  years?: number;
+}
+
+/** Duration comparison result */
+export type DurationComparison = -1 | 0 | 1;

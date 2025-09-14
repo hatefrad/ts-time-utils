@@ -151,6 +151,19 @@ export {
   RANGE_PRESETS
 } from './rangePresets.js';
 
+// Duration utilities
+export {
+  Duration,
+  createDuration,
+  isValidDuration,
+  parseDurationString,
+  formatDurationString,
+  maxDuration,
+  minDuration,
+  sumDurations,
+  averageDuration
+} from './duration.js';
+
 // Constants and types
 export { 
   MILLISECONDS_PER_SECOND,
@@ -185,5 +198,8 @@ export type {
   DateTransformer,
   TimeUtilsError,
   ParseError,
-  ValidationError
+  ValidationError,
+  DurationUnit,
+  DurationInput,
+  DurationComparison
 } from './types.js';
