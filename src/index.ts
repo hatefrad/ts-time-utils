@@ -164,6 +164,27 @@ export {
   averageDuration
 } from './duration.js';
 
+// Serialization utilities
+export {
+  serializeDate,
+  deserializeDate,
+  createDateReviver,
+  createDateReplacer,
+  parseISOString,
+  toEpochTimestamp,
+  fromEpochTimestamp,
+  createEpochTimestamp,
+  toDateObject,
+  fromDateObject,
+  isValidISODateString,
+  isValidEpochTimestamp,
+  cloneDate,
+  datesEqual,
+  now,
+  parseJSONWithDates,
+  stringifyWithDates
+} from './serialize.js';
+
 // Constants and types
 export { 
   MILLISECONDS_PER_SECOND,
@@ -201,5 +222,8 @@ export type {
   ValidationError,
   DurationUnit,
   DurationInput,
-  DurationComparison
+  DurationComparison,
+  SerializationOptions,
+  DateObject,
+  EpochTimestamp
 } from './types.js';

@@ -166,3 +166,36 @@ export interface DurationInput {
 
 /** Duration comparison result */
 export type DurationComparison = -1 | 0 | 1;
+
+/** Serialization format options */
+export interface SerializationOptions {
+  /** Include timezone information */
+  includeTimezone?: boolean;
+  /** Use UTC for serialization */
+  useUTC?: boolean;
+  /** Custom date format */
+  format?: 'iso' | 'epoch' | 'object' | 'custom';
+  /** Precision for epoch timestamps */
+  precision?: 'milliseconds' | 'seconds' | 'microseconds';
+  /** Custom format string when format is 'custom' */
+  customFormat?: string;
+}
+
+/** Date object representation for safe serialization */
+export interface DateObject {
+  year: number;
+  month: number; // 1-12
+  day: number;
+  hour: number;
+  minute: number;
+  second: number;
+  millisecond: number;
+  timezone?: string;
+}
+
+/** Epoch timestamp with metadata */
+export interface EpochTimestamp {
+  timestamp: number;
+  precision: 'milliseconds' | 'seconds' | 'microseconds';
+  timezone?: string;
+}

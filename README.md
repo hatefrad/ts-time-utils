@@ -8,7 +8,7 @@ A lightweight TypeScript utility library for time formatting, calculations, and 
 - **⚡ Fast** - Zero dependencies, pure JavaScript functions
 - **🔧 TypeScript** - Full type safety and IntelliSense support
 - **🌳 Tree-shakable** - Import individual functions to minimize bundle size
-- **📚 Comprehensive** - 13 utility categories with 80+ functions
+- **📚 Comprehensive** - 14 utility categories with 95+ functions
 
 ### ⏱️ Duration utilities
 
@@ -18,6 +18,15 @@ A lightweight TypeScript utility library for time formatting, calculations, and 
 - Compare durations and check relationships
 - Format to human-readable strings
 - Utility functions for arrays of durations
+
+### 💾 Serialization utilities
+
+- Safe JSON date serialization and deserialization
+- Multiple format support (ISO, epoch, object, custom)
+- Automatic date reviver and replacer functions
+- Timezone-aware serialization options
+- Cross-platform date interchange utilities
+- Validation for ISO strings and epoch timestamps
 
 ### 🎨 Format utilities
 
@@ -132,6 +141,7 @@ import { formatInTimeZone } from "ts-time-utils/timezone";
 import { isWorkingTime, addWorkingHours } from "ts-time-utils/workingHours";
 import { today, lastNDays } from "ts-time-utils/rangePresets";
 import { Duration, createDuration } from "ts-time-utils/duration";
+import { serializeDate, parseJSONWithDates } from "ts-time-utils/serialize";
 ```
 
 ## 📖 Examples
@@ -173,6 +183,71 @@ const durations = [duration1, duration2, duration3];
 const max = maxDuration(...durations);
 const total = sumDurations(...durations);
 const average = averageDuration(...durations);
+```
+
+### Serialization Utilities
+
+```ts
+import {
+  serializeDate,
+  deserializeDate,
+  parseJSONWithDates,
+  stringifyWithDates,
+  toEpochTimestamp,
+  fromEpochTimestamp,
+  toDateObject,
+  fromDateObject,
+} from "ts-time-utils/serialize";
+
+// Serialize dates in different formats
+const date = new Date("2025-09-14T12:30:45.123Z");
+
+const isoString = serializeDate(date, { format: "iso" }); // "2025-09-14T12:30:45.123Z"
+const epochMs = serializeDate(date, { format: "epoch" }); // 1757853045123
+const dateObj = serializeDate(date, { format: "object" }); // {year: 2025, month: 9, ...}
+const custom = serializeDate(date, {
+  format: "custom",
+  customFormat: "YYYY-MM-DD HH:mm:ss",
+}); // "2025-09-14 12:30:45"
+
+// Deserialize from various formats
+const fromISO = deserializeDate("2025-09-14T12:30:45.123Z");
+const fromEpoch = deserializeDate(1757853045123);
+const fromObj = deserializeDate({
+  year: 2025,
+  month: 9,
+  day: 14,
+  hour: 12,
+  minute: 30,
+  second: 45,
+  millisecond: 123,
+});
+
+// Safe JSON handling with automatic date conversion
+const data = {
+  name: "User",
+  createdAt: new Date(),
+  updatedAt: new Date(),
+  metadata: "other data",
+};
+
+// Stringify with automatic date serialization
+const jsonString = stringifyWithDates(data, ["createdAt", "updatedAt"], {
+  format: "epoch",
+});
+// {"name":"User","createdAt":1757853045123,"updatedAt":1757853045123,"metadata":"other data"}
+
+// Parse with automatic date restoration
+const parsed = parseJSONWithDates(jsonString, ["createdAt", "updatedAt"]);
+// parsed.createdAt and parsed.updatedAt are Date objects
+
+// Epoch timestamp utilities
+const timestamp = toEpochTimestamp(date, "seconds"); // 1757853045
+const restoredDate = fromEpochTimestamp(timestamp, "seconds");
+
+// Date object utilities (UTC-based)
+const dateObject = toDateObject(date, true); // includes timezone
+const reconstructed = fromDateObject(dateObject);
 ```
 
 ### Format Utilities
@@ -352,6 +427,19 @@ const quarter = quarterRange();
 - `formatDurationString(duration, options?)` - Format to readable string
 - `maxDuration/minDuration(...durations)` - Find extremes
 - `sumDurations/averageDuration(...durations)` - Aggregate operations
+
+### Serialization Functions
+
+- `serializeDate(date, options?)` - Serialize date to various formats (ISO, epoch, object, custom)
+- `deserializeDate(serialized, options?)` - Deserialize from string, number, or object
+- `parseJSONWithDates(jsonString, dateKeys?, options?)` - Parse JSON with automatic date conversion
+- `stringifyWithDates(obj, dateKeys?, options?)` - Stringify JSON with automatic date serialization
+- `createDateReviver/createDateReplacer(dateKeys?, options?)` - Create JSON reviver/replacer functions
+- `toEpochTimestamp/fromEpochTimestamp(input, precision?)` - Convert to/from epoch timestamps
+- `toDateObject/fromDateObject(input)` - Convert to/from safe object representation
+- `isValidISODateString/isValidEpochTimestamp(input)` - Validation utilities
+- `cloneDate(date)` - Safe date cloning
+- `datesEqual(date1, date2, precision?)` - Compare dates with precision control
 
 ### Format Functions
 
