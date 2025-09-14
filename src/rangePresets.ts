@@ -1,6 +1,8 @@
-/** Predefined date range helpers (returns [start,end]) */
+/**
+ * Predefined date range helpers for common time periods
+ */
 
-export interface DateRange { start: Date; end: Date; }
+import type { DateRange } from './types.js';
 
 function todayRange(now = new Date()): DateRange {
   const start = new Date(now); start.setHours(0,0,0,0);
@@ -104,22 +106,22 @@ export function rollingWindowDays(days: number, now = new Date()): DateRange {
   return { start, end };
 }
 
-export function quarterRange(date = new Date()): DateRange {
-  const q = Math.floor(date.getMonth()/3); // 0-3
-  const start = new Date(date.getFullYear(), q*3, 1);
-  const end = new Date(date.getFullYear(), q*3 + 3, 1);
+export function quarterRange(now = new Date()): DateRange {
+  const q = Math.floor(now.getMonth()/3); // 0-3
+  const start = new Date(now.getFullYear(), q*3, 1);
+  const end = new Date(now.getFullYear(), q*3 + 3, 1);
   return { start, end };
 }
 
-export function lastQuarter(date = new Date()): DateRange {
-  const q = quarterRange(date);
+export function lastQuarter(now = new Date()): DateRange {
+  const q = quarterRange(now);
   q.start.setMonth(q.start.getMonth() - 3);
   q.end.setMonth(q.end.getMonth() - 3);
   return q;
 }
 
-export function nextQuarter(date = new Date()): DateRange {
-  const q = quarterRange(date);
+export function nextQuarter(now = new Date()): DateRange {
+  const q = quarterRange(now);
   q.start.setMonth(q.start.getMonth() + 3);
   q.end.setMonth(q.end.getMonth() + 3);
   return q;

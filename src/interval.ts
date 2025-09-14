@@ -2,13 +2,10 @@
  * Interval utilities: operations on time intervals [start, end)
  */
 
-export interface Interval {
-  start: Date;
-  end: Date; // exclusive end
-}
+import type { Interval, DateInput } from './types.js';
 
 /** Create an interval ensuring start <= end */
-export function createInterval(start: Date | string | number, end: Date | string | number): Interval | null {
+export function createInterval(start: DateInput, end: DateInput): Interval | null {
   const s = new Date(start);
   const e = new Date(end);
   if (isNaN(s.getTime()) || isNaN(e.getTime()) || s > e) return null;
@@ -26,7 +23,7 @@ export function intervalDuration(i: Interval): number {
 }
 
 /** Whether interval contains date (inclusive start, exclusive end) */
-export function intervalContains(i: Interval, date: Date | number): boolean {
+export function intervalContains(i: Interval, date: DateInput): boolean {
   const d = date instanceof Date ? date : new Date(date);
   return d >= i.start && d < i.end;
 }

@@ -45,8 +45,7 @@ export {
   getLifeStage,
   getNextBirthday,
   getDaysUntilBirthday,
-  isBirthday,
-  type AgeResult
+  isBirthday
 } from './age.js';
 
 // Calendar utilities
@@ -88,8 +87,7 @@ export {
   measureTime,
   measureAsync,
   benchmark,
-  Stopwatch,
-  type BenchmarkResult
+  Stopwatch
 } from './performance.js';
 
 // Interval utilities
@@ -104,8 +102,7 @@ export {
   subtractInterval,
   splitIntervalByDay,
   totalIntervalCoverage,
-  normalizeIntervals,
-  type Interval
+  normalizeIntervals
 } from './interval.js';
 
 // Timezone utilities
@@ -118,8 +115,7 @@ export {
   COMMON_TIMEZONES,
   getLocalOffset,
   compareZoneOffsets,
-  reinterpretAsZone,
-  type ZonedTime
+  reinterpretAsZone
 } from './timezone.js';
 
 // Working hours utilities
@@ -129,8 +125,7 @@ export {
   isWorkingTime,
   nextWorkingTime,
   workingTimeBetween,
-  addWorkingHours,
-  type WorkingHoursConfig
+  addWorkingHours
 } from './workingHours.js';
 
 // Range preset utilities
@@ -153,8 +148,7 @@ export {
   quarterRange,
   lastQuarter,
   nextQuarter,
-  RANGE_PRESETS,
-  type DateRange
+  RANGE_PRESETS
 } from './rangePresets.js';
 
 // Constants and types
@@ -173,3 +167,23 @@ export {
   type TimeUnit,
   type FormatOptions 
 } from './constants.js';
+
+// Shared types
+export type {
+  DateInput,
+  DateRange,
+  ParseOptions,
+  WorkingHoursConfig,
+  AgeResult,
+  ZonedTime,
+  Interval,
+  BenchmarkResult,
+  RecurrencePattern,
+  LocaleFormatOptions,
+  BusinessConfig,
+  DateValidator,
+  DateTransformer,
+  TimeUtilsError,
+  ParseError,
+  ValidationError
+} from './types.js';

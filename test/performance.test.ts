@@ -198,10 +198,9 @@ describe("Performance utilities", () => {
       
       expect(result.iterations).toBe(100);
       expect(result.totalTime).toBeGreaterThan(0);
-      expect(result.averageTime).toBeGreaterThan(0);
-      expect(result.minTime).toBeGreaterThan(0);
-      expect(result.maxTime).toBeGreaterThanOrEqual(result.minTime);
-      expect(result.opsPerSecond).toBeGreaterThan(0);
+      expect(result.average).toBeGreaterThan(0);
+      expect(result.min).toBeGreaterThan(0);
+      expect(result.max).toBeGreaterThanOrEqual(result.min);
     });
   });
 });

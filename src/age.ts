@@ -1,15 +1,5 @@
 import { TimeUnit } from './constants.js';
-
-/**
- * Age calculation result
- */
-export interface AgeResult {
-  years: number;
-  months: number;
-  days: number;
-  totalDays: number;
-  totalMonths: number;
-}
+import type { AgeResult } from './types.js';
 
 /**
  * Calculate detailed age from birth date

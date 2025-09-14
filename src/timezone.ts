@@ -1,12 +1,8 @@
 /**
- * Timezone utilities (rely on Intl API, fallbacks where possible)
+ * Timezone utilities using Intl API with fallbacks
  */
 
-export interface ZonedTime {
-  date: Date;
-  zone: string; // IANA name
-  offsetMinutes: number; // offset from UTC in minutes
-}
+import type { ZonedTime } from './types.js';
 
 /** Get offset (minutes) for a zone at a given date */
 export function getTimezoneOffset(zone: string, date: Date = new Date()): number | null {

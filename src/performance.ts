@@ -243,16 +243,10 @@ export async function measureAsync<T>(fn: () => Promise<T>): Promise<[T, number]
 }
 
 /**
- * Benchmark result interface
+ * Performance measurement and async utilities
  */
-export interface BenchmarkResult {
-  totalTime: number;
-  averageTime: number;
-  minTime: number;
-  maxTime: number;
-  iterations: number;
-  opsPerSecond: number;
-}
+
+import type { BenchmarkResult } from './types.js';
 
 /**
  * Benchmark a function by running it multiple times
@@ -268,17 +262,16 @@ export function benchmark(fn: () => void, iterations: number = 1000): BenchmarkR
   }
   
   const totalTime = times.reduce((sum, time) => sum + time, 0);
-  const averageTime = totalTime / iterations;
-  const minTime = Math.min(...times);
-  const maxTime = Math.max(...times);
-  const opsPerSecond = 1000 / averageTime;
+  const average = totalTime / iterations;
+  const min = Math.min(...times);
+  const max = Math.max(...times);
   
   return {
     totalTime,
-    averageTime,
-    minTime,
-    maxTime,
+    average,
+    min,
+    max,
     iterations,
-    opsPerSecond
+    total: totalTime
   };
 }

@@ -8,6 +8,7 @@ import {
   MILLISECONDS_PER_YEAR,
   FormatOptions
 } from './constants.js';
+import type { DateInput } from './types.js';
 
 /**
  * Convert milliseconds to a human-readable duration.

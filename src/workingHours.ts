@@ -1,11 +1,8 @@
-/** Working hours utilities */
+/**
+ * Working hours utilities for business time calculations
+ */
 
-export interface WorkingHoursConfig {
-  workingDays: number[]; // 0=Sunday..6
-  hours: { start: number; end: number }; // e.g. 9 -> 17 (24h clock, end exclusive)
-  breaks?: { start: number; end: number }[]; // optional breaks in hour decimals (e.g. 12 -> 13)
-  timezone?: string; // reserved for future expansion
-}
+import type { WorkingHoursConfig } from './types.js';
 
 export const DEFAULT_WORKING_HOURS: WorkingHoursConfig = {
   workingDays: [1,2,3,4,5],
