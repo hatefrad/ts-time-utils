@@ -1,7 +1,7 @@
 {
   "name": "ts-time-utils",
   "version": "0.0.1",
-  "description": "A lightweight TypeScript utility library for time formatting, calculations, and validation with tree-shaking support",
+  "description": "A comprehensive TypeScript utility library for time, dates, durations, and calendar operations with full tree-shaking support",
   "main": "dist/index.js",
   "module": "dist/esm/index.js",
   "types": "dist/index.d.ts",
@@ -93,10 +93,18 @@
   "keywords": [
     "time",
     "date",
+    "duration",
+    "calendar",
     "utilities",
     "formatting",
     "typescript",
-    "tree-shaking"
+    "tree-shaking",
+    "timezone",
+    "working-hours",
+    "intervals",
+    "age-calculation",
+    "business-days",
+    "date-parsing"
   ],
   "author": "",
   "license": "MIT",

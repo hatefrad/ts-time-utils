@@ -8,7 +8,16 @@ A lightweight TypeScript utility library for time formatting, calculations, and 
 - **⚡ Fast** - Zero dependencies, pure JavaScript functions
 - **🔧 TypeScript** - Full type safety and IntelliSense support
 - **🌳 Tree-shakable** - Import individual functions to minimize bundle size
-- **📚 Comprehensive** - 12 utility categories with 70+ functions
+- **📚 Comprehensive** - 13 utility categories with 80+ functions
+
+### ⏱️ Duration utilities
+
+- Immutable Duration class with arithmetic operations
+- Create durations from various units and string formats
+- Add, subtract, multiply, divide durations
+- Compare durations and check relationships
+- Format to human-readable strings
+- Utility functions for arrays of durations
 
 ### 🎨 Format utilities
 
@@ -122,9 +131,49 @@ import { createInterval, mergeIntervals } from "ts-time-utils/interval";
 import { formatInTimeZone } from "ts-time-utils/timezone";
 import { isWorkingTime, addWorkingHours } from "ts-time-utils/workingHours";
 import { today, lastNDays } from "ts-time-utils/rangePresets";
+import { Duration, createDuration } from "ts-time-utils/duration";
 ```
 
 ## 📖 Examples
+
+### Duration Utilities
+
+```ts
+import {
+  Duration,
+  createDuration,
+  formatDurationString,
+} from "ts-time-utils/duration";
+
+// Create durations
+const duration1 = Duration.fromHours(2.5); // 2.5 hours
+const duration2 = new Duration({ hours: 1, minutes: 30 }); // 1.5 hours
+const duration3 = Duration.fromString("1h 30m 45s"); // Parse from string
+const duration4 = Duration.between(startDate, endDate); // From date range
+
+// Arithmetic operations
+const sum = duration1.add(duration2); // 4 hours
+const diff = duration1.subtract(duration2); // 1 hour
+const doubled = duration1.multiply(2); // 5 hours
+const half = duration1.divide(2); // 1.25 hours
+
+// Comparisons
+duration1.equals(duration2); // false
+duration1.greaterThan(duration2); // true
+duration1.compareTo(duration2); // 1
+
+// Conversions and formatting
+duration1.hours; // 2.5
+duration1.minutes; // 150
+duration1.toString(); // "2h 30m"
+formatDurationString(duration1, { long: true }); // "2 hours, 30 minutes"
+
+// Utility functions with arrays
+const durations = [duration1, duration2, duration3];
+const max = maxDuration(...durations);
+const total = sumDurations(...durations);
+const average = averageDuration(...durations);
+```
 
 ### Format Utilities
 
@@ -290,6 +339,19 @@ const quarter = quarterRange();
 ```
 
 ## 📊 API Reference
+
+### Duration Functions
+
+- `Duration` class - Immutable duration with full arithmetic support
+- `createDuration(input)` - Create duration from number, object, or string
+- `Duration.fromHours/Minutes/Seconds/Days/Weeks(n)` - Create from specific units
+- `Duration.fromString(str)` - Parse from string like "1h 30m 45s"
+- `Duration.between(start, end)` - Create from date range
+- `duration.add/subtract/multiply/divide()` - Arithmetic operations
+- `duration.equals/greaterThan/lessThan()` - Comparison methods
+- `formatDurationString(duration, options?)` - Format to readable string
+- `maxDuration/minDuration(...durations)` - Find extremes
+- `sumDurations/averageDuration(...durations)` - Aggregate operations
 
 ### Format Functions
 
