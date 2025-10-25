@@ -67,7 +67,7 @@ describe('Countdown', () => {
       const target = new Date('2024-01-15T12:30:45');
       const from = new Date('2024-01-01T00:00:00');
       
-      const formatted = formatCountdown(target, from as any);
+      const formatted = formatCountdown(target, { from });
       
       expect(formatted).toContain('d');
       expect(formatted).toContain('h');
@@ -80,8 +80,9 @@ describe('Countdown', () => {
       const from = new Date('2024-01-01T00:00:00');
       
       const formatted = formatCountdown(target, {
+        from,
         short: false
-      } as any);
+      });
       
       expect(formatted).toContain('day');
       expect(formatted).toContain('hour');
@@ -126,9 +127,10 @@ describe('Countdown', () => {
       const from = new Date('2024-01-01T00:00:00');
       
       const formatted = formatCountdown(target, {
+        from,
         units: ['days', 'hours', 'minutes'],
         showZero: true
-      } as any);
+      });
       
       expect(formatted).toContain('0d');
     });

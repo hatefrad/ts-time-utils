@@ -219,7 +219,7 @@ export function getRemainingTime(
   const seconds = totalSeconds % 60;
   const minutes = totalMinutes % 60;
   const hours = totalHours % 24;
-  const days = totalDays % 7;
+  const days = totalDays; // Don't mod by 7 - let the formatter decide
   const weeks = Math.floor(totalDays / 7);
   
   return {
@@ -259,6 +259,8 @@ export function getRemainingTime(
 export function formatCountdown(
   targetDate: DateInput,
   options: {
+    /** Date to calculate from (defaults to now) */
+    from?: DateInput;
     /** Units to include in output */
     units?: ('weeks' | 'days' | 'hours' | 'minutes' | 'seconds' | 'milliseconds')[];
     /** Use short format (d, h, m, s) */
@@ -272,6 +274,7 @@ export function formatCountdown(
   } = {}
 ): string {
   const {
+    from,
     units = ['days', 'hours', 'minutes', 'seconds'],
     short = true,
     maxUnits,
@@ -279,7 +282,7 @@ export function formatCountdown(
     separator = ' '
   } = options;
   
-  const remaining = getRemainingTime(targetDate);
+  const remaining = getRemainingTime(targetDate, from);
   
   if (remaining.isExpired) {
     return 'Expired';

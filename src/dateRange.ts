@@ -149,8 +149,8 @@ export function findGaps(ranges: DateRange[], bounds?: DateRange): DateRange[] {
     
     if (nextStart > currentEnd) {
       gaps.push({
-        start: addTime(currentEnd, 1, 'millisecond'),
-        end: addTime(nextStart, -1, 'millisecond')
+        start: addTime(currentEnd, 1, 'day'),
+        end: addTime(nextStart, -1, 'day')
       });
     }
   }
@@ -191,17 +191,27 @@ export function splitRange(
 ): DateRange[] {
   const chunks: DateRange[] = [];
   let current = new Date(range.start);
+  const rangeEnd = new Date(range.end);
   
-  while (current < range.end) {
+  // Keep looping while current hasn't passed the end
+  while (current.getTime() <= rangeEnd.getTime()) {
     const chunkEnd = addTime(current, chunkSize, unit);
-    const end = chunkEnd > range.end ? new Date(range.end) : chunkEnd;
+    
+    // Don't go past the range end
+    const effectiveEnd = chunkEnd > rangeEnd ? new Date(rangeEnd) : new Date(chunkEnd);
     
     chunks.push({
       start: new Date(current),
-      end: end
+      end: effectiveEnd
     });
     
-    current = addTime(end, 1, 'millisecond');
+    // Move to the next chunk
+    current = chunkEnd;
+    
+    // If the next chunk would start after the range end, we're done
+    if (current.getTime() > rangeEnd.getTime()) {
+      break;
+    }
   }
   
   return chunks;
@@ -317,14 +327,14 @@ export function subtractRange(range: DateRange, subtract: DateRange): DateRange[
   if (range.start < subtract.start) {
     result.push({
       start: new Date(range.start),
-      end: new Date(Math.min(range.end.getTime(), subtract.start.getTime() - 1))
+      end: addTime(subtract.start, -1, 'day')
     });
   }
   
   // Check if there's a range after the subtraction
   if (range.end > subtract.end) {
     result.push({
-      start: new Date(Math.max(range.start.getTime(), subtract.end.getTime() + 1)),
+      start: addTime(subtract.end, 1, 'day'),
       end: new Date(range.end)
     });
   }

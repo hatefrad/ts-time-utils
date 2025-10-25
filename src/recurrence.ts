@@ -103,17 +103,11 @@ export function getNextOccurrence(rule: RecurrenceRule, afterDate?: DateInput): 
   }
   
   // Start searching from the day after 'after'
-  let candidate = new Date(after);
-  // Move forward by at least 1 millisecond to ensure we don't return the same date
-  candidate = new Date(candidate.getTime() + 1);
+  // We want strictly greater than after, so start from the next potential occurrence
+  let candidate = addTime(after, 1, 'day');
   
   // Preserve time from start date
   candidate.setHours(start.getHours(), start.getMinutes(), start.getSeconds(), start.getMilliseconds());
-  
-  // If this pushes us backwards, move to next day
-  if (candidate <= after) {
-    candidate = new Date(candidate.getTime() + 86400000); // Add 1 day
-  }
   
   const maxIterations = 1000; // Prevent infinite loops
   let iterations = 0;
@@ -360,7 +354,9 @@ function matchesRecurrenceRule(date: Date, rule: RecurrenceRule): boolean {
   // Check if date matches the frequency and interval
   switch (rule.frequency) {
     case 'daily': {
-      const daysDiff = Math.floor((checkDate.getTime() - start.getTime()) / (1000 * 60 * 60 * 24));
+      // Calculate days difference more reliably
+      const msPerDay = 1000 * 60 * 60 * 24;
+      const daysDiff = Math.round((checkDate.getTime() - start.getTime()) / msPerDay);
       if (daysDiff < 0) return false;
       if (daysDiff % interval !== 0) return false;
       break;
@@ -377,7 +373,8 @@ function matchesRecurrenceRule(date: Date, rule: RecurrenceRule): boolean {
       }
       
       // Check interval
-      const daysDiff = Math.floor((checkDate.getTime() - start.getTime()) / (1000 * 60 * 60 * 24));
+      const msPerDay = 1000 * 60 * 60 * 24;
+      const daysDiff = Math.round((checkDate.getTime() - start.getTime()) / msPerDay);
       const weeksDiff = Math.floor(daysDiff / 7);
       if (weeksDiff % interval !== 0) return false;
       break;
@@ -418,7 +415,9 @@ function getNextCandidate(date: Date, rule: RecurrenceRule): Date {
   
   switch (rule.frequency) {
     case 'daily':
-      return addTime(date, interval, 'day');
+      // For daily recurrence, always increment by 1 day to check each day
+      // matchesRecurrenceRule will filter based on interval
+      return addTime(date, 1, 'day');
     case 'weekly':
       // If we have specific weekdays, try next day, otherwise skip full interval
       if (rule.byWeekday && rule.byWeekday.length > 0) {
