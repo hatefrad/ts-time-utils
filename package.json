@@ -86,6 +86,26 @@
       "import": "./dist/esm/locale.js",
       "require": "./dist/locale.js",
       "types": "./dist/locale.d.ts"
+    },
+    "./recurrence": {
+      "import": "./dist/esm/recurrence.js",
+      "require": "./dist/recurrence.js",
+      "types": "./dist/recurrence.d.ts"
+    },
+    "./countdown": {
+      "import": "./dist/esm/countdown.js",
+      "require": "./dist/countdown.js",
+      "types": "./dist/countdown.d.ts"
+    },
+    "./dateRange": {
+      "import": "./dist/esm/dateRange.js",
+      "require": "./dist/dateRange.js",
+      "types": "./dist/dateRange.d.ts"
+    },
+    "./naturalLanguage": {
+      "import": "./dist/esm/naturalLanguage.js",
+      "require": "./dist/naturalLanguage.js",
+      "types": "./dist/naturalLanguage.d.ts"
     }
   },
   "files": [
@@ -119,7 +139,15 @@
     "internationalization",
     "i18n",
     "locale",
-    "relative-time"
+    "relative-time",
+    "recurrence",
+    "recurring-events",
+    "rrule",
+    "countdown",
+    "timer",
+    "date-range",
+    "natural-language",
+    "nlp"
   ],
   "author": "",
   "license": "MIT",

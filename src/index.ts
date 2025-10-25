@@ -209,6 +209,58 @@ export {
   compareLocaleFormats
 } from './locale.js';
 
+// Recurrence utilities
+export {
+  createRecurrence,
+  getNextOccurrence,
+  getOccurrencesBetween,
+  isRecurrenceDate,
+  isValidRecurrenceRule,
+  recurrenceToString
+} from './recurrence.js';
+
+// Countdown utilities
+export {
+  createCountdown,
+  getRemainingTime,
+  formatCountdown,
+  isExpired,
+  getProgressPercentage,
+  getTimeUntil,
+  createDeadline,
+  type Countdown,
+  type RemainingTime,
+  type CountdownOptions
+} from './countdown.js';
+
+// Date range utilities
+export {
+  dateRangeOverlap,
+  hasOverlappingRanges,
+  mergeDateRanges,
+  findGaps,
+  splitRange,
+  containsDate,
+  getIntersection,
+  getUnion,
+  subtractRange,
+  getRangeDuration,
+  expandRange,
+  shrinkRange,
+  rangeContains,
+  sortRanges
+} from './dateRange.js';
+
+// Natural language parsing utilities
+export {
+  parseNaturalDate,
+  parseRelativePhrase,
+  extractDatesFromText,
+  suggestDateFromContext,
+  type NaturalParseOptions,
+  type ExtractedDate
+} from './naturalLanguage.js';
+
 // Constants and types
 export { 
   MILLISECONDS_PER_SECOND,
@@ -237,6 +289,8 @@ export type {
   Interval,
   BenchmarkResult,
   RecurrencePattern,
+  RecurrenceRule,
+  RecurrenceFrequency,
   LocaleFormatOptions,
   BusinessConfig,
   DateValidator,

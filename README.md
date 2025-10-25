@@ -8,7 +8,43 @@ A lightweight TypeScript utility library for time formatting, calculations, and 
 - **⚡ Fast** - Zero dependencies, pure JavaScript functions
 - **🔧 TypeScript** - Full type safety and IntelliSense support
 - **🌳 Tree-shakable** - Import individual functions to minimize bundle size
-- **📚 Comprehensive** - 15 utility categories with 115+ functions
+- **📚 Comprehensive** - 19 utility categories with 150+ functions
+
+### 🔄 Recurrence utilities **(NEW!)**
+
+- RRULE-inspired recurring event patterns
+- Daily, weekly, monthly, and yearly recurrences
+- Complex recurrence rules with byWeekday, byMonthDay, byMonth
+- Get next occurrence, all occurrences, or occurrences within range
+- Human-readable recurrence descriptions
+- Full support for count and until limits
+
+### ⏲️ Countdown & Timer utilities **(NEW!)**
+
+- Real-time countdown timers with callbacks
+- Get remaining time broken down by units
+- Format countdowns as human-readable strings
+- Check if dates are expired
+- Calculate progress percentage between dates
+- Deadline tracking with helper methods
+
+### 📊 Date Range utilities **(NEW!)**
+
+- Advanced range operations (overlap, intersection, union)
+- Merge overlapping ranges
+- Find gaps between ranges
+- Split ranges into chunks
+- Expand and shrink ranges
+- Subtract ranges from each other
+- Check containment and sort ranges
+
+### 💬 Natural Language Parsing **(NEW!)**
+
+- Parse human-friendly date strings ("tomorrow", "next Friday", "in 2 weeks")
+- Extract dates from text automatically
+- Context-aware date suggestions ("end of month", "EOY")
+- Support for relative phrases and absolute dates
+- Confidence scoring for extracted dates
 
 ### ⏱️ Duration utilities
 
@@ -157,9 +193,198 @@ import {
   formatDateLocale,
   detectLocale,
 } from "ts-time-utils/locale";
+// New modules!
+import { createRecurrence, getNextOccurrence } from "ts-time-utils/recurrence";
+import { createCountdown, getRemainingTime } from "ts-time-utils/countdown";
+import { mergeDateRanges, findGaps } from "ts-time-utils/dateRange";
+import {
+  parseNaturalDate,
+  extractDatesFromText,
+} from "ts-time-utils/naturalLanguage";
 ```
 
 ## 📖 Examples
+
+### Recurrence Utilities (NEW!)
+
+```ts
+import { createRecurrence, recurrenceToString } from "ts-time-utils/recurrence";
+
+// Daily recurrence
+const daily = createRecurrence({
+  frequency: "daily",
+  interval: 2,
+  startDate: new Date("2024-01-01"),
+  count: 10,
+});
+
+const next = daily.getNextOccurrence(new Date());
+const allOccurrences = daily.getAllOccurrences();
+
+// Weekly on specific days
+const weekly = createRecurrence({
+  frequency: "weekly",
+  interval: 1,
+  startDate: new Date("2024-01-01"),
+  byWeekday: [1, 3, 5], // Monday, Wednesday, Friday
+});
+
+const description = recurrenceToString(weekly.rule);
+// "Every week on Monday, Wednesday, Friday"
+
+// Monthly on the 15th
+const monthly = createRecurrence({
+  frequency: "monthly",
+  interval: 1,
+  startDate: new Date("2024-01-01"),
+  byMonthDay: [15],
+  until: new Date("2024-12-31"),
+});
+
+const occurrencesInRange = monthly.getOccurrencesBetween(
+  new Date("2024-03-01"),
+  new Date("2024-06-30")
+);
+```
+
+### Countdown & Timer Utilities (NEW!)
+
+```ts
+import {
+  createCountdown,
+  getRemainingTime,
+  formatCountdown,
+} from "ts-time-utils/countdown";
+
+// Create a countdown timer
+const countdown = createCountdown(new Date("2024-12-31T23:59:59"), {
+  onTick: (remaining) => {
+    console.log(`${remaining.days}d ${remaining.hours}h ${remaining.minutes}m`);
+  },
+  onComplete: () => {
+    console.log("Happy New Year!");
+  },
+  interval: 1000, // Update every second
+});
+
+countdown.start();
+// Later...
+countdown.stop();
+
+// Get remaining time
+const remaining = getRemainingTime(new Date("2024-12-31"));
+console.log(`${remaining.days} days, ${remaining.hours} hours remaining`);
+
+// Format countdown
+const formatted = formatCountdown(new Date("2024-12-31"), {
+  units: ["days", "hours", "minutes"],
+  short: true,
+});
+// "45d 12h 30m"
+
+// Progress tracking
+import { getProgressPercentage } from "ts-time-utils/countdown";
+
+const progress = getProgressPercentage(
+  new Date("2024-01-01"),
+  new Date("2024-12-31"),
+  new Date("2024-07-01")
+);
+console.log(`${progress}% complete`); // ~50%
+```
+
+### Date Range Utilities (NEW!)
+
+```ts
+import {
+  mergeDateRanges,
+  findGaps,
+  dateRangeOverlap,
+  splitRange,
+} from "ts-time-utils/dateRange";
+
+// Merge overlapping ranges
+const ranges = [
+  { start: new Date("2024-01-01"), end: new Date("2024-01-10") },
+  { start: new Date("2024-01-05"), end: new Date("2024-01-15") },
+  { start: new Date("2024-01-20"), end: new Date("2024-01-25") },
+];
+
+const merged = mergeDateRanges(ranges);
+// [
+//   { start: Date('2024-01-01'), end: Date('2024-01-15') },
+//   { start: Date('2024-01-20'), end: Date('2024-01-25') }
+// ]
+
+// Find gaps between busy times
+const busyTimes = [
+  { start: new Date("2024-01-01T09:00"), end: new Date("2024-01-01T11:00") },
+  { start: new Date("2024-01-01T14:00"), end: new Date("2024-01-01T16:00") },
+];
+
+const gaps = findGaps(busyTimes, {
+  start: new Date("2024-01-01T08:00"),
+  end: new Date("2024-01-01T18:00"),
+});
+// Returns available time slots
+
+// Split into chunks
+const range = {
+  start: new Date("2024-01-01"),
+  end: new Date("2024-01-31"),
+};
+
+const weeks = splitRange(range, 1, "week");
+// Splits January into weekly chunks
+
+// Check overlap
+const overlap = dateRangeOverlap(
+  { start: new Date("2024-01-01"), end: new Date("2024-01-15") },
+  { start: new Date("2024-01-10"), end: new Date("2024-01-20") }
+); // true
+```
+
+### Natural Language Parsing (NEW!)
+
+```ts
+import {
+  parseNaturalDate,
+  extractDatesFromText,
+  suggestDateFromContext,
+} from "ts-time-utils/naturalLanguage";
+
+// Parse natural language dates
+parseNaturalDate("tomorrow at 3pm");
+// Returns Date for tomorrow at 15:00
+
+parseNaturalDate("next Friday");
+// Returns Date for next Friday
+
+parseNaturalDate("in 2 weeks");
+// Returns Date 2 weeks from now
+
+parseNaturalDate("3 days ago");
+// Returns Date 3 days ago
+
+// Extract dates from text
+const text = "Meeting tomorrow at 3pm and lunch next Friday at noon";
+const dates = extractDatesFromText(text);
+// [
+//   { date: Date(...), text: 'tomorrow at 3pm', index: 8, confidence: 0.9 },
+//   { date: Date(...), text: 'next Friday at noon', index: 35, confidence: 0.85 }
+// ]
+
+// Context-aware suggestions
+const suggestions = suggestDateFromContext("deadline is end of month");
+// [{ date: Date(last day of current month), text: 'end of month', confidence: 0.85 }]
+
+// Supported phrases:
+// - "tomorrow", "yesterday", "today"
+// - "next Monday", "last Friday"
+// - "in 2 hours", "5 days ago"
+// - "end of month/week/year" (or EOM/EOW/EOY)
+// - "beginning of month/year"
+```
 
 ### Duration Utilities
 

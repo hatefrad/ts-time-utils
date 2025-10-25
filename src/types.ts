@@ -129,6 +129,29 @@ export interface RecurrencePattern {
   until?: Date;
 }
 
+/** Recurrence frequency types */
+export type RecurrenceFrequency = 'daily' | 'weekly' | 'monthly' | 'yearly';
+
+/** Recurrence rule for repeating events (RRULE-inspired) */
+export interface RecurrenceRule {
+  /** Frequency of recurrence */
+  frequency: RecurrenceFrequency;
+  /** Start date for the recurrence */
+  startDate: DateInput;
+  /** Interval between occurrences (default: 1) */
+  interval?: number;
+  /** Days of week (0=Sunday, 6=Saturday) */
+  byWeekday?: number[];
+  /** Days of month (1-31) */
+  byMonthDay?: number[];
+  /** Months of year (1-12) */
+  byMonth?: number[];
+  /** Number of occurrences (alternative to until) */
+  count?: number;
+  /** End date for recurrence (alternative to count) */
+  until?: DateInput;
+}
+
 /** Locale-specific formatting options */
 export interface LocaleFormatOptions extends FormatOptions {
   /** Calendar system to use */
