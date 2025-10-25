@@ -61,7 +61,11 @@ export function parseNaturalDate(input: string, options: NaturalParseOptions = {
   const { referenceDate = new Date(), defaultTime } = options;
   const normalized = input.toLowerCase().trim();
   
-  // Try existing relative date parser first
+  // Try relative phrase parser first (handles "next week", "last month", etc.)
+  const relativePhraseResult = parseRelativePhrase(input, referenceDate);
+  if (relativePhraseResult) return relativePhraseResult;
+  
+  // Try existing relative date parser
   const relativeResult = parseRelativeDate(input);
   if (relativeResult) return relativeResult;
   
@@ -147,29 +151,34 @@ export function parseRelativePhrase(input: string, referenceDate: Date = new Dat
     return addTime(referenceDate, amount, unit);
   }
   
-  // Common shortcuts
-  const shortcuts: Record<string, () => Date> = {
-    'now': () => new Date(referenceDate),
-    'today': () => {
+  // Common shortcuts - use switch/case to properly use the referenceDate parameter
+  switch (normalized) {
+    case 'now':
+      return new Date(referenceDate);
+    case 'today': {
       const d = new Date(referenceDate);
       d.setHours(0, 0, 0, 0);
       return d;
-    },
-    'tomorrow': () => addTime(referenceDate, 1, 'day'),
-    'yesterday': () => addTime(referenceDate, -1, 'day'),
-    'next week': () => addTime(referenceDate, 1, 'week'),
-    'last week': () => addTime(referenceDate, -1, 'week'),
-    'next month': () => addTime(referenceDate, 1, 'month'),
-    'last month': () => addTime(referenceDate, -1, 'month'),
-    'next year': () => addTime(referenceDate, 1, 'year'),
-    'last year': () => addTime(referenceDate, -1, 'year'),
-  };
-  
-  if (shortcuts[normalized]) {
-    return shortcuts[normalized]();
+    }
+    case 'tomorrow':
+      return addTime(referenceDate, 1, 'day');
+    case 'yesterday':
+      return addTime(referenceDate, -1, 'day');
+    case 'next week':
+      return addTime(referenceDate, 1, 'week');
+    case 'last week':
+      return addTime(referenceDate, -1, 'week');
+    case 'next month':
+      return addTime(referenceDate, 1, 'month');
+    case 'last month':
+      return addTime(referenceDate, -1, 'month');
+    case 'next year':
+      return addTime(referenceDate, 1, 'year');
+    case 'last year':
+      return addTime(referenceDate, -1, 'year');
+    default:
+      return null;
   }
-  
-  return null;
 }
 
 /**

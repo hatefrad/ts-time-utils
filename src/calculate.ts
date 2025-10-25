@@ -66,37 +66,50 @@ export function differenceInUnits(
 export function addTime(date: Date, amount: number, unit: TimeUnit): Date {
   const result = new Date(date);
   
-  let milliseconds: number;
-  
   switch (unit) {
+    case 'year':
     case 'years':
-      milliseconds = amount * MILLISECONDS_PER_YEAR;
+    case 'y':
+      result.setFullYear(result.getFullYear() + amount);
       break;
+    case 'month':
     case 'months':
-      milliseconds = amount * MILLISECONDS_PER_MONTH;
+    case 'M':
+      result.setMonth(result.getMonth() + amount);
       break;
+    case 'week':
     case 'weeks':
-      milliseconds = amount * MILLISECONDS_PER_WEEK;
+    case 'w':
+      result.setDate(result.getDate() + (amount * 7));
       break;
+    case 'day':
     case 'days':
-      milliseconds = amount * MILLISECONDS_PER_DAY;
+    case 'd':
+      result.setDate(result.getDate() + amount);
       break;
+    case 'hour':
     case 'hours':
-      milliseconds = amount * MILLISECONDS_PER_HOUR;
+    case 'h':
+      result.setHours(result.getHours() + amount);
       break;
+    case 'minute':
     case 'minutes':
-      milliseconds = amount * MILLISECONDS_PER_MINUTE;
+    case 'm':
+      result.setMinutes(result.getMinutes() + amount);
       break;
+    case 'second':
     case 'seconds':
-      milliseconds = amount * MILLISECONDS_PER_SECOND;
+    case 's':
+      result.setSeconds(result.getSeconds() + amount);
       break;
+    case 'millisecond':
     case 'milliseconds':
+    case 'ms':
     default:
-      milliseconds = amount;
+      result.setMilliseconds(result.getMilliseconds() + amount);
       break;
   }
   
-  result.setTime(result.getTime() + milliseconds);
   return result;
 }
 
