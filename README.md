@@ -8,7 +8,7 @@ A lightweight TypeScript utility library for time formatting, calculations, and 
 - **⚡ Fast** - Zero dependencies, pure JavaScript functions
 - **🔧 TypeScript** - Full type safety and IntelliSense support
 - **🌳 Tree-shakable** - Import individual functions to minimize bundle size
-- **📚 Comprehensive** - 19 utility categories with 150+ functions
+- **📚 Comprehensive** - 20 utility categories with 220+ functions
 
 ### 🔄 Recurrence utilities **(NEW!)**
 
@@ -70,6 +70,9 @@ A lightweight TypeScript utility library for time formatting, calculations, and 
 - Get human-friendly "time ago" strings
 - Parse duration strings back to milliseconds
 - Format time in 12h/24h/ISO formats
+- Custom date formatting with pattern strings (YYYY-MM-DD, etc.)
+- Format date ranges and ordinals
+- Calendar-friendly date formatting ("Today", "Tomorrow", "Monday")
 
 ### 🧮 Calculation utilities
 
@@ -83,7 +86,10 @@ A lightweight TypeScript utility library for time formatting, calculations, and 
 
 - Validate dates and time strings
 - Check for leap years, weekends, past/future dates
-- Compare dates (same day, today, yesterday, etc.)
+- Compare dates (same day, same week, same month, same year)
+- Check relative periods (isThisWeek, isThisMonth, isThisYear)
+- Business day validation with holiday support
+- Check if date is within last/next N days
 
 ### 🎂 Age utilities
 
@@ -96,8 +102,12 @@ A lightweight TypeScript utility library for time formatting, calculations, and 
 
 - ISO week numbers and week-based calculations
 - Quarter operations and fiscal year support
-- Holiday calculations (Easter, Thanksgiving, etc.)
+- Holiday calculations (Easter, US federal holidays)
 - Days in month/year calculations
+- Get nth occurrence of weekday in month
+- US holiday functions (Thanksgiving, Memorial Day, Labor Day, etc.)
+- Week start/end calculations
+- Calendar grid generation
 
 ### 🔍 Parse utilities
 
@@ -105,6 +115,10 @@ A lightweight TypeScript utility library for time formatting, calculations, and 
 - Relative date parsing ("tomorrow", "next week")
 - Custom format parsing with flexible patterns
 - Smart date interpretation
+- ISO 8601 duration parsing (P1Y2M3DT4H5M6S)
+- Time string parsing (14:30, 2:30 PM)
+- Auto-detect date format
+- Parse range endpoints ("end of month", "start of year")
 
 ### ⚡ Performance utilities
 
@@ -127,14 +141,22 @@ A lightweight TypeScript utility library for time formatting, calculations, and 
 - Format in specific timezone
 - Convert absolute moment to zone components
 - Reinterpret wall-clock times
+- Daylight Saving Time detection
+- Find next DST transition
+- Find common working hours across timezones
+- Convert dates between timezones
 
 ### 🕘 Working hours utilities
 
 - Define working day patterns and breaks
 - Check working day/time
 - Compute working time between dates
-- Add working hours across days
-- Find next working time
+- Add/subtract working hours and days
+- Find next/previous working day
+- Get working days in month
+- Count working days between dates
+- Break time detection
+- Work day start/end times
 
 ### 🎯 Range preset utilities
 
@@ -152,6 +174,16 @@ A lightweight TypeScript utility library for time formatting, calculations, and 
 - Custom locale registration
 - Internationalization (i18n) support
 - **Locale conversions** - Convert between different locales and detect locale from text
+
+### ⏰ Cron utilities **(NEW!)**
+
+- Parse and validate cron expressions (5-field format)
+- Check if a date matches a cron expression
+- Get next/previous occurrence dates
+- Get multiple future occurrences
+- Human-readable cron descriptions
+- Common cron presets (every minute, hourly, daily, weekly, etc.)
+- Support for wildcards, ranges, steps, and lists
 
 ### 🧱 Constants
 
@@ -175,16 +207,20 @@ import { formatDuration, timeAgo, isValidDate } from "ts-time-utils";
 ### Import by category (better for tree-shaking)
 
 ```ts
-import { formatDuration, timeAgo } from "ts-time-utils/format";
+import { formatDuration, timeAgo, formatDate } from "ts-time-utils/format";
 import { differenceInUnits, addTime } from "ts-time-utils/calculate";
-import { isValidDate, isLeapYear } from "ts-time-utils/validate";
+import { isValidDate, isLeapYear, isSameWeek } from "ts-time-utils/validate";
 import { calculateAge, getNextBirthday } from "ts-time-utils/age";
-import { getWeekNumber, getQuarter } from "ts-time-utils/calendar";
-import { parseDate, parseRelativeDate } from "ts-time-utils/parse";
+import {
+  getWeekNumber,
+  getQuarter,
+  getUSHolidays,
+} from "ts-time-utils/calendar";
+import { parseDate, parseRelativeDate, parseTime } from "ts-time-utils/parse";
 import { sleep, benchmark, Stopwatch } from "ts-time-utils/performance";
 import { createInterval, mergeIntervals } from "ts-time-utils/interval";
-import { formatInTimeZone } from "ts-time-utils/timezone";
-import { isWorkingTime, addWorkingHours } from "ts-time-utils/workingHours";
+import { formatInTimeZone, isDST } from "ts-time-utils/timezone";
+import { isWorkingTime, addWorkingDays } from "ts-time-utils/workingHours";
 import { today, lastNDays } from "ts-time-utils/rangePresets";
 import { Duration, createDuration } from "ts-time-utils/duration";
 import { serializeDate, parseJSONWithDates } from "ts-time-utils/serialize";
@@ -193,7 +229,6 @@ import {
   formatDateLocale,
   detectLocale,
 } from "ts-time-utils/locale";
-// New modules!
 import { createRecurrence, getNextOccurrence } from "ts-time-utils/recurrence";
 import { createCountdown, getRemainingTime } from "ts-time-utils/countdown";
 import { mergeDateRanges, findGaps } from "ts-time-utils/dateRange";
@@ -201,6 +236,13 @@ import {
   parseNaturalDate,
   extractDatesFromText,
 } from "ts-time-utils/naturalLanguage";
+// NEW: Cron utilities
+import {
+  matchesCron,
+  getNextCronDate,
+  isValidCron,
+  CRON_PRESETS,
+} from "ts-time-utils/cron";
 ```
 
 ## 📖 Examples
@@ -653,6 +695,52 @@ const week = thisWeek();
 const quarter = quarterRange();
 ```
 
+### Cron Utilities
+
+```ts
+import {
+  parseCronExpression,
+  matchesCron,
+  getNextCronDate,
+  getNextCronDates,
+  describeCron,
+  isValidCron,
+  CRON_PRESETS,
+} from "ts-time-utils/cron";
+
+// Parse a cron expression
+const parsed = parseCronExpression("0 9 * * 1-5"); // 9 AM weekdays
+// { minute: [0], hour: [9], dayOfMonth: [1-31], month: [1-12], dayOfWeek: [1,2,3,4,5] }
+
+// Check if a date matches a cron expression
+matchesCron("0 9 * * *", new Date("2024-01-15T09:00:00")); // true (9 AM daily)
+matchesCron("0 9 * * *", new Date("2024-01-15T10:00:00")); // false
+
+// Get next scheduled date
+getNextCronDate("0 9 * * *"); // Next 9 AM
+getNextCronDate("0 0 1 * *"); // Next 1st of month at midnight
+
+// Get multiple upcoming dates
+getNextCronDates("0 9 * * 1-5", 5); // Next 5 weekday 9 AMs
+
+// Human-readable descriptions
+describeCron("0 9 * * *"); // "At 09:00"
+describeCron("0 9 * * 1-5"); // "At 09:00 on Monday through Friday"
+describeCron("0 0 1 * *"); // "At 00:00 on day 1 of every month"
+
+// Validate cron expressions
+isValidCron("0 9 * * *"); // true
+isValidCron("invalid"); // false
+
+// Common presets
+CRON_PRESETS.EVERY_MINUTE; // "* * * * *"
+CRON_PRESETS.HOURLY; // "0 * * * *"
+CRON_PRESETS.DAILY; // "0 0 * * *"
+CRON_PRESETS.WEEKLY; // "0 0 * * 0"
+CRON_PRESETS.MONTHLY; // "0 0 1 * *"
+CRON_PRESETS.WEEKDAYS; // "0 0 * * 1-5"
+```
+
 ### Locale Utilities
 
 ```ts
@@ -848,9 +936,97 @@ console.log(comparison.weekStartsOn);
 ### Format Functions
 
 - `formatDuration(ms, options?)` - Format milliseconds to readable duration
+- `formatDurationCompact(ms)` - Format milliseconds as HH:MM:SS
 - `timeAgo(date, options?)` - Get "time ago" string for past/future dates
 - `formatTime(date, format?)` - Format time as 12h/24h/ISO
+- `formatDate(date, pattern?)` - Format date using patterns (YYYY-MM-DD, etc.)
+- `formatRelativeTime(date, locale?, options?)` - Format as relative time ("2 days ago")
+- `formatDateRange(start, end, options?)` - Format date ranges ("Jan 1-5, 2024")
+- `formatOrdinal(n)` - Format number as ordinal ("1st", "2nd", "3rd")
+- `formatDayOrdinal(date)` - Format day with ordinal ("1st", "15th")
+- `formatCalendarDate(date)` - Format as "Today", "Tomorrow", or day name
 - `parseDuration(duration)` - Parse duration string to milliseconds
+
+### Parse Functions
+
+- `parseISO8601Duration(duration)` - Parse ISO 8601 duration to object (P1Y2M3DT4H5M6S)
+- `parseISO8601DurationToMs(duration)` - Parse ISO 8601 duration to milliseconds
+- `parseTime(timeString)` - Parse time string ("14:30", "2:30 PM") to Date
+- `guessDateFormat(dateString)` - Guess the format of a date string
+- `parseAutoFormat(dateString)` - Auto-detect and parse date string
+- `parseRangeEndpoint(endpoint)` - Parse range endpoint (date string, Date, or number)
+
+### Calendar Functions
+
+- `getCalendarDays(year, month)` - Get array of days for a calendar month
+- `getWeekNumber(date)` - Get ISO week number (1-53)
+- `getQuarter(date)` - Get quarter (1-4)
+- `getFirstDayOfMonth(date)` / `getLastDayOfMonth(date)` - Month boundaries
+- `getFirstDayOfWeek(date)` / `getLastDayOfWeek(date)` - Week boundaries
+- `getNthDayOfMonth(year, month, dayOfWeek, n)` - Get nth occurrence of weekday in month
+- `getStartOfWeek(date, startDay?)` - Get start of week (configurable start day)
+- `getEndOfWeek(date, startDay?)` - Get end of week (configurable start day)
+- `getWeeksInMonth(year, month)` - Count weeks in a month
+
+#### US Federal Holidays
+
+- `getNewYearsDay(year)` - Get New Year's Day
+- `getMLKDay(year)` - Get Martin Luther King Jr. Day (3rd Monday of January)
+- `getPresidentsDay(year)` - Get Presidents Day (3rd Monday of February)
+- `getMemorialDay(year)` - Get Memorial Day (last Monday of May)
+- `getIndependenceDay(year)` - Get Independence Day (July 4th)
+- `getLaborDay(year)` - Get Labor Day (1st Monday of September)
+- `getColumbusDay(year)` - Get Columbus Day (2nd Monday of October)
+- `getVeteransDay(year)` - Get Veterans Day (November 11th)
+- `getThanksgivingDay(year)` - Get Thanksgiving Day (4th Thursday of November)
+- `getChristmasDay(year)` - Get Christmas Day
+- `getGoodFriday(year)` - Get Good Friday
+- `getUSHolidays(year)` - Get all US federal holidays for a year
+- `isUSHoliday(date)` - Check if date is a US federal holiday
+- `getUSHolidayName(date)` - Get name of US holiday (or null)
+
+### Timezone Functions
+
+- `getTimezoneOffset(timezone, date?)` - Get timezone offset in minutes
+- `convertTimezone(date, fromTz, toTz)` - Convert date between timezones
+- `getTimezoneNames()` - Get array of valid timezone names
+- `formatWithTimezone(date, timezone, format?)` - Format date in specific timezone
+- `isDST(date, timezone?)` - Check if DST is in effect
+- `getNextDSTTransition(date?, timezone?)` - Get next DST transition date
+- `findCommonWorkingHours(tz1, tz2, workStart?, workEnd?)` - Find overlapping work hours
+- `getTimezoneAbbreviation(date, timezone?)` - Get timezone abbreviation (EST, PST, etc.)
+- `convertBetweenZones(date, fromTz, toTz)` - Convert date between zones (returns new Date)
+- `getTimezoneDifferenceHours(tz1, tz2, date?)` - Get hour difference between timezones
+- `isSameTimezone(tz1, tz2, date?)` - Check if two timezones have same offset
+
+### Working Hours Functions
+
+- `isWithinWorkingHours(date, config?)` - Check if time is within working hours
+- `getNextWorkingHour(date, config?)` - Get next available working hour
+- `addWorkingMinutes(date, minutes, config?)` - Add minutes within working hours
+- `workingMinutesBetween(start, end, config?)` - Count working minutes between dates
+- `addWorkingDays(date, days, config?)` - Add working days to date
+- `subtractWorkingDays(date, days, config?)` - Subtract working days from date
+- `getNextWorkingDay(date, config?)` - Get next working day
+- `getPreviousWorkingDay(date, config?)` - Get previous working day
+- `getWorkingDaysInMonth(year, month, config?)` - Count working days in month
+- `getWorkingDaysInMonthArray(year, month, config?)` - Get array of working days
+- `workingDaysBetween(start, end, config?)` - Count working days between dates
+- `isBreakTime(date, breakStart?, breakEnd?)` - Check if time is during break
+- `getWorkDayStart(date, config?)` - Get start time of work day
+- `getWorkDayEnd(date, config?)` - Get end time of work day
+- `getWorkingHoursPerDay(config?)` - Get working hours per day
+
+### Cron Functions
+
+- `parseCronExpression(expression)` - Parse cron expression to object
+- `matchesCron(expression, date?)` - Check if date matches cron expression
+- `getNextCronDate(expression, after?)` - Get next date matching cron
+- `getNextCronDates(expression, count, after?)` - Get multiple future cron dates
+- `getPreviousCronDate(expression, before?)` - Get previous date matching cron
+- `isValidCron(expression)` - Validate cron expression syntax
+- `describeCron(expression)` - Get human-readable cron description
+- `CRON_PRESETS` - Common cron expressions (EVERY_MINUTE, HOURLY, DAILY, etc.)
 
 ### Calculate Functions
 
@@ -869,7 +1045,16 @@ console.log(comparison.weekStartsOn);
 - `isPast(date)` / `isFuture(date)` - Check if date is past/future
 - `isToday(date)` / `isYesterday(date)` / `isTomorrow(date)` - Date comparisons
 - `isSameDay(date1, date2)` - Check if dates are same day
+- `isSameWeek(date1, date2)` - Check if dates are in same week
+- `isSameMonth(date1, date2)` - Check if dates are in same month
+- `isSameYear(date1, date2)` - Check if dates are in same year
+- `isThisWeek(date)` - Check if date is in current week
+- `isThisMonth(date)` - Check if date is in current month
+- `isThisYear(date)` - Check if date is in current year
 - `isWeekend(date)` / `isWeekday(date)` - Check day type
+- `isBusinessDay(date)` - Check if date is a business day (weekday, not a US holiday)
+- `isInLastNDays(date, n)` - Check if date is within last N days
+- `isInNextNDays(date, n)` - Check if date is within next N days
 - `isValidTimeString(time)` - Validate HH:MM time format
 - `isValidISOString(dateString)` - Validate ISO 8601 date string
 
