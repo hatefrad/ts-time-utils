@@ -10,7 +10,6 @@ export {
   formatTime, 
   parseDuration,
   formatDate,
-  formatRelativeTime,
   formatDateRange,
   formatOrdinal,
   formatDayOrdinal,
