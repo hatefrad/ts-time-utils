@@ -197,11 +197,22 @@ export function endOf(date: Date, unit: 'day' | 'week' | 'month' | 'year' | 'hou
  * Check if a date is between two other dates
  * @param date - date to check
  * @param start - start date (inclusive)
- * @param end - end date (inclusive)
+/**
+ * Check if a date falls between two dates
+ * @param date - date to check
+ * @param start - start date
+ * @param end - end date
+ * @param inclusive - whether boundaries are inclusive (default: true)
  */
-export function isBetween(date: Date, start: Date, end: Date): boolean {
+export function isBetween(date: Date, start: Date, end: Date, inclusive: boolean = true): boolean {
   const time = date.getTime();
-  return time >= start.getTime() && time <= end.getTime();
+  const startTime = start.getTime();
+  const endTime = end.getTime();
+  
+  if (inclusive) {
+    return time >= startTime && time <= endTime;
+  }
+  return time > startTime && time < endTime;
 }
 
 /**

@@ -127,3 +127,111 @@ export function isValidISOString(dateString: string): boolean {
   const isoRegex = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(\.\d{3})?Z?$/;
   return isoRegex.test(dateString) && isValidDate(dateString);
 }
+
+/**
+ * Check if two dates are in the same week (ISO week, Monday-Sunday)
+ * @param date1 - first date
+ * @param date2 - second date
+ */
+export function isSameWeek(date1: Date, date2: Date): boolean {
+  const getWeekStart = (d: Date): Date => {
+    const date = new Date(d);
+    const day = date.getDay();
+    const diff = date.getDate() - day + (day === 0 ? -6 : 1); // Adjust for Monday start
+    date.setDate(diff);
+    date.setHours(0, 0, 0, 0);
+    return date;
+  };
+  
+  return getWeekStart(date1).getTime() === getWeekStart(date2).getTime();
+}
+
+/**
+ * Check if two dates are in the same month
+ * @param date1 - first date
+ * @param date2 - second date
+ */
+export function isSameMonth(date1: Date, date2: Date): boolean {
+  return (
+    date1.getMonth() === date2.getMonth() &&
+    date1.getFullYear() === date2.getFullYear()
+  );
+}
+
+/**
+ * Check if two dates are in the same year
+ * @param date1 - first date
+ * @param date2 - second date
+ */
+export function isSameYear(date1: Date, date2: Date): boolean {
+  return date1.getFullYear() === date2.getFullYear();
+}
+
+/**
+ * Check if a date is in the current week
+ * @param date - date to check
+ */
+export function isThisWeek(date: Date): boolean {
+  return isSameWeek(date, new Date());
+}
+
+/**
+ * Check if a date is in the current month
+ * @param date - date to check
+ */
+export function isThisMonth(date: Date): boolean {
+  return isSameMonth(date, new Date());
+}
+
+/**
+ * Check if a date is in the current year
+ * @param date - date to check
+ */
+export function isThisYear(date: Date): boolean {
+  return isSameYear(date, new Date());
+}
+
+/**
+ * Check if a date is a business day (weekday, optionally excluding holidays)
+ * @param date - date to check
+ * @param holidays - optional array of holiday dates to exclude
+ */
+export function isBusinessDay(date: Date, holidays: Date[] = []): boolean {
+  if (isWeekend(date)) return false;
+  
+  return !holidays.some(holiday => isSameDay(date, holiday));
+}
+
+/**
+ * Check if a date is in the last N days (including today)
+ * @param date - date to check
+ * @param n - number of days
+ */
+export function isInLastNDays(date: Date, n: number): boolean {
+  const now = new Date();
+  const nDaysAgo = new Date(now);
+  nDaysAgo.setDate(nDaysAgo.getDate() - n);
+  nDaysAgo.setHours(0, 0, 0, 0);
+  
+  const endOfToday = new Date(now);
+  endOfToday.setHours(23, 59, 59, 999);
+  
+  return date >= nDaysAgo && date <= endOfToday;
+}
+
+/**
+ * Check if a date is in the next N days (including today)
+ * @param date - date to check
+ * @param n - number of days
+ */
+export function isInNextNDays(date: Date, n: number): boolean {
+  const now = new Date();
+  const startOfToday = new Date(now);
+  startOfToday.setHours(0, 0, 0, 0);
+  
+  const nDaysFromNow = new Date(now);
+  nDaysFromNow.setDate(nDaysFromNow.getDate() + n);
+  nDaysFromNow.setHours(23, 59, 59, 999);
+  
+  return date >= startOfToday && date <= nDaysFromNow;
+}

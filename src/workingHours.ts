@@ -102,3 +102,188 @@ export function addWorkingHours(start: Date, hours: number, config: WorkingHours
   }
   return cursor;
 }
+
+/**
+ * Add working days to a date
+ * @param start - start date
+ * @param days - number of working days to add
+ * @param config - working hours configuration
+ */
+export function addWorkingDays(start: Date, days: number, config: WorkingHoursConfig = DEFAULT_WORKING_HOURS): Date {
+  if (days === 0) return new Date(start);
+  
+  const result = new Date(start);
+  const direction = days > 0 ? 1 : -1;
+  let remaining = Math.abs(days);
+  
+  while (remaining > 0) {
+    result.setDate(result.getDate() + direction);
+    if (isWorkingDay(result, config)) {
+      remaining--;
+    }
+  }
+  
+  return result;
+}
+
+/**
+ * Subtract working days from a date
+ * @param start - start date
+ * @param days - number of working days to subtract
+ * @param config - working hours configuration
+ */
+export function subtractWorkingDays(start: Date, days: number, config: WorkingHoursConfig = DEFAULT_WORKING_HOURS): Date {
+  return addWorkingDays(start, -days, config);
+}
+
+/**
+ * Get the next working day from a given date
+ * @param date - start date
+ * @param config - working hours configuration
+ */
+export function getNextWorkingDay(date: Date, config: WorkingHoursConfig = DEFAULT_WORKING_HOURS): Date {
+  const result = new Date(date);
+  result.setDate(result.getDate() + 1);
+  
+  while (!isWorkingDay(result, config)) {
+    result.setDate(result.getDate() + 1);
+  }
+  
+  return result;
+}
+
+/**
+ * Get the previous working day from a given date
+ * @param date - start date
+ * @param config - working hours configuration
+ */
+export function getPreviousWorkingDay(date: Date, config: WorkingHoursConfig = DEFAULT_WORKING_HOURS): Date {
+  const result = new Date(date);
+  result.setDate(result.getDate() - 1);
+  
+  while (!isWorkingDay(result, config)) {
+    result.setDate(result.getDate() - 1);
+  }
+  
+  return result;
+}
+
+/**
+ * Get the number of working days in a month
+ * @param year - year
+ * @param month - month (0-11)
+ * @param config - working hours configuration
+ */
+export function getWorkingDaysInMonth(year: number, month: number, config: WorkingHoursConfig = DEFAULT_WORKING_HOURS): number {
+  const daysInMonth = new Date(year, month + 1, 0).getDate();
+  let count = 0;
+  
+  for (let day = 1; day <= daysInMonth; day++) {
+    const date = new Date(year, month, day);
+    if (isWorkingDay(date, config)) {
+      count++;
+    }
+  }
+  
+  return count;
+}
+
+/**
+ * Get all working days in a month as an array of dates
+ * @param year - year
+ * @param month - month (0-11)
+ * @param config - working hours configuration
+ */
+export function getWorkingDaysInMonthArray(year: number, month: number, config: WorkingHoursConfig = DEFAULT_WORKING_HOURS): Date[] {
+  const daysInMonth = new Date(year, month + 1, 0).getDate();
+  const workingDays: Date[] = [];
+  
+  for (let day = 1; day <= daysInMonth; day++) {
+    const date = new Date(year, month, day);
+    if (isWorkingDay(date, config)) {
+      workingDays.push(date);
+    }
+  }
+  
+  return workingDays;
+}
+
+/**
+ * Get working days between two dates (inclusive)
+ * @param start - start date
+ * @param end - end date
+ * @param config - working hours configuration
+ */
+export function workingDaysBetween(start: Date, end: Date, config: WorkingHoursConfig = DEFAULT_WORKING_HOURS): number {
+  if (end < start) return 0;
+  
+  let count = 0;
+  const current = new Date(start);
+  current.setHours(0, 0, 0, 0);
+  
+  const endDate = new Date(end);
+  endDate.setHours(0, 0, 0, 0);
+  
+  while (current <= endDate) {
+    if (isWorkingDay(current, config)) {
+      count++;
+    }
+    current.setDate(current.getDate() + 1);
+  }
+  
+  return count;
+}
+
+/**
+ * Check if a date is during work break
+ * @param date - date to check
+ * @param config - working hours configuration
+ */
+export function isBreakTime(date: Date, config: WorkingHoursConfig = DEFAULT_WORKING_HOURS): boolean {
+  if (!isWorkingDay(date, config)) return false;
+  if (!config.breaks || config.breaks.length === 0) return false;
+  
+  const h = toHourFraction(date);
+  for (const b of config.breaks) {
+    if (h >= b.start && h < b.end) return true;
+  }
+  return false;
+}
+
+/**
+ * Get the start of the work day for a given date
+ * @param date - date to get work start for
+ * @param config - working hours configuration
+ */
+export function getWorkDayStart(date: Date, config: WorkingHoursConfig = DEFAULT_WORKING_HOURS): Date {
+  const result = new Date(date);
+  result.setHours(config.hours.start, 0, 0, 0);
+  return result;
+}
+
+/**
+ * Get the end of the work day for a given date
+ * @param date - date to get work end for
+ * @param config - working hours configuration
+ */
+export function getWorkDayEnd(date: Date, config: WorkingHoursConfig = DEFAULT_WORKING_HOURS): Date {
+  const result = new Date(date);
+  result.setHours(config.hours.end, 0, 0, 0);
+  return result;
+}
+
+/**
+ * Get the total working hours per day (excluding breaks)
+ * @param config - working hours configuration
+ */
+export function getWorkingHoursPerDay(config: WorkingHoursConfig = DEFAULT_WORKING_HOURS): number {
+  let hours = config.hours.end - config.hours.start;
+  
+  if (config.breaks) {
+    for (const b of config.breaks) {
+      hours -= (b.end - b.start);
+    }
+  }
+  
+  return hours;
+}

@@ -171,3 +171,270 @@ export function getFirstDayOfYear(year: number): Date {
 export function getLastDayOfYear(year: number): Date {
   return new Date(year, 11, 31);
 }
+
+/**
+ * Get the nth occurrence of a day in a month (e.g., 2nd Monday)
+ * @param year - year
+ * @param month - month (0-11)
+ * @param dayOfWeek - day of week (0=Sunday, 6=Saturday)
+ * @param n - occurrence (1-5, or -1 for last)
+ */
+export function getNthDayOfMonth(year: number, month: number, dayOfWeek: number, n: number): Date | null {
+  if (n === 0 || n < -1 || n > 5) return null;
+  
+  const firstDay = new Date(year, month, 1);
+  const lastDay = new Date(year, month + 1, 0);
+  
+  if (n === -1) {
+    // Last occurrence
+    let date = lastDay.getDate();
+    while (date > 0) {
+      const d = new Date(year, month, date);
+      if (d.getDay() === dayOfWeek) return d;
+      date--;
+    }
+    return null;
+  }
+  
+  // Find nth occurrence
+  let count = 0;
+  for (let date = 1; date <= lastDay.getDate(); date++) {
+    const d = new Date(year, month, date);
+    if (d.getDay() === dayOfWeek) {
+      count++;
+      if (count === n) return d;
+    }
+  }
+  
+  return null;
+}
+
+/**
+ * US Holiday type
+ */
+export interface USHoliday {
+  name: string;
+  date: Date;
+  type: 'federal' | 'observance';
+}
+
+/**
+ * Get New Year's Day
+ * @param year - year
+ */
+export function getNewYearsDay(year: number): Date {
+  return new Date(year, 0, 1);
+}
+
+/**
+ * Get Martin Luther King Jr. Day (3rd Monday of January)
+ * @param year - year
+ */
+export function getMLKDay(year: number): Date | null {
+  return getNthDayOfMonth(year, 0, 1, 3);
+}
+
+/**
+ * Get Presidents' Day (3rd Monday of February)
+ * @param year - year
+ */
+export function getPresidentsDay(year: number): Date | null {
+  return getNthDayOfMonth(year, 1, 1, 3);
+}
+
+/**
+ * Get Memorial Day (last Monday of May)
+ * @param year - year
+ */
+export function getMemorialDay(year: number): Date | null {
+  return getNthDayOfMonth(year, 4, 1, -1);
+}
+
+/**
+ * Get Independence Day (July 4th)
+ * @param year - year
+ */
+export function getIndependenceDay(year: number): Date {
+  return new Date(year, 6, 4);
+}
+
+/**
+ * Get Labor Day (1st Monday of September)
+ * @param year - year
+ */
+export function getLaborDay(year: number): Date | null {
+  return getNthDayOfMonth(year, 8, 1, 1);
+}
+
+/**
+ * Get Columbus Day (2nd Monday of October)
+ * @param year - year
+ */
+export function getColumbusDay(year: number): Date | null {
+  return getNthDayOfMonth(year, 9, 1, 2);
+}
+
+/**
+ * Get Veterans Day (November 11th)
+ * @param year - year
+ */
+export function getVeteransDay(year: number): Date {
+  return new Date(year, 10, 11);
+}
+
+/**
+ * Get Thanksgiving Day (4th Thursday of November)
+ * @param year - year
+ */
+export function getThanksgivingDay(year: number): Date | null {
+  return getNthDayOfMonth(year, 10, 4, 4);
+}
+
+/**
+ * Get Christmas Day (December 25th)
+ * @param year - year
+ */
+export function getChristmasDay(year: number): Date {
+  return new Date(year, 11, 25);
+}
+
+/**
+ * Get Good Friday (Friday before Easter)
+ * @param year - year
+ */
+export function getGoodFriday(year: number): Date {
+  const easter = getEaster(year);
+  const goodFriday = new Date(easter);
+  goodFriday.setDate(easter.getDate() - 2);
+  return goodFriday;
+}
+
+/**
+ * Get all US federal holidays for a year
+ * @param year - year
+ */
+export function getUSHolidays(year: number): USHoliday[] {
+  const holidays: USHoliday[] = [];
+  
+  holidays.push({ name: "New Year's Day", date: getNewYearsDay(year), type: 'federal' });
+  
+  const mlk = getMLKDay(year);
+  if (mlk) holidays.push({ name: "Martin Luther King Jr. Day", date: mlk, type: 'federal' });
+  
+  const presidents = getPresidentsDay(year);
+  if (presidents) holidays.push({ name: "Presidents' Day", date: presidents, type: 'federal' });
+  
+  const memorial = getMemorialDay(year);
+  if (memorial) holidays.push({ name: "Memorial Day", date: memorial, type: 'federal' });
+  
+  holidays.push({ name: "Independence Day", date: getIndependenceDay(year), type: 'federal' });
+  
+  const labor = getLaborDay(year);
+  if (labor) holidays.push({ name: "Labor Day", date: labor, type: 'federal' });
+  
+  const columbus = getColumbusDay(year);
+  if (columbus) holidays.push({ name: "Columbus Day", date: columbus, type: 'federal' });
+  
+  holidays.push({ name: "Veterans Day", date: getVeteransDay(year), type: 'federal' });
+  
+  const thanksgiving = getThanksgivingDay(year);
+  if (thanksgiving) holidays.push({ name: "Thanksgiving Day", date: thanksgiving, type: 'federal' });
+  
+  holidays.push({ name: "Christmas Day", date: getChristmasDay(year), type: 'federal' });
+  
+  return holidays.sort((a, b) => a.date.getTime() - b.date.getTime());
+}
+
+/**
+ * Check if a date is a US federal holiday
+ * @param date - date to check
+ */
+export function isUSHoliday(date: Date): boolean {
+  const holidays = getUSHolidays(date.getFullYear());
+  return holidays.some(h => 
+    h.date.getFullYear() === date.getFullYear() &&
+    h.date.getMonth() === date.getMonth() &&
+    h.date.getDate() === date.getDate()
+  );
+}
+
+/**
+ * Get the name of a US holiday for a given date
+ * @param date - date to check
+ * @returns holiday name or null if not a holiday
+ */
+export function getUSHolidayName(date: Date): string | null {
+  const holidays = getUSHolidays(date.getFullYear());
+  const holiday = holidays.find(h => 
+    h.date.getFullYear() === date.getFullYear() &&
+    h.date.getMonth() === date.getMonth() &&
+    h.date.getDate() === date.getDate()
+  );
+  return holiday ? holiday.name : null;
+}
+
+/**
+ * Get the start of the week for a date (Monday)
+ * @param date - any date
+ */
+export function getStartOfWeek(date: Date): Date {
+  const d = new Date(date);
+  const day = d.getDay();
+  const diff = d.getDate() - day + (day === 0 ? -6 : 1); // Adjust for Monday start
+  d.setDate(diff);
+  d.setHours(0, 0, 0, 0);
+  return d;
+}
+
+/**
+ * Get the end of the week for a date (Sunday)
+ * @param date - any date
+ */
+export function getEndOfWeek(date: Date): Date {
+  const start = getStartOfWeek(date);
+  const end = new Date(start);
+  end.setDate(start.getDate() + 6);
+  end.setHours(23, 59, 59, 999);
+  return end;
+}
+
+/**
+ * Get all weeks in a month as arrays of dates
+ * @param year - year
+ * @param month - month (0-11)
+ */
+export function getWeeksInMonth(year: number, month: number): Date[][] {
+  const weeks: Date[][] = [];
+  const firstDay = new Date(year, month, 1);
+  const lastDay = new Date(year, month + 1, 0);
+  
+  let currentWeek: Date[] = [];
+  const startDayOfWeek = firstDay.getDay() || 7; // Convert Sunday from 0 to 7 for ISO
+  
+  // Add days from previous month to fill the first week
+  for (let i = 1; i < startDayOfWeek; i++) {
+    const prevDate = new Date(year, month, 1 - (startDayOfWeek - i));
+    currentWeek.push(prevDate);
+  }
+  
+  // Add days of the current month
+  for (let day = 1; day <= lastDay.getDate(); day++) {
+    currentWeek.push(new Date(year, month, day));
+    
+    if (currentWeek.length === 7) {
+      weeks.push(currentWeek);
+      currentWeek = [];
+    }
+  }
+  
+  // Add days from next month to fill the last week
+  if (currentWeek.length > 0) {
+    let nextDay = 1;
+    while (currentWeek.length < 7) {
+      currentWeek.push(new Date(year, month + 1, nextDay++));
+    }
+    weeks.push(currentWeek);
+  }
+  
+  return weeks;
+}

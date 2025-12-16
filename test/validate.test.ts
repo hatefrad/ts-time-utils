@@ -9,6 +9,15 @@ import {
   isYesterday,
   isTomorrow,
   isSameDay,
+  isSameWeek,
+  isSameMonth,
+  isSameYear,
+  isThisWeek,
+  isThisMonth,
+  isThisYear,
+  isBusinessDay,
+  isInLastNDays,
+  isInNextNDays,
   isWeekday,
   isValidTimeString,
   isValidISOString
@@ -103,6 +112,102 @@ describe("Validation utilities", () => {
       expect(isValidISOString("2025-09-13T14:30:00.000Z")).toBe(true);
       expect(isValidISOString("2025-09-13T14:30:00Z")).toBe(true);
       expect(isValidISOString("2025-09-13 14:30:00")).toBe(false);
+    });
+  });
+
+  describe("isSameWeek", () => {
+    it("detects same week (ISO Monday-Sunday)", () => {
+      // Monday and Friday of same week
+      const monday = new Date('2025-01-06'); // Monday
+      const friday = new Date('2025-01-10'); // Friday same week
+      expect(isSameWeek(monday, friday)).toBe(true);
+
+      // Sunday and next Monday are different weeks
+      const sunday = new Date('2025-01-12'); // Sunday
+      const nextMonday = new Date('2025-01-13'); // Next Monday
+      expect(isSameWeek(sunday, nextMonday)).toBe(false);
+    });
+  });
+
+  describe("isSameMonth", () => {
+    it("detects same month", () => {
+      expect(isSameMonth(new Date('2025-01-01'), new Date('2025-01-31'))).toBe(true);
+      expect(isSameMonth(new Date('2025-01-31'), new Date('2025-02-01'))).toBe(false);
+      // Same month different years
+      expect(isSameMonth(new Date('2025-01-15'), new Date('2024-01-15'))).toBe(false);
+    });
+  });
+
+  describe("isSameYear", () => {
+    it("detects same year", () => {
+      expect(isSameYear(new Date('2025-01-01'), new Date('2025-12-31'))).toBe(true);
+      expect(isSameYear(new Date('2025-12-31'), new Date('2026-01-01'))).toBe(false);
+    });
+  });
+
+  describe("isThisWeek", () => {
+    it("detects current week", () => {
+      expect(isThisWeek(today)).toBe(true);
+      // A date 2 weeks ago should not be this week
+      const twoWeeksAgo = new Date(today);
+      twoWeeksAgo.setDate(today.getDate() - 14);
+      expect(isThisWeek(twoWeeksAgo)).toBe(false);
+    });
+  });
+
+  describe("isThisMonth", () => {
+    it("detects current month", () => {
+      expect(isThisMonth(today)).toBe(true);
+      // A date from a different year same month should not be this month
+      const lastYear = new Date(today);
+      lastYear.setFullYear(today.getFullYear() - 1);
+      expect(isThisMonth(lastYear)).toBe(false);
+    });
+  });
+
+  describe("isThisYear", () => {
+    it("detects current year", () => {
+      expect(isThisYear(today)).toBe(true);
+      const lastYear = new Date(today);
+      lastYear.setFullYear(today.getFullYear() - 1);
+      expect(isThisYear(lastYear)).toBe(false);
+    });
+  });
+
+  describe("isBusinessDay", () => {
+    it("detects business days (weekdays)", () => {
+      const monday = new Date('2025-01-06'); // Monday
+      const saturday = new Date('2025-01-11'); // Saturday
+      expect(isBusinessDay(monday)).toBe(true);
+      expect(isBusinessDay(saturday)).toBe(false);
+    });
+
+    it("excludes holidays", () => {
+      const monday = new Date('2025-01-06'); // Monday
+      const holidays = [new Date('2025-01-06')]; // Same Monday is a holiday
+      expect(isBusinessDay(monday, holidays)).toBe(false);
+    });
+  });
+
+  describe("isInLastNDays", () => {
+    it("detects dates in last N days", () => {
+      expect(isInLastNDays(today, 7)).toBe(true);
+      expect(isInLastNDays(yesterday, 7)).toBe(true);
+      
+      const twoWeeksAgo = new Date(today);
+      twoWeeksAgo.setDate(today.getDate() - 14);
+      expect(isInLastNDays(twoWeeksAgo, 7)).toBe(false);
+    });
+  });
+
+  describe("isInNextNDays", () => {
+    it("detects dates in next N days", () => {
+      expect(isInNextNDays(today, 7)).toBe(true);
+      expect(isInNextNDays(tomorrow, 7)).toBe(true);
+      
+      const twoWeeksFromNow = new Date(today);
+      twoWeeksFromNow.setDate(today.getDate() + 14);
+      expect(isInNextNDays(twoWeeksFromNow, 7)).toBe(false);
     });
   });
 });

@@ -8,7 +8,14 @@ export {
   formatDuration, 
   timeAgo, 
   formatTime, 
-  parseDuration 
+  parseDuration,
+  formatDate,
+  formatRelativeTime,
+  formatDateRange,
+  formatOrdinal,
+  formatDayOrdinal,
+  formatDurationCompact,
+  formatCalendarDate
 } from './format.js';
 
 // Calculation utilities  
@@ -31,9 +38,18 @@ export {
   isToday, 
   isYesterday, 
   isTomorrow, 
-  isSameDay, 
+  isSameDay,
+  isSameWeek,
+  isSameMonth,
+  isSameYear,
+  isThisWeek,
+  isThisMonth,
+  isThisYear,
   isWeekend, 
-  isWeekday, 
+  isWeekday,
+  isBusinessDay,
+  isInLastNDays,
+  isInNextNDays,
   isValidTimeString, 
   isValidISOString 
 } from './validate.js';
@@ -64,8 +80,28 @@ export {
   getFirstDayOfMonth,
   getLastDayOfMonth,
   getFirstDayOfYear,
-  getLastDayOfYear
+  getLastDayOfYear,
+  getNthDayOfMonth,
+  getNewYearsDay,
+  getMLKDay,
+  getPresidentsDay,
+  getMemorialDay,
+  getIndependenceDay,
+  getLaborDay,
+  getColumbusDay,
+  getVeteransDay,
+  getThanksgivingDay,
+  getChristmasDay,
+  getGoodFriday,
+  getUSHolidays,
+  isUSHoliday,
+  getUSHolidayName,
+  getStartOfWeek,
+  getEndOfWeek,
+  getWeeksInMonth
 } from './calendar.js';
+
+export type { USHoliday } from './calendar.js';
 
 // Parse utilities
 export {
@@ -73,7 +109,13 @@ export {
   parseRelativeDate,
   parseTimeAgo,
   parseCustomFormat,
-  parseManyFormats
+  parseManyFormats,
+  parseISO8601Duration,
+  parseISO8601DurationToMs,
+  parseTime,
+  guessDateFormat,
+  parseAutoFormat,
+  parseRangeEndpoint
 } from './parse.js';
 
 // Performance utilities
@@ -115,7 +157,14 @@ export {
   COMMON_TIMEZONES,
   getLocalOffset,
   compareZoneOffsets,
-  reinterpretAsZone
+  reinterpretAsZone,
+  isDST,
+  getNextDSTTransition,
+  findCommonWorkingHours,
+  getTimezoneAbbreviation,
+  convertBetweenZones,
+  getTimezoneDifferenceHours,
+  isSameTimezone
 } from './timezone.js';
 
 // Working hours utilities
@@ -125,7 +174,18 @@ export {
   isWorkingTime,
   nextWorkingTime,
   workingTimeBetween,
-  addWorkingHours
+  addWorkingHours,
+  addWorkingDays,
+  subtractWorkingDays,
+  getNextWorkingDay,
+  getPreviousWorkingDay,
+  getWorkingDaysInMonth,
+  getWorkingDaysInMonthArray,
+  workingDaysBetween,
+  isBreakTime,
+  getWorkDayStart,
+  getWorkDayEnd,
+  getWorkingHoursPerDay
 } from './workingHours.js';
 
 // Range preset utilities
@@ -309,3 +369,18 @@ export type {
   RelativeTimeOptions,
   RelativeTimeUnit
 } from './types.js';
+
+// Cron expression utilities
+export {
+  parseCronExpression,
+  parseCronField,
+  matchesCron,
+  getNextCronDate,
+  getNextCronDates,
+  getPreviousCronDate,
+  isValidCron,
+  describeCron,
+  CRON_PRESETS
+} from './cron.js';
+
+export type { CronParts, ParsedCronField } from './cron.js';
