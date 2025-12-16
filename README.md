@@ -8,7 +8,7 @@ A lightweight TypeScript utility library for time formatting, calculations, and 
 - **⚡ Fast** - Zero dependencies, pure JavaScript functions
 - **🔧 TypeScript** - Full type safety and IntelliSense support
 - **🌳 Tree-shakable** - Import individual functions to minimize bundle size
-- **📚 Comprehensive** - 20 utility categories with 220+ functions
+- **📚 Comprehensive** - 25 utility categories with 287+ functions
 
 ### 🔄 Recurrence utilities **(NEW!)**
 
@@ -185,6 +185,37 @@ A lightweight TypeScript utility library for time formatting, calculations, and 
 - Common cron presets (every minute, hourly, daily, weekly, etc.)
 - Support for wildcards, ranges, steps, and lists
 
+### 📅 Fiscal Year utilities **(NEW!)**
+
+- Configurable fiscal year start month (calendar, UK/India April, Australia July, US Federal October)
+- Get fiscal year, quarter, month, and week for any date
+- Calculate fiscal year/quarter start and end dates
+- Track fiscal year progress and days elapsed/remaining
+- Format fiscal years and quarters (FY2024, Q1 FY2024, FY2023/24)
+- Common fiscal presets: CALENDAR, UK_INDIA, AUSTRALIA, US_FEDERAL
+
+### 🔄 Date Comparison & Sorting **(NEW!)**
+
+- Sort date arrays ascending or descending
+- Find min/max/median/average dates in arrays
+- Find closest date to a target (past, future, or any)
+- Clamp dates to ranges
+- Remove duplicate dates with precision control
+- Group dates by year, month, day, or day of week
+- Round and snap dates to intervals (e.g., nearest 15 minutes)
+- Check if dates are in chronological order
+- Partition dates by predicate
+
+### 🔁 Date Iteration utilities **(NEW!)**
+
+- Generate arrays of dates: `eachDay()`, `eachWeekday()`, `eachWeekend()`
+- Iterate by period: `eachWeek()`, `eachMonth()`, `eachQuarter()`, `eachYear()`
+- Time iteration: `eachHour()`, `eachMinute()`, `eachInterval()`
+- Get specific days: `eachDayOfWeek()`, `eachNthDayOfMonth()`, `eachMonthEnd()`
+- Count functions: `countDays()`, `countWeekdays()`, `countWeekendDays()`
+- Lazy iterators for memory efficiency: `iterateDays()`, `iterateWeekdays()`, `iterateMonths()`
+- Custom filtering with `filterDays()`
+
 ### 🧱 Constants
 
 - Milliseconds & seconds per unit
@@ -243,6 +274,27 @@ import {
   isValidCron,
   CRON_PRESETS,
 } from "ts-time-utils/cron";
+// NEW: Fiscal year utilities
+import {
+  getFiscalYear,
+  getFiscalQuarter,
+  getFiscalPeriodInfo,
+  FISCAL_PRESETS,
+} from "ts-time-utils/fiscal";
+// NEW: Date comparison & sorting
+import {
+  sortDates,
+  closestDate,
+  groupDatesByMonth,
+  snapDate,
+} from "ts-time-utils/compare";
+// NEW: Date iteration
+import {
+  eachDay,
+  eachWeekday,
+  countWeekdays,
+  iterateDays,
+} from "ts-time-utils/iterate";
 ```
 
 ## 📖 Examples
@@ -741,6 +793,140 @@ CRON_PRESETS.MONTHLY; // "0 0 1 * *"
 CRON_PRESETS.WEEKDAYS; // "0 0 * * 1-5"
 ```
 
+### Fiscal Year Utilities (NEW!)
+
+```ts
+import {
+  getFiscalYear,
+  getFiscalQuarter,
+  getFiscalYearStart,
+  getFiscalYearEnd,
+  getFiscalPeriodInfo,
+  formatFiscalYear,
+  FISCAL_PRESETS,
+} from "ts-time-utils/fiscal";
+
+// Default calendar year (January start)
+getFiscalYear(new Date("2024-06-15")); // 2024
+getFiscalQuarter(new Date("2024-06-15")); // 2
+
+// UK/India fiscal year (April start)
+getFiscalYear(new Date("2024-03-15"), FISCAL_PRESETS.UK_INDIA); // 2023
+getFiscalYear(new Date("2024-04-15"), FISCAL_PRESETS.UK_INDIA); // 2024
+
+// Australian fiscal year (July start)
+getFiscalYear(new Date("2024-06-30"), FISCAL_PRESETS.AUSTRALIA); // 2023
+getFiscalYear(new Date("2024-07-01"), FISCAL_PRESETS.AUSTRALIA); // 2024
+
+// US Federal fiscal year (October start)
+getFiscalYear(new Date("2024-09-30"), FISCAL_PRESETS.US_FEDERAL); // 2023
+getFiscalYear(new Date("2024-10-01"), FISCAL_PRESETS.US_FEDERAL); // 2024
+
+// Get fiscal year boundaries
+getFiscalYearStart(2024, FISCAL_PRESETS.UK_INDIA); // April 1, 2024
+getFiscalYearEnd(2024, FISCAL_PRESETS.UK_INDIA); // March 31, 2025
+
+// Format fiscal years
+formatFiscalYear(2024); // "FY2024"
+formatFiscalYear(2024, FISCAL_PRESETS.UK_INDIA, "long"); // "FY2024/25"
+
+// Get comprehensive fiscal info
+const info = getFiscalPeriodInfo(new Date("2024-06-15"));
+// { fiscalYear: 2024, fiscalQuarter: 2, fiscalMonth: 6, progress: 45.2, ... }
+```
+
+### Date Comparison & Sorting (NEW!)
+
+```ts
+import {
+  sortDates,
+  minDate,
+  maxDate,
+  closestDate,
+  uniqueDates,
+  groupDatesByMonth,
+  snapDate,
+  roundDate,
+  medianDate,
+} from "ts-time-utils/compare";
+
+const dates = [
+  new Date("2024-03-15"),
+  new Date("2024-01-10"),
+  new Date("2024-06-20"),
+];
+
+// Sort dates
+sortDates(dates); // [Jan 10, Mar 15, Jun 20]
+sortDates(dates, "desc"); // [Jun 20, Mar 15, Jan 10]
+
+// Find extremes
+minDate(dates); // Jan 10, 2024
+maxDate(dates); // Jun 20, 2024
+medianDate(dates); // Mar 15, 2024
+
+// Find closest to target
+const target = new Date("2024-04-01");
+closestDate(target, dates); // Mar 15, 2024
+
+// Remove duplicates
+uniqueDates([date1, date1Copy, date2]); // [date1, date2]
+uniqueDates(dates, "day"); // Unique by day precision
+
+// Group dates
+groupDatesByMonth(dates);
+// Map { "2024-01" => [Jan 10], "2024-03" => [Mar 15], "2024-06" => [Jun 20] }
+
+// Snap to intervals (e.g., 15-minute blocks)
+snapDate(new Date("2024-01-15T10:37:00"), 15); // 10:30:00
+snapDate(new Date("2024-01-15T10:37:00"), 15, "ceil"); // 10:45:00
+
+// Round to nearest unit
+roundDate(new Date("2024-01-15T10:37:00"), "hour"); // 11:00:00
+```
+
+### Date Iteration (NEW!)
+
+```ts
+import {
+  eachDay,
+  eachWeekday,
+  eachWeek,
+  eachMonth,
+  countWeekdays,
+  eachDayOfWeek,
+  iterateDays,
+  filterDays,
+} from "ts-time-utils/iterate";
+
+const start = new Date("2024-01-01");
+const end = new Date("2024-01-31");
+
+// Generate arrays of dates
+eachDay(start, end); // [Jan 1, Jan 2, ..., Jan 31] (31 dates)
+eachWeekday(start, end); // All Mon-Fri dates (23 dates)
+eachWeek(start, end); // [Jan 7, Jan 14, Jan 21, Jan 28] (Sundays)
+eachMonth(start, new Date("2024-06-30")); // [Feb 1, Mar 1, Apr 1, May 1, Jun 1]
+
+// Count dates
+countWeekdays(start, end); // 23
+
+// Get specific weekdays
+eachDayOfWeek(start, end, 1); // All Mondays in January
+
+// Lazy iteration (memory efficient for large ranges)
+for (const date of iterateDays(start, end)) {
+  console.log(date);
+}
+
+// Filter days by custom predicate
+filterDays(start, end, (d) => d.getDate() === 15); // [Jan 15]
+
+// Custom intervals
+eachInterval(start, end, { days: 7 }); // Every 7 days
+eachInterval(start, end, { hours: 6 }); // Every 6 hours
+```
+
 ### Locale Utilities
 
 ```ts
@@ -1027,6 +1213,81 @@ console.log(comparison.weekStartsOn);
 - `isValidCron(expression)` - Validate cron expression syntax
 - `describeCron(expression)` - Get human-readable cron description
 - `CRON_PRESETS` - Common cron expressions (EVERY_MINUTE, HOURLY, DAILY, etc.)
+
+### Fiscal Year Functions
+
+- `getFiscalYear(date, config?)` - Get fiscal year for a date
+- `getFiscalQuarter(date, config?)` - Get fiscal quarter (1-4)
+- `getFiscalMonth(date, config?)` - Get fiscal month (1-12 within fiscal year)
+- `getFiscalWeek(date, config?)` - Get fiscal week number
+- `getFiscalYearStart(year, config?)` - Get start date of fiscal year
+- `getFiscalYearEnd(year, config?)` - Get end date of fiscal year
+- `getFiscalQuarterStart(year, quarter, config?)` - Get start of fiscal quarter
+- `getFiscalQuarterEnd(year, quarter, config?)` - Get end of fiscal quarter
+- `isSameFiscalYear(date1, date2, config?)` - Check if dates are in same fiscal year
+- `isSameFiscalQuarter(date1, date2, config?)` - Check if dates are in same fiscal quarter
+- `getDaysElapsedInFiscalYear(date, config?)` - Days elapsed in fiscal year
+- `getDaysRemainingInFiscalYear(date, config?)` - Days remaining in fiscal year
+- `getFiscalYearProgress(date, config?)` - Percentage of fiscal year completed
+- `formatFiscalYear(year, config?, format?)` - Format as "FY2024" or "FY2023/24"
+- `formatFiscalQuarter(year, quarter, config?)` - Format as "Q1 FY2024"
+- `getFiscalPeriodInfo(date, config?)` - Get comprehensive fiscal period info
+- `FISCAL_PRESETS` - CALENDAR, UK_INDIA, AUSTRALIA, US_FEDERAL
+
+### Compare Functions
+
+- `compareDates(a, b)` - Compare function for sorting dates
+- `compareDatesDesc(a, b)` - Compare function for reverse sorting
+- `sortDates(dates, direction?)` - Sort date array (asc/desc)
+- `minDate(dates)` - Find earliest date
+- `maxDate(dates)` - Find latest date
+- `dateExtent(dates)` - Get { min, max } from date array
+- `uniqueDates(dates, precision?)` - Remove duplicate dates
+- `closestDate(target, candidates)` - Find closest date to target
+- `closestFutureDate(target, candidates)` - Find closest future date
+- `closestPastDate(target, candidates)` - Find closest past date
+- `clampDate(date, min, max)` - Constrain date to range
+- `isDateInRange(date, min, max)` - Check if date is in range
+- `filterDatesInRange(dates, min, max)` - Filter dates in range
+- `groupDates(dates, keyFn)` - Group dates by custom key
+- `groupDatesByYear(dates)` - Group by year
+- `groupDatesByMonth(dates)` - Group by month (YYYY-MM)
+- `groupDatesByDay(dates)` - Group by day (YYYY-MM-DD)
+- `groupDatesByDayOfWeek(dates)` - Group by day of week (0-6)
+- `medianDate(dates)` - Calculate median date
+- `averageDate(dates)` - Calculate average/mean date
+- `roundDate(date, unit)` - Round to nearest minute/hour/day
+- `snapDate(date, intervalMinutes, mode?)` - Snap to interval grid
+- `isChronological(dates, strict?)` - Check if dates are in order
+- `dateSpan(dates)` - Get duration between min and max
+- `partitionDates(dates, predicate)` - Split into [matching, non-matching]
+- `nthDate(dates, n)` - Get nth date (supports negative indices)
+
+### Iterate Functions
+
+- `eachDay(start, end)` - Array of each day in range
+- `eachWeekday(start, end)` - Array of weekdays (Mon-Fri)
+- `eachWeekend(start, end)` - Array of weekend days (Sat-Sun)
+- `eachWeek(start, end, weekStartsOn?)` - Array of week starts
+- `eachMonth(start, end)` - Array of month starts
+- `eachMonthEnd(start, end)` - Array of month ends
+- `eachQuarter(start, end)` - Array of quarter starts
+- `eachYear(start, end)` - Array of year starts
+- `eachHour(start, end, step?)` - Array of hourly intervals
+- `eachMinute(start, end, step?)` - Array of minute intervals
+- `eachDayOfWeek(start, end, dayOfWeek)` - Array of specific weekday
+- `eachNthDayOfMonth(start, end, day)` - Array of nth day of each month
+- `eachInterval(start, end, interval)` - Array at custom intervals
+- `countDays(start, end)` - Count days in range
+- `countWeekdays(start, end)` - Count weekdays in range
+- `countWeekendDays(start, end)` - Count weekend days
+- `countWeeks(start, end)` - Count weeks in range
+- `countMonths(start, end)` - Count months in range
+- `iterateDates(start, end, step?)` - Lazy date generator
+- `iterateDays(start, end)` - Lazy day iterator
+- `iterateWeekdays(start, end)` - Lazy weekday iterator
+- `iterateMonths(start, end)` - Lazy month iterator
+- `filterDays(start, end, filter)` - Filter days by predicate
 
 ### Calculate Functions
 
