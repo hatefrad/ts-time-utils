@@ -1,6 +1,6 @@
 {
   "name": "ts-time-utils",
-  "version": "1.3.0",
+  "version": "2.0.0",
   "description": "A comprehensive TypeScript utility library for time, dates, durations, and calendar operations with full tree-shaking support",
   "main": "dist/index.js",
   "module": "dist/esm/index.js",
@@ -111,6 +111,21 @@
       "import": "./dist/esm/cron.js",
       "require": "./dist/cron.js",
       "types": "./dist/cron.d.ts"
+    },
+    "./fiscal": {
+      "import": "./dist/esm/fiscal.js",
+      "require": "./dist/fiscal.js",
+      "types": "./dist/fiscal.d.ts"
+    },
+    "./compare": {
+      "import": "./dist/esm/compare.js",
+      "require": "./dist/compare.js",
+      "types": "./dist/compare.d.ts"
+    },
+    "./iterate": {
+      "import": "./dist/esm/iterate.js",
+      "require": "./dist/iterate.js",
+      "types": "./dist/iterate.d.ts"
     }
   },
   "files": [

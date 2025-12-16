@@ -383,3 +383,83 @@ export {
 } from './cron.js';
 
 export type { CronParts, ParsedCronField } from './cron.js';
+
+// Fiscal year utilities
+export {
+  getFiscalYear,
+  getFiscalQuarter,
+  getFiscalYearStart,
+  getFiscalYearEnd,
+  getFiscalQuarterStart,
+  getFiscalQuarterEnd,
+  isSameFiscalYear,
+  isSameFiscalQuarter,
+  getFiscalMonth,
+  getDaysRemainingInFiscalYear,
+  getDaysElapsedInFiscalYear,
+  getFiscalYearProgress,
+  getFiscalWeek,
+  formatFiscalYear,
+  formatFiscalQuarter,
+  getFiscalPeriodInfo,
+  FISCAL_PRESETS
+} from './fiscal.js';
+
+export type { FiscalConfig } from './fiscal.js';
+
+// Date comparison and sorting utilities
+export {
+  compareDates,
+  compareDatesDesc,
+  sortDates,
+  minDate,
+  maxDate,
+  dateExtent,
+  uniqueDates,
+  closestDate,
+  closestFutureDate,
+  closestPastDate,
+  clampDate,
+  isDateInRange,
+  filterDatesInRange,
+  groupDates,
+  groupDatesByYear,
+  groupDatesByMonth,
+  groupDatesByDay,
+  groupDatesByDayOfWeek,
+  medianDate,
+  averageDate,
+  roundDate,
+  snapDate,
+  isChronological,
+  dateSpan,
+  partitionDates,
+  nthDate
+} from './compare.js';
+
+// Date iteration utilities
+export {
+  eachDay,
+  eachWeekday,
+  eachWeekend,
+  eachWeek,
+  eachMonth,
+  eachQuarter,
+  eachYear,
+  eachHour,
+  eachMinute,
+  eachDayOfWeek,
+  eachInterval,
+  countDays,
+  countWeekdays,
+  countWeekendDays,
+  countWeeks,
+  countMonths,
+  iterateDates,
+  iterateDays,
+  iterateWeekdays,
+  iterateMonths,
+  filterDays,
+  eachMonthEnd,
+  eachNthDayOfMonth
+} from './iterate.js';
