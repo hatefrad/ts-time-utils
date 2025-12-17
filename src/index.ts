@@ -463,3 +463,25 @@ export {
   eachMonthEnd,
   eachNthDayOfMonth
 } from './iterate.js';
+
+// International holidays utilities
+export {
+  getUKHolidays,
+  getNetherlandsHolidays,
+  getGermanyHolidays,
+  getCanadaHolidays,
+  getAustraliaHolidays,
+  getItalyHolidays,
+  getSpainHolidays,
+  getChinaHolidays,
+  getIndiaHolidays,
+  getHolidays,
+  isHoliday,
+  getHolidayName,
+  getNextHoliday,
+  getUpcomingHolidays,
+  getSupportedCountries
+} from './holidays.js';
+
+// Export types
+export type { CountryCode, Holiday } from './holidays.js';

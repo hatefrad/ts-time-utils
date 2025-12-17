@@ -8,7 +8,7 @@ A lightweight TypeScript utility library for time formatting, calculations, and 
 - **⚡ Fast** - Zero dependencies, pure JavaScript functions
 - **🔧 TypeScript** - Full type safety and IntelliSense support
 - **🌳 Tree-shakable** - Import individual functions to minimize bundle size
-- **📚 Comprehensive** - 25 utility categories with 287+ functions
+- **📚 Comprehensive** - 26 utility categories with 320+ functions
 
 ### 🔄 Recurrence utilities **(NEW!)**
 
@@ -198,6 +198,34 @@ A lightweight TypeScript utility library for time formatting, calculations, and 
 
 - Sort date arrays ascending or descending
 - Find min/max/median/average dates in arrays
+- Find closest/farthest dates from target
+- Remove duplicate dates
+- Group dates by year/month/day/weekday
+- Snap dates to grid and round to nearest unit
+- Validate chronological order
+- Get date span and partition into groups
+- Select nth dates from sorted arrays
+
+### ⏭️ Date Iteration & Counting **(NEW!)**
+
+- Iterate through date sequences: days, weekdays, weekends, weeks, months, quarters, years
+- Count dates in ranges: count all days, weekdays, weekend days, weeks, months
+- Lazy iteration with generators for memory efficiency
+- Filter dates by custom conditions
+- Iterate specific day patterns (e.g., all Mondays)
+- Get month-end dates in range
+- Get nth day of each month in range
+
+### 🌍 International Holidays **(NEW!)**
+
+- Calculate public holidays for 9 countries: UK, Netherlands, Germany, Canada, Australia, Italy, Spain, China, India
+- Fixed holidays (New Year, Christmas, National Days)
+- Easter-based holidays (Good Friday, Easter Monday, Whit Monday)
+- Movable holidays (Victoria Day, Thanksgiving, Spring Bank Holiday)
+- Unified API: check if date is holiday, get holiday name, find next holiday
+- Weekend adjustment for substitute holidays
+- Get upcoming holidays within timeframe
+- Support for both federal and regional observances
 - Find closest date to a target (past, future, or any)
 - Clamp dates to ranges
 - Remove duplicate dates with precision control
@@ -295,6 +323,13 @@ import {
   countWeekdays,
   iterateDays,
 } from "ts-time-utils/iterate";
+// NEW: International holidays
+import {
+  getHolidays,
+  isHoliday,
+  getNextHoliday,
+  getSupportedCountries,
+} from "ts-time-utils/holidays";
 ```
 
 ## 📖 Examples
@@ -927,6 +962,60 @@ eachInterval(start, end, { days: 7 }); // Every 7 days
 eachInterval(start, end, { hours: 6 }); // Every 6 hours
 ```
 
+### International Holidays (NEW!)
+
+```ts
+import {
+  getHolidays,
+  isHoliday,
+  getHolidayName,
+  getNextHoliday,
+  getUpcomingHolidays,
+  getSupportedCountries,
+  getUKHolidays,
+  getCanadaHolidays,
+} from "ts-time-utils/holidays";
+
+// Get all holidays for a country and year
+const ukHolidays2024 = getHolidays(2024, "UK");
+console.log(ukHolidays2024);
+// [
+//   { name: "New Year's Day", date: Date, countryCode: "UK", type: "bank" },
+//   { name: "Good Friday", date: Date, countryCode: "UK", type: "bank" },
+//   { name: "Easter Monday", date: Date, countryCode: "UK", type: "bank" },
+//   ...
+// ]
+
+// Check if a date is a holiday
+const christmas = new Date(2024, 11, 25);
+isHoliday(christmas, "UK"); // true
+isHoliday(new Date(2024, 5, 15), "UK"); // false
+
+// Get holiday name for a date
+getHolidayName(christmas, "UK"); // "Christmas Day"
+getHolidayName(new Date(2024, 0, 1), "CA"); // "New Year's Day"
+
+// Find next holiday from a date
+const today = new Date();
+const nextHoliday = getNextHoliday(today, "CA");
+console.log(`Next holiday: ${nextHoliday?.name} on ${nextHoliday?.date}`);
+
+// Get upcoming holidays in the next 90 days
+const upcoming = getUpcomingHolidays(today, 90, "AU");
+upcoming.forEach((h) => {
+  console.log(`${h.name} - ${h.date.toDateString()}`);
+});
+
+// Get supported countries
+getSupportedCountries(); // ["UK", "NL", "DE", "CA", "AU", "IT", "ES", "CN", "IN", "US"]
+
+// Country-specific functions
+const nlHolidays = getHolidays(2024, "NL"); // Netherlands holidays (includes King's Day)
+const deHolidays = getHolidays(2024, "DE"); // German holidays (includes German Unity Day)
+const itHolidays = getHolidays(2024, "IT"); // Italian holidays (includes Republic Day)
+const esHolidays = getHolidays(2024, "ES"); // Spanish holidays (includes Constitution Day)
+```
+
 ### Locale Utilities
 
 ```ts
@@ -1288,6 +1377,26 @@ console.log(comparison.weekStartsOn);
 - `iterateWeekdays(start, end)` - Lazy weekday iterator
 - `iterateMonths(start, end)` - Lazy month iterator
 - `filterDays(start, end, filter)` - Filter days by predicate
+
+### Holidays Functions
+
+- `getHolidays(year, countryCode)` - Get all holidays for a country and year
+- `isHoliday(date, countryCode)` - Check if date is a holiday
+- `getHolidayName(date, countryCode)` - Get holiday name for date (or null)
+- `getNextHoliday(date, countryCode)` - Find next holiday after date
+- `getUpcomingHolidays(date, days, countryCode)` - Get holidays in next N days
+- `getSupportedCountries()` - Get array of supported country codes
+- `getUKHolidays(year)` - Get UK bank holidays (New Year, Easter, Spring/Summer Bank Holiday, Christmas)
+- `getNetherlandsHolidays(year)` - Get Netherlands holidays (King's Day, Liberation Day, Easter, Ascension, Whit)
+- `getGermanyHolidays(year)` - Get German holidays (Unity Day, Labour Day, Easter, Ascension, Whit, Christmas)
+- `getCanadaHolidays(year)` - Get Canadian federal holidays (Victoria Day, Canada Day, Labour Day, Thanksgiving)
+- `getAustraliaHolidays(year)` - Get Australian holidays (Australia Day, Anzac Day, Queen's Birthday)
+- `getItalyHolidays(year)` - Get Italian holidays (Epiphany, Liberation Day, Republic Day, Assumption)
+- `getSpainHolidays(year)` - Get Spanish holidays (National Day, Constitution Day, Immaculate Conception)
+- `getChinaHolidays(year)` - Get Chinese holidays (Spring Festival, National Day, New Year) - simplified
+- `getIndiaHolidays(year)` - Get Indian holidays (Republic Day, Independence Day, Gandhi Jayanti) - simplified
+- **Types**: `CountryCode` = "UK" | "NL" | "DE" | "CA" | "AU" | "IT" | "ES" | "CN" | "IN" | "US"
+- **Holiday Interface**: `{ name: string, date: Date, countryCode: CountryCode, type: string }`
 
 ### Calculate Functions
 

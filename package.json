@@ -126,6 +126,11 @@
       "import": "./dist/esm/iterate.js",
       "require": "./dist/iterate.js",
       "types": "./dist/iterate.d.ts"
+    },
+    "./holidays": {
+      "import": "./dist/esm/holidays.js",
+      "require": "./dist/holidays.js",
+      "types": "./dist/holidays.d.ts"
     }
   },
   "files": [
