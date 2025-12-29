@@ -131,6 +131,11 @@
       "import": "./dist/esm/holidays.js",
       "require": "./dist/holidays.js",
       "types": "./dist/holidays.d.ts"
+    },
+    "./chain": {
+      "import": "./dist/esm/chain.js",
+      "require": "./dist/chain.js",
+      "types": "./dist/chain.d.ts"
     }
   },
   "files": [

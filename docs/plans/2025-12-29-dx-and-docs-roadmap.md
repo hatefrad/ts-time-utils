@@ -4,28 +4,28 @@
 
 Phased plan to improve developer experience and documentation. No backwards compatibility constraints - library has few users currently.
 
-## Phase 1: Foundation
+## Phase 1: Foundation ✅
 
 ### 1A: Bundle Size Analysis
-- [ ] Add `size-limit` to devDependencies
-- [ ] Configure per-subpath size tracking (all 26 exports)
-- [ ] Add CI job that fails on size regression
-- [ ] Generate `docs/bundle-sizes.md` with breakdown table
+- [x] Add `size-limit` to devDependencies
+- [x] Configure per-subpath size tracking (all 26 exports)
+- [x] Add CI job that fails on size regression
+- [x] Generate `docs/bundle-sizes.md` with breakdown table
 - [ ] Add size badges to README
 
 ### 1B: Integration Guides
-- [ ] Create `docs/guides/` directory
-- [ ] `docs/guides/react.md` - hooks wrapper, form validation, relative time display
-- [ ] `docs/guides/vue.md` - composables, reactive date handling
-- [ ] `docs/guides/node.md` - Express middleware, scheduling patterns
-- [ ] `docs/guides/angular.md` - pipes, services
+- [x] Create `docs/guides/` directory
+- [x] `docs/guides/react.md` - hooks wrapper, form validation, relative time display
+- [x] `docs/guides/vue.md` - composables, reactive date handling
+- [x] `docs/guides/node.md` - Express middleware, scheduling patterns
+- [x] `docs/guides/angular.md` - pipes, services
 
 ---
 
-## Phase 2: Documentation Completeness
+## Phase 2: Documentation Completeness ✅
 
 ### 2A: Edge Case Documentation
-- [ ] Create `docs/edge-cases.md` covering:
+- [x] Create `docs/edge-cases.md` covering:
   - Date parsing ambiguity (01/02/2025 format detection)
   - DST transitions (missing/duplicate hours)
   - Leap year handling (Feb 29 + 1 year)
@@ -35,21 +35,21 @@ Phased plan to improve developer experience and documentation. No backwards comp
   - Floating point precision in durations
 
 ### 2B: Migration Guides
-- [ ] `docs/migrate-from-date-fns.md` - function mapping table
-- [ ] `docs/migrate-from-dayjs.md` - chain API equivalents
-- [ ] `docs/migrate-from-moment.md` - deprecated patterns → modern
+- [x] `docs/migrate-from-date-fns.md` - function mapping table
+- [x] `docs/migrate-from-dayjs.md` - chain API equivalents
+- [x] `docs/migrate-from-moment.md` - deprecated patterns → modern
 
 ---
 
-## Phase 3: Chain API
+## Phase 3: Chain API ✅
 
-- [ ] Create `src/chain.ts` with fluent wrapper class
-- [ ] Pattern: `chain(date).add(1, 'day').startOf('month').format('YYYY-MM-DD')`
-- [ ] Methods delegate to existing pure functions (no duplication)
-- [ ] Full TypeScript support with method chaining types
-- [ ] Export as `ts-time-utils/chain` subpath
-- [ ] Add `docs/guides/chain-api.md`
-- [ ] Add tests in `test/chain.test.ts`
+- [x] Create `src/chain.ts` with fluent wrapper class
+- [x] Pattern: `chain(date).add(1, 'day').startOf('month').format('YYYY-MM-DD')`
+- [x] Methods delegate to existing pure functions (no duplication)
+- [x] Full TypeScript support with method chaining types
+- [x] Export as `ts-time-utils/chain` subpath
+- [x] Add `docs/guides/chain-api.md`
+- [x] Add tests in `test/chain.test.ts`
 
 ---
 

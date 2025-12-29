@@ -485,3 +485,6 @@ export {
 
 // Export types
 export type { CountryCode, Holiday } from './holidays.js';
+
+// Chain API (fluent interface)
+export { chain, ChainedDate, formatMs } from './chain.js';
