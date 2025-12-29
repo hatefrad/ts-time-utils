@@ -492,3 +492,9 @@ export function chain(date?: DateInput): ChainedDate {
 export function formatMs(ms: number, options?: FormatOptions): string {
   return formatDuration(ms, options);
 }
+
+// Initialize plugin system if it's available
+// This allows plugins to extend ChainedDate
+if (typeof globalThis !== 'undefined') {
+  (globalThis as any).__chainedDateClass = ChainedDate;
+}

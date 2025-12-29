@@ -488,3 +488,7 @@ export type { CountryCode, Holiday } from './holidays.js';
 
 // Chain API (fluent interface)
 export { chain, ChainedDate, formatMs } from './chain.js';
+
+// Plugin system for extending ChainedDate
+export { extend, uninstall, getRegisteredPlugins, getPluginMethods, isPluginRegistered } from './plugins.js';
+export type { PluginFunction, Plugin } from './plugins.js';
