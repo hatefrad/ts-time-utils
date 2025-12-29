@@ -1,1487 +1,474 @@
 # ts-time-utils
 
-A lightweight TypeScript utility library for time formatting, calculations, and validation with full tree-shaking support.
+A comprehensive TypeScript utility library for time, dates, durations, and calendar operations. Zero dependencies, full tree-shaking support, 320+ functions across 26 categories.
 
-## 🚀 Features
+[![npm version](https://img.shields.io/npm/v/ts-time-utils.svg)](https://www.npmjs.com/package/ts-time-utils)
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
 
-- **📦 Lightweight** - Import only what you need with tree-shaking support
-- **⚡ Fast** - Zero dependencies, pure JavaScript functions
-- **🔧 TypeScript** - Full type safety and IntelliSense support
-- **🌳 Tree-shakable** - Import individual functions to minimize bundle size
-- **📚 Comprehensive** - 26 utility categories with 320+ functions
+**[Live Playground & Docs](https://ts-time-utils.h8frad.work)** | [GitHub](https://github.com/hatefrad/ts-time-utils)
 
-### 🔄 Recurrence utilities **(NEW!)**
+## Features
 
-- RRULE-inspired recurring event patterns
-- Daily, weekly, monthly, and yearly recurrences
-- Complex recurrence rules with byWeekday, byMonthDay, byMonth
-- Get next occurrence, all occurrences, or occurrences within range
-- Human-readable recurrence descriptions
-- Full support for count and until limits
+- **Lightweight** — Import only what you need with tree-shaking support
+- **Zero dependencies** — Pure TypeScript, no external packages
+- **Type-safe** — Full TypeScript support with IntelliSense
+- **Comprehensive** — 320+ functions across 26 utility categories
+- **Fluent API** — Chain operations with the `chain()` API
+- **Extensible** — Plugin system for custom functionality
 
-### ⏲️ Countdown & Timer utilities **(NEW!)**
-
-- Real-time countdown timers with callbacks
-- Get remaining time broken down by units
-- Format countdowns as human-readable strings
-- Check if dates are expired
-- Calculate progress percentage between dates
-- Deadline tracking with helper methods
-
-### 📊 Date Range utilities **(NEW!)**
-
-- Advanced range operations (overlap, intersection, union)
-- Merge overlapping ranges
-- Find gaps between ranges
-- Split ranges into chunks
-- Expand and shrink ranges
-- Subtract ranges from each other
-- Check containment and sort ranges
-
-### 💬 Natural Language Parsing **(NEW!)**
-
-- Parse human-friendly date strings ("tomorrow", "next Friday", "in 2 weeks")
-- Extract dates from text automatically
-- Context-aware date suggestions ("end of month", "EOY")
-- Support for relative phrases and absolute dates
-- Confidence scoring for extracted dates
-
-### ⏱️ Duration utilities
-
-- Immutable Duration class with arithmetic operations
-- Create durations from various units and string formats
-- Add, subtract, multiply, divide durations
-- Compare durations and check relationships
-- Format to human-readable strings
-- Utility functions for arrays of durations
-
-### 💾 Serialization utilities
-
-- Safe JSON date serialization and deserialization
-- Multiple format support (ISO, epoch, object, custom)
-- Automatic date reviver and replacer functions
-- Timezone-aware serialization options
-- Cross-platform date interchange utilities
-- Validation for ISO strings and epoch timestamps
-
-### 🎨 Format utilities
-
-- Format milliseconds to human-readable durations
-- Get human-friendly "time ago" strings
-- Parse duration strings back to milliseconds
-- Format time in 12h/24h/ISO formats
-- Custom date formatting with pattern strings (YYYY-MM-DD, etc.)
-- Format date ranges and ordinals
-- Calendar-friendly date formatting ("Today", "Tomorrow", "Monday")
-
-### 🧮 Calculation utilities
-
-- Calculate difference between dates in any unit
-- Add/subtract time from dates
-- Get start/end of time periods
-- Business days calculations
-- Check if date is between two dates
-
-### ✅ Validation utilities
-
-- Validate dates and time strings
-- Check for leap years, weekends, past/future dates
-- Compare dates (same day, same week, same month, same year)
-- Check relative periods (isThisWeek, isThisMonth, isThisYear)
-- Business day validation with holiday support
-- Check if date is within last/next N days
-
-### 🎂 Age utilities
-
-- Calculate precise age with years, months, and days
-- Get life stage classifications (infant, child, adult, etc.)
-- Birthday calculations and next birthday finder
-- Check if today is someone's birthday
-
-### 📅 Calendar utilities
-
-- ISO week numbers and week-based calculations
-- Quarter operations and fiscal year support
-- Holiday calculations (Easter, US federal holidays)
-- Days in month/year calculations
-- Get nth occurrence of weekday in month
-- US holiday functions (Thanksgiving, Memorial Day, Labor Day, etc.)
-- Week start/end calculations
-- Calendar grid generation
-
-### 🔍 Parse utilities
-
-- Advanced date parsing from multiple formats
-- Relative date parsing ("tomorrow", "next week")
-- Custom format parsing with flexible patterns
-- Smart date interpretation
-- ISO 8601 duration parsing (P1Y2M3DT4H5M6S)
-- Time string parsing (14:30, 2:30 PM)
-- Auto-detect date format
-- Parse range endpoints ("end of month", "start of year")
-
-### ⚡ Performance utilities
-
-- Async utilities (sleep, timeout, retry)
-- Performance measurement and benchmarking
-- Stopwatch for timing operations
-- Function utilities (debounce, throttle, memoize)
-
-### 📏 Interval utilities
-
-- Create and validate intervals
-- Overlap, intersection, merge, subtraction
-- Split by day and total coverage
-- Normalize and compute durations
-
-### 🌐 Timezone utilities
-
-- Validate IANA timezones
-- Get offsets and compare zones
-- Format in specific timezone
-- Convert absolute moment to zone components
-- Reinterpret wall-clock times
-- Daylight Saving Time detection
-- Find next DST transition
-- Find common working hours across timezones
-- Convert dates between timezones
-
-### 🕘 Working hours utilities
-
-- Define working day patterns and breaks
-- Check working day/time
-- Compute working time between dates
-- Add/subtract working hours and days
-- Find next/previous working day
-- Get working days in month
-- Count working days between dates
-- Break time detection
-- Work day start/end times
-
-### 🎯 Range preset utilities
-
-- Today / yesterday / tomorrow
-- Last/next N days windows
-- This/last/next week, month, quarter, year
-- Rolling windows and quarter helpers
-
-### 🌍 Locale utilities
-
-- Multi-language relative time formatting
-- Locale-specific date and time formatting
-- Support for 40+ locales with built-in configurations
-- Auto-detection of system/browser locale
-- Custom locale registration
-- Internationalization (i18n) support
-- **Locale conversions** - Convert between different locales and detect locale from text
-
-### ⏰ Cron utilities **(NEW!)**
-
-- Parse and validate cron expressions (5-field format)
-- Check if a date matches a cron expression
-- Get next/previous occurrence dates
-- Get multiple future occurrences
-- Human-readable cron descriptions
-- Common cron presets (every minute, hourly, daily, weekly, etc.)
-- Support for wildcards, ranges, steps, and lists
-
-### 📅 Fiscal Year utilities **(NEW!)**
-
-- Configurable fiscal year start month (calendar, UK/India April, Australia July, US Federal October)
-- Get fiscal year, quarter, month, and week for any date
-- Calculate fiscal year/quarter start and end dates
-- Track fiscal year progress and days elapsed/remaining
-- Format fiscal years and quarters (FY2024, Q1 FY2024, FY2023/24)
-- Common fiscal presets: CALENDAR, UK_INDIA, AUSTRALIA, US_FEDERAL
-
-### 🔄 Date Comparison & Sorting **(NEW!)**
-
-- Sort date arrays ascending or descending
-- Find min/max/median/average dates in arrays
-- Find closest/farthest dates from target
-- Remove duplicate dates
-- Group dates by year/month/day/weekday
-- Snap dates to grid and round to nearest unit
-- Validate chronological order
-- Get date span and partition into groups
-- Select nth dates from sorted arrays
-
-### ⏭️ Date Iteration & Counting **(NEW!)**
-
-- Iterate through date sequences: days, weekdays, weekends, weeks, months, quarters, years
-- Count dates in ranges: count all days, weekdays, weekend days, weeks, months
-- Lazy iteration with generators for memory efficiency
-- Filter dates by custom conditions
-- Iterate specific day patterns (e.g., all Mondays)
-- Get month-end dates in range
-- Get nth day of each month in range
-
-### 🌍 International Holidays **(NEW!)**
-
-- Calculate public holidays for 9 countries: UK, Netherlands, Germany, Canada, Australia, Italy, Spain, China, India
-- Fixed holidays (New Year, Christmas, National Days)
-- Easter-based holidays (Good Friday, Easter Monday, Whit Monday)
-- Movable holidays (Victoria Day, Thanksgiving, Spring Bank Holiday)
-- Unified API: check if date is holiday, get holiday name, find next holiday
-- Weekend adjustment for substitute holidays
-- Get upcoming holidays within timeframe
-- Support for both federal and regional observances
-- Find closest date to a target (past, future, or any)
-- Clamp dates to ranges
-- Remove duplicate dates with precision control
-- Group dates by year, month, day, or day of week
-- Round and snap dates to intervals (e.g., nearest 15 minutes)
-- Check if dates are in chronological order
-- Partition dates by predicate
-
-### 🔁 Date Iteration utilities **(NEW!)**
-
-- Generate arrays of dates: `eachDay()`, `eachWeekday()`, `eachWeekend()`
-- Iterate by period: `eachWeek()`, `eachMonth()`, `eachQuarter()`, `eachYear()`
-- Time iteration: `eachHour()`, `eachMinute()`, `eachInterval()`
-- Get specific days: `eachDayOfWeek()`, `eachNthDayOfMonth()`, `eachMonthEnd()`
-- Count functions: `countDays()`, `countWeekdays()`, `countWeekendDays()`
-- Lazy iterators for memory efficiency: `iterateDays()`, `iterateWeekdays()`, `iterateMonths()`
-- Custom filtering with `filterDays()`
-
-### 🧱 Constants
-
-- Milliseconds & seconds per unit
-- Time unit and formatting option types
-
-## 📦 Installation
+## Installation
 
 ```bash
 npm install ts-time-utils
 ```
 
-## 🔧 Usage
-
-### Import everything (not recommended for production)
+## Quick Start
 
 ```ts
-import { formatDuration, timeAgo, isValidDate } from "ts-time-utils";
+import { formatDuration, timeAgo, Duration } from 'ts-time-utils';
+
+// Format milliseconds to readable duration
+formatDuration(3661000); // "1 hour, 1 minute, 1 second"
+
+// Get "time ago" strings
+timeAgo(new Date(Date.now() - 3600000)); // "1 hour ago"
+
+// Duration arithmetic
+const meeting = Duration.fromMinutes(45);
+const buffer = Duration.fromMinutes(15);
+meeting.add(buffer).toString(); // "1h"
 ```
 
-### Import by category (better for tree-shaking)
+### Tree-shaking (recommended)
 
 ```ts
-import { formatDuration, timeAgo, formatDate } from "ts-time-utils/format";
-import { differenceInUnits, addTime } from "ts-time-utils/calculate";
-import { isValidDate, isLeapYear, isSameWeek } from "ts-time-utils/validate";
-import { calculateAge, getNextBirthday } from "ts-time-utils/age";
-import {
-  getWeekNumber,
-  getQuarter,
-  getUSHolidays,
-} from "ts-time-utils/calendar";
-import { parseDate, parseRelativeDate, parseTime } from "ts-time-utils/parse";
-import { sleep, benchmark, Stopwatch } from "ts-time-utils/performance";
-import { createInterval, mergeIntervals } from "ts-time-utils/interval";
-import { formatInTimeZone, isDST } from "ts-time-utils/timezone";
-import { isWorkingTime, addWorkingDays } from "ts-time-utils/workingHours";
-import { today, lastNDays } from "ts-time-utils/rangePresets";
-import { Duration, createDuration } from "ts-time-utils/duration";
-import { serializeDate, parseJSONWithDates } from "ts-time-utils/serialize";
-import {
-  formatRelativeTime,
-  formatDateLocale,
-  detectLocale,
-} from "ts-time-utils/locale";
-import { createRecurrence, getNextOccurrence } from "ts-time-utils/recurrence";
-import { createCountdown, getRemainingTime } from "ts-time-utils/countdown";
-import { mergeDateRanges, findGaps } from "ts-time-utils/dateRange";
-import {
-  parseNaturalDate,
-  extractDatesFromText,
-} from "ts-time-utils/naturalLanguage";
-// NEW: Cron utilities
-import {
-  matchesCron,
-  getNextCronDate,
-  isValidCron,
-  CRON_PRESETS,
-} from "ts-time-utils/cron";
-// NEW: Fiscal year utilities
-import {
-  getFiscalYear,
-  getFiscalQuarter,
-  getFiscalPeriodInfo,
-  FISCAL_PRESETS,
-} from "ts-time-utils/fiscal";
-// NEW: Date comparison & sorting
-import {
-  sortDates,
-  closestDate,
-  groupDatesByMonth,
-  snapDate,
-} from "ts-time-utils/compare";
-// NEW: Date iteration
-import {
-  eachDay,
-  eachWeekday,
-  countWeekdays,
-  iterateDays,
-} from "ts-time-utils/iterate";
-// NEW: International holidays
-import {
-  getHolidays,
-  isHoliday,
-  getNextHoliday,
-  getSupportedCountries,
-} from "ts-time-utils/holidays";
+import { formatDuration } from 'ts-time-utils/format';
+import { differenceInUnits } from 'ts-time-utils/calculate';
+import { isValidDate } from 'ts-time-utils/validate';
 ```
 
-## 📖 Examples
+---
 
-### Recurrence Utilities (NEW!)
+## Utility Categories
+
+### Format
+
+Format durations, time ago strings, and custom date formats.
 
 ```ts
-import { createRecurrence, recurrenceToString } from "ts-time-utils/recurrence";
+import { formatDuration, timeAgo, parseDuration } from 'ts-time-utils/format';
 
-// Daily recurrence
-const daily = createRecurrence({
-  frequency: "daily",
-  interval: 2,
-  startDate: new Date("2024-01-01"),
-  count: 10,
-});
-
-const next = daily.getNextOccurrence(new Date());
-const allOccurrences = daily.getAllOccurrences();
-
-// Weekly on specific days
-const weekly = createRecurrence({
-  frequency: "weekly",
-  interval: 1,
-  startDate: new Date("2024-01-01"),
-  byWeekday: [1, 3, 5], // Monday, Wednesday, Friday
-});
-
-const description = recurrenceToString(weekly.rule);
-// "Every week on Monday, Wednesday, Friday"
-
-// Monthly on the 15th
-const monthly = createRecurrence({
-  frequency: "monthly",
-  interval: 1,
-  startDate: new Date("2024-01-01"),
-  byMonthDay: [15],
-  until: new Date("2024-12-31"),
-});
-
-const occurrencesInRange = monthly.getOccurrencesBetween(
-  new Date("2024-03-01"),
-  new Date("2024-06-30")
-);
+formatDuration(65000);                    // "1 minute, 5 seconds"
+formatDuration(65000, { short: true });   // "1m 5s"
+timeAgo(new Date(Date.now() - 60000));    // "1 minute ago"
+parseDuration('1h 30m');                  // 5400000 (ms)
 ```
 
-### Countdown & Timer Utilities (NEW!)
+### Calculate
+
+Date arithmetic, differences, and business day calculations.
 
 ```ts
-import {
-  createCountdown,
-  getRemainingTime,
-  formatCountdown,
-} from "ts-time-utils/countdown";
+import { differenceInUnits, addTime, startOf, endOf } from 'ts-time-utils/calculate';
 
-// Create a countdown timer
-const countdown = createCountdown(new Date("2024-12-31T23:59:59"), {
-  onTick: (remaining) => {
-    console.log(`${remaining.days}d ${remaining.hours}h ${remaining.minutes}m`);
-  },
-  onComplete: () => {
-    console.log("Happy New Year!");
-  },
-  interval: 1000, // Update every second
-});
-
-countdown.start();
-// Later...
-countdown.stop();
-
-// Get remaining time
-const remaining = getRemainingTime(new Date("2024-12-31"));
-console.log(`${remaining.days} days, ${remaining.hours} hours remaining`);
-
-// Format countdown
-const formatted = formatCountdown(new Date("2024-12-31"), {
-  units: ["days", "hours", "minutes"],
-  short: true,
-});
-// "45d 12h 30m"
-
-// Progress tracking
-import { getProgressPercentage } from "ts-time-utils/countdown";
-
-const progress = getProgressPercentage(
-  new Date("2024-01-01"),
-  new Date("2024-12-31"),
-  new Date("2024-07-01")
-);
-console.log(`${progress}% complete`); // ~50%
+differenceInUnits(date1, date2, 'days');  // 10
+addTime(new Date(), 5, 'hours');          // 5 hours from now
+startOf(new Date(), 'day');               // 00:00:00 today
+endOf(new Date(), 'month');               // Last moment of month
 ```
 
-### Date Range Utilities (NEW!)
+### Validate
+
+Date validation, checks, and comparisons.
 
 ```ts
-import {
-  mergeDateRanges,
-  findGaps,
-  dateRangeOverlap,
-  splitRange,
-} from "ts-time-utils/dateRange";
+import { isValidDate, isLeapYear, isWeekend, isSameDay } from 'ts-time-utils/validate';
 
-// Merge overlapping ranges
+isValidDate(new Date('2025-13-01'));      // false
+isLeapYear(2024);                         // true
+isWeekend(new Date('2025-09-13'));        // true (Saturday)
+isSameDay(date1, date2);                  // boolean
+```
+
+### Duration
+
+Immutable Duration class with arithmetic operations.
+
+```ts
+import { Duration } from 'ts-time-utils/duration';
+
+const d1 = Duration.fromHours(2.5);
+const d2 = Duration.fromString('1h 30m 45s');
+const d3 = Duration.between(startDate, endDate);
+
+d1.add(d2).toString();        // "4h 0m 45s"
+d1.greaterThan(d2);           // true
+d1.multiply(2).hours;         // 5
+```
+
+### Chain API
+
+Fluent chainable API for date operations.
+
+```ts
+import { chain } from 'ts-time-utils/chain';
+
+chain(new Date())
+  .startOf('day')
+  .add(9, 'hours')
+  .add(30, 'minutes')
+  .toDate();  // Today at 9:30am
+
+chain(new Date())
+  .add(1, 'week')
+  .startOf('week')
+  .format('YYYY-MM-DD');  // Next week Monday
+```
+
+### Timezone
+
+Timezone conversions, DST handling, and zone comparisons.
+
+```ts
+import { formatInTimeZone, isDST, convertTimezone } from 'ts-time-utils/timezone';
+
+formatInTimeZone(date, 'America/New_York');
+isDST(new Date('2025-07-14'), 'America/New_York');  // true
+convertTimezone(date, 'UTC', 'Asia/Tokyo');
+```
+
+### Calendar
+
+ISO weeks, quarters, holidays, and calendar grids.
+
+```ts
+import { getWeekNumber, getQuarter, getEaster, getUSHolidays } from 'ts-time-utils/calendar';
+
+getWeekNumber(new Date('2025-09-14'));    // 37
+getQuarter(new Date('2025-07-15'));       // 3
+getEaster(2025);                          // Easter Sunday 2025
+getUSHolidays(2025);                      // Array of US federal holidays
+```
+
+### Date Range
+
+Date range operations: overlap, gaps, merge, split.
+
+```ts
+import { mergeDateRanges, findGaps, dateRangeOverlap } from 'ts-time-utils/dateRange';
+
 const ranges = [
-  { start: new Date("2024-01-01"), end: new Date("2024-01-10") },
-  { start: new Date("2024-01-05"), end: new Date("2024-01-15") },
-  { start: new Date("2024-01-20"), end: new Date("2024-01-25") },
+  { start: new Date('2024-01-01'), end: new Date('2024-01-10') },
+  { start: new Date('2024-01-05'), end: new Date('2024-01-15') },
 ];
 
-const merged = mergeDateRanges(ranges);
-// [
-//   { start: Date('2024-01-01'), end: Date('2024-01-15') },
-//   { start: Date('2024-01-20'), end: Date('2024-01-25') }
-// ]
-
-// Find gaps between busy times
-const busyTimes = [
-  { start: new Date("2024-01-01T09:00"), end: new Date("2024-01-01T11:00") },
-  { start: new Date("2024-01-01T14:00"), end: new Date("2024-01-01T16:00") },
-];
-
-const gaps = findGaps(busyTimes, {
-  start: new Date("2024-01-01T08:00"),
-  end: new Date("2024-01-01T18:00"),
-});
-// Returns available time slots
-
-// Split into chunks
-const range = {
-  start: new Date("2024-01-01"),
-  end: new Date("2024-01-31"),
-};
-
-const weeks = splitRange(range, 1, "week");
-// Splits January into weekly chunks
-
-// Check overlap
-const overlap = dateRangeOverlap(
-  { start: new Date("2024-01-01"), end: new Date("2024-01-15") },
-  { start: new Date("2024-01-10"), end: new Date("2024-01-20") }
-); // true
+mergeDateRanges(ranges);  // Merged into single range
+findGaps(busyTimes, workday);  // Available time slots
+dateRangeOverlap(range1, range2);  // true/false
 ```
 
-### Natural Language Parsing (NEW!)
+### Recurrence
+
+RRULE-inspired recurring event patterns.
 
 ```ts
-import {
-  parseNaturalDate,
-  extractDatesFromText,
-  suggestDateFromContext,
-} from "ts-time-utils/naturalLanguage";
+import { createRecurrence, recurrenceToString } from 'ts-time-utils/recurrence';
 
-// Parse natural language dates
-parseNaturalDate("tomorrow at 3pm");
-// Returns Date for tomorrow at 15:00
-
-parseNaturalDate("next Friday");
-// Returns Date for next Friday
-
-parseNaturalDate("in 2 weeks");
-// Returns Date 2 weeks from now
-
-parseNaturalDate("3 days ago");
-// Returns Date 3 days ago
-
-// Extract dates from text
-const text = "Meeting tomorrow at 3pm and lunch next Friday at noon";
-const dates = extractDatesFromText(text);
-// [
-//   { date: Date(...), text: 'tomorrow at 3pm', index: 8, confidence: 0.9 },
-//   { date: Date(...), text: 'next Friday at noon', index: 35, confidence: 0.85 }
-// ]
-
-// Context-aware suggestions
-const suggestions = suggestDateFromContext("deadline is end of month");
-// [{ date: Date(last day of current month), text: 'end of month', confidence: 0.85 }]
-
-// Supported phrases:
-// - "tomorrow", "yesterday", "today"
-// - "next Monday", "last Friday"
-// - "in 2 hours", "5 days ago"
-// - "end of month/week/year" (or EOM/EOW/EOY)
-// - "beginning of month/year"
-```
-
-### Duration Utilities
-
-```ts
-import {
-  Duration,
-  createDuration,
-  formatDurationString,
-} from "ts-time-utils/duration";
-
-// Create durations
-const duration1 = Duration.fromHours(2.5); // 2.5 hours
-const duration2 = new Duration({ hours: 1, minutes: 30 }); // 1.5 hours
-const duration3 = Duration.fromString("1h 30m 45s"); // Parse from string
-const duration4 = Duration.between(startDate, endDate); // From date range
-
-// Arithmetic operations
-const sum = duration1.add(duration2); // 4 hours
-const diff = duration1.subtract(duration2); // 1 hour
-const doubled = duration1.multiply(2); // 5 hours
-const half = duration1.divide(2); // 1.25 hours
-
-// Comparisons
-duration1.equals(duration2); // false
-duration1.greaterThan(duration2); // true
-duration1.compareTo(duration2); // 1
-
-// Conversions and formatting
-duration1.hours; // 2.5
-duration1.minutes; // 150
-duration1.toString(); // "2h 30m"
-formatDurationString(duration1, { long: true }); // "2 hours, 30 minutes"
-
-// Utility functions with arrays
-const durations = [duration1, duration2, duration3];
-const max = maxDuration(...durations);
-const total = sumDurations(...durations);
-const average = averageDuration(...durations);
-```
-
-### Serialization Utilities
-
-```ts
-import {
-  serializeDate,
-  deserializeDate,
-  parseJSONWithDates,
-  stringifyWithDates,
-  toEpochTimestamp,
-  fromEpochTimestamp,
-  toDateObject,
-  fromDateObject,
-} from "ts-time-utils/serialize";
-
-// Serialize dates in different formats
-const date = new Date("2025-09-14T12:30:45.123Z");
-
-const isoString = serializeDate(date, { format: "iso" }); // "2025-09-14T12:30:45.123Z"
-const epochMs = serializeDate(date, { format: "epoch" }); // 1757853045123
-const dateObj = serializeDate(date, { format: "object" }); // {year: 2025, month: 9, ...}
-const custom = serializeDate(date, {
-  format: "custom",
-  customFormat: "YYYY-MM-DD HH:mm:ss",
-}); // "2025-09-14 12:30:45"
-
-// Deserialize from various formats
-const fromISO = deserializeDate("2025-09-14T12:30:45.123Z");
-const fromEpoch = deserializeDate(1757853045123);
-const fromObj = deserializeDate({
-  year: 2025,
-  month: 9,
-  day: 14,
-  hour: 12,
-  minute: 30,
-  second: 45,
-  millisecond: 123,
+const weekly = createRecurrence({
+  frequency: 'weekly',
+  interval: 1,
+  startDate: new Date('2025-01-01'),
+  byWeekday: [1, 3, 5],  // Mon, Wed, Fri
 });
 
-// Safe JSON handling with automatic date conversion
-const data = {
-  name: "User",
-  createdAt: new Date(),
-  updatedAt: new Date(),
-  metadata: "other data",
-};
-
-// Stringify with automatic date serialization
-const jsonString = stringifyWithDates(data, ["createdAt", "updatedAt"], {
-  format: "epoch",
-});
-// {"name":"User","createdAt":1757853045123,"updatedAt":1757853045123,"metadata":"other data"}
-
-// Parse with automatic date restoration
-const parsed = parseJSONWithDates(jsonString, ["createdAt", "updatedAt"]);
-// parsed.createdAt and parsed.updatedAt are Date objects
-
-// Epoch timestamp utilities
-const timestamp = toEpochTimestamp(date, "seconds"); // 1757853045
-const restoredDate = fromEpochTimestamp(timestamp, "seconds");
-
-// Date object utilities (UTC-based)
-const dateObject = toDateObject(date, true); // includes timezone
-const reconstructed = fromDateObject(dateObject);
+weekly.getNextOccurrence(new Date());
+weekly.getAllOccurrences();
+recurrenceToString(weekly.rule);  // "Every week on Monday, Wednesday, Friday"
 ```
 
-### Format Utilities
+### Cron
+
+Parse and match cron expressions.
 
 ```ts
-import { formatDuration, timeAgo, parseDuration } from "ts-time-utils/format";
+import { matchesCron, getNextCronDate, describeCron, CRON_PRESETS } from 'ts-time-utils/cron';
 
-// Format durations
-formatDuration(65000); // "1 minute, 5 seconds"
-formatDuration(65000, { short: true }); // "1m 5s"
-formatDuration(90061000, { maxUnits: 2 }); // "1 day, 1 hour"
-
-// Time ago strings
-timeAgo(new Date(Date.now() - 60000)); // "1 minute ago"
-timeAgo(new Date(Date.now() + 60000)); // "in 1 minute"
-
-// Parse duration strings
-parseDuration("1h 30m"); // 5400000 (milliseconds)
-parseDuration("2 days 3 hours"); // 183600000
+matchesCron('0 9 * * 1-5', date);         // true if weekday 9am
+getNextCronDate('0 9 * * *');             // Next 9am
+describeCron('0 9 * * 1-5');              // "At 09:00 on Monday through Friday"
+CRON_PRESETS.DAILY;                       // "0 0 * * *"
 ```
 
-### Calculate Utilities
+### Fiscal Year
+
+Fiscal year utilities with configurable start month.
 
 ```ts
-import { differenceInUnits, addTime, startOf } from "ts-time-utils/calculate";
+import { getFiscalYear, getFiscalQuarter, FISCAL_PRESETS } from 'ts-time-utils/fiscal';
 
-// Date calculations
-differenceInUnits(new Date("2025-09-01"), new Date("2025-09-11"), "days"); // 10
-
-addTime(new Date(), 5, "hours"); // 5 hours from now
-startOf(new Date(), "day"); // Start of today (00:00:00)
+getFiscalYear(date, FISCAL_PRESETS.UK_INDIA);     // April start
+getFiscalYear(date, FISCAL_PRESETS.AUSTRALIA);   // July start
+getFiscalYear(date, FISCAL_PRESETS.US_FEDERAL);  // October start
+getFiscalQuarter(date, { startMonth: 4 });       // Q2 for UK fiscal
 ```
 
-### Validation Utilities
+### Compare & Sort
+
+Sort, group, and analyze date arrays.
 
 ```ts
-import { isValidDate, isLeapYear, isWeekend } from "ts-time-utils/validate";
+import { sortDates, closestDate, groupDatesByMonth, snapDate } from 'ts-time-utils/compare';
 
-// Validations
-isValidDate(new Date("2025-13-01")); // false
-isLeapYear(2024); // true
-isWeekend(new Date("2025-09-13")); // true (Saturday)
+sortDates(dates, 'desc');
+closestDate(target, candidates);
+groupDatesByMonth(dates);  // Map by YYYY-MM
+snapDate(date, 15, 'minutes');  // Snap to 15-min grid
 ```
 
-### Age Utilities
+### Iterate
+
+Iterate through date sequences and count dates.
 
 ```ts
-import {
-  calculateAge,
-  getLifeStage,
-  getNextBirthday,
-  isBirthday,
-} from "ts-time-utils/age";
+import { eachDay, eachWeekday, countWeekdays, filterDays } from 'ts-time-utils/iterate';
 
-// Age calculations
-calculateAge(new Date("1990-05-15")); // { years: 34, months: 4, days: 2 }
-getLifeStage(25); // "adult"
-getNextBirthday(new Date("1990-05-15")); // Next May 15th
-isBirthday(new Date("1990-05-15"), new Date("2025-05-15")); // true
+eachDay(start, end);       // Array of each day
+eachWeekday(start, end);   // Weekdays only (Mon-Fri)
+countWeekdays(start, end); // Number of weekdays
+filterDays(start, end, d => d.getDate() === 15);  // 15th of each month
 ```
 
-### Calendar Utilities
+### Natural Language
+
+Parse human-friendly date strings.
 
 ```ts
-import {
-  getWeekNumber,
-  getQuarter,
-  getEaster,
-  getDaysInMonth,
-} from "ts-time-utils/calendar";
+import { parseNaturalDate, extractDatesFromText } from 'ts-time-utils/naturalLanguage';
 
-// Calendar operations
-getWeekNumber(new Date("2025-01-15")); // 3
-getQuarter(new Date("2025-07-15")); // 3
-getEaster(2025); // Date object for Easter Sunday 2025
-getDaysInMonth(2, 2024); // 29 (leap year)
+parseNaturalDate('tomorrow');
+parseNaturalDate('next Friday');
+parseNaturalDate('in 2 weeks');
+parseNaturalDate('end of month');
+
+extractDatesFromText('Meeting tomorrow at 3pm');
+// [{ date: Date, text: 'tomorrow at 3pm', confidence: 0.9 }]
 ```
 
-### Parse Utilities
+### International Holidays
+
+Public holidays for 10 countries.
 
 ```ts
-import {
-  parseDate,
-  parseRelativeDate,
-  parseCustomFormat,
-} from "ts-time-utils/parse";
+import { getHolidays, isHoliday, getNextHoliday } from 'ts-time-utils/holidays';
 
-// Advanced parsing
-parseDate("2025-02-30"); // null (invalid date)
-parseDate("Dec 25, 2025"); // Date object
-parseRelativeDate("tomorrow"); // Date for tomorrow
-parseCustomFormat("25/12/2025", "DD/MM/YYYY"); // Date object
+getHolidays(2025, 'UK');      // UK bank holidays
+getHolidays(2025, 'DE');      // German holidays
+isHoliday(date, 'CA');        // Is Canadian holiday?
+getNextHoliday(date, 'AU');   // Next Australian holiday
+
+// Supported: UK, NL, DE, CA, AU, IT, ES, CN, IN, US
 ```
 
-### Performance Utilities
+### Locale
+
+Multi-language formatting with 40+ locales.
 
 ```ts
-import {
-  sleep,
-  timeout,
-  benchmark,
-  Stopwatch,
-  debounce,
-} from "ts-time-utils/performance";
+import { formatRelativeTime, formatDateLocale, detectLocale } from 'ts-time-utils/locale';
 
-// Async utilities
-await sleep(1000); // Wait 1 second
-await timeout(promise, 5000); // Timeout after 5 seconds
+formatRelativeTime(pastDate, { locale: 'es' });  // "hace 2 horas"
+formatRelativeTime(pastDate, { locale: 'de' });  // "vor 2 Stunden"
+formatDateLocale(date, 'fr', 'long');            // "15 janvier 2024"
+detectLocale();                                   // Auto-detect system locale
+```
 
-// Performance measurement
-const result = await benchmark(() => heavyOperation(), 10); // Run 10 times
+### Working Hours
+
+Business hours calculations with break support.
+
+```ts
+import { isWorkingTime, addWorkingDays, workingDaysBetween } from 'ts-time-utils/workingHours';
+
+isWorkingTime(date, config);
+addWorkingDays(date, 5, config);
+workingDaysBetween(start, end, config);
+```
+
+### Serialization
+
+Safe JSON date serialization and deserialization.
+
+```ts
+import { serializeDate, parseJSONWithDates, stringifyWithDates } from 'ts-time-utils/serialize';
+
+serializeDate(date, { format: 'iso' });    // "2025-09-14T12:30:45.123Z"
+serializeDate(date, { format: 'epoch' });  // 1757853045123
+
+const json = stringifyWithDates(data, ['createdAt']);
+const parsed = parseJSONWithDates(json, ['createdAt']);
+```
+
+### Performance
+
+Async utilities, benchmarking, and timing.
+
+```ts
+import { sleep, benchmark, Stopwatch, debounce } from 'ts-time-utils/performance';
+
+await sleep(1000);
+await benchmark(() => heavyOperation(), 10);
+
 const stopwatch = new Stopwatch();
 stopwatch.start();
 // ... operations
-console.log(stopwatch.getElapsed()); // Get elapsed time
+stopwatch.getElapsed();
 
-// Function utilities
-const debouncedFn = debounce(() => console.log("Called!"), 300);
+const debouncedFn = debounce(fn, 300);
 ```
 
-### Interval Utilities
+### Age
+
+Age calculations and birthday utilities.
 
 ```ts
-import {
-  createInterval,
-  intervalsOverlap,
-  mergeIntervals,
-} from "ts-time-utils/interval";
+import { calculateAge, getLifeStage, getNextBirthday } from 'ts-time-utils/age';
 
-const a = createInterval("2025-01-01", "2025-01-05");
-const b = createInterval("2025-01-04", "2025-01-10");
-intervalsOverlap(a!, b!); // true
-const merged = mergeIntervals([a!, b!]);
+calculateAge(new Date('1990-05-15'));  // { years: 34, months: 4, days: 2 }
+getLifeStage(25);                      // "adult"
+getNextBirthday(birthDate);            // Next birthday date
 ```
 
-### Timezone Utilities
+### Countdown
+
+Timer and countdown utilities.
 
 ```ts
-import { formatInTimeZone, getTimezoneOffset } from "ts-time-utils/timezone";
-formatInTimeZone(new Date(), "Europe/Paris", {
-  hour: "2-digit",
-  minute: "2-digit",
+import { createCountdown, getRemainingTime, formatCountdown } from 'ts-time-utils/countdown';
+
+const countdown = createCountdown(targetDate, {
+  onTick: (remaining) => console.log(remaining.days, 'd'),
+  onComplete: () => console.log('Done!'),
 });
-getTimezoneOffset("America/New_York"); // e.g. -300 (minutes)
+countdown.start();
+
+getRemainingTime(targetDate);  // { days, hours, minutes, seconds }
+formatCountdown(targetDate, { units: ['days', 'hours'] });  // "45d 12h"
 ```
 
-### Working Hours Utilities
+### Interval
+
+Time interval operations.
 
 ```ts
-import { isWorkingTime, addWorkingHours } from "ts-time-utils/workingHours";
+import { createInterval, intervalsOverlap, mergeIntervals } from 'ts-time-utils/interval';
 
-isWorkingTime(new Date()); // depends on config
-addWorkingHours(new Date(), 10); // adds 10 working hours, skipping off-hours
+const a = createInterval('2025-01-01', '2025-01-05');
+const b = createInterval('2025-01-04', '2025-01-10');
+intervalsOverlap(a, b);  // true
+mergeIntervals([a, b]);  // Single merged interval
 ```
 
-### Range Preset Utilities
+### Range Presets
+
+Common date range presets.
 
 ```ts
-import { lastNDays, thisWeek, quarterRange } from "ts-time-utils/rangePresets";
+import { today, lastNDays, thisWeek, thisMonth } from 'ts-time-utils/rangePresets';
 
-const last7 = lastNDays(7);
-const week = thisWeek();
-const quarter = quarterRange();
+today();        // { start, end } for today
+lastNDays(7);   // Last 7 days
+thisWeek();     // Current week
+thisMonth();    // Current month
 ```
 
-### Cron Utilities
+### Parse
+
+Date parsing from various formats.
 
 ```ts
-import {
-  parseCronExpression,
-  matchesCron,
-  getNextCronDate,
-  getNextCronDates,
-  describeCron,
-  isValidCron,
-  CRON_PRESETS,
-} from "ts-time-utils/cron";
+import { parseDate, parseTime, autoDetectFormat } from 'ts-time-utils/parse';
 
-// Parse a cron expression
-const parsed = parseCronExpression("0 9 * * 1-5"); // 9 AM weekdays
-// { minute: [0], hour: [9], dayOfMonth: [1-31], month: [1-12], dayOfWeek: [1,2,3,4,5] }
-
-// Check if a date matches a cron expression
-matchesCron("0 9 * * *", new Date("2024-01-15T09:00:00")); // true (9 AM daily)
-matchesCron("0 9 * * *", new Date("2024-01-15T10:00:00")); // false
-
-// Get next scheduled date
-getNextCronDate("0 9 * * *"); // Next 9 AM
-getNextCronDate("0 0 1 * *"); // Next 1st of month at midnight
-
-// Get multiple upcoming dates
-getNextCronDates("0 9 * * 1-5", 5); // Next 5 weekday 9 AMs
-
-// Human-readable descriptions
-describeCron("0 9 * * *"); // "At 09:00"
-describeCron("0 9 * * 1-5"); // "At 09:00 on Monday through Friday"
-describeCron("0 0 1 * *"); // "At 00:00 on day 1 of every month"
-
-// Validate cron expressions
-isValidCron("0 9 * * *"); // true
-isValidCron("invalid"); // false
-
-// Common presets
-CRON_PRESETS.EVERY_MINUTE; // "* * * * *"
-CRON_PRESETS.HOURLY; // "0 * * * *"
-CRON_PRESETS.DAILY; // "0 0 * * *"
-CRON_PRESETS.WEEKLY; // "0 0 * * 0"
-CRON_PRESETS.MONTHLY; // "0 0 1 * *"
-CRON_PRESETS.WEEKDAYS; // "0 0 * * 1-5"
+parseDate('Dec 25, 2025');
+parseDate('25/12/2025', 'DD/MM/YYYY');
+parseTime('2:30 PM');  // { hour: 14, minute: 30 }
+autoDetectFormat('2025-09-14');  // 'YYYY-MM-DD'
 ```
 
-### Fiscal Year Utilities (NEW!)
+---
+
+## Plugin System
+
+Extend ChainedDate with custom functionality.
 
 ```ts
-import {
-  getFiscalYear,
-  getFiscalQuarter,
-  getFiscalYearStart,
-  getFiscalYearEnd,
-  getFiscalPeriodInfo,
-  formatFiscalYear,
-  FISCAL_PRESETS,
-} from "ts-time-utils/fiscal";
+import { chain, registerPlugin, createPlugin } from 'ts-time-utils/chain';
 
-// Default calendar year (January start)
-getFiscalYear(new Date("2024-06-15")); // 2024
-getFiscalQuarter(new Date("2024-06-15")); // 2
-
-// UK/India fiscal year (April start)
-getFiscalYear(new Date("2024-03-15"), FISCAL_PRESETS.UK_INDIA); // 2023
-getFiscalYear(new Date("2024-04-15"), FISCAL_PRESETS.UK_INDIA); // 2024
-
-// Australian fiscal year (July start)
-getFiscalYear(new Date("2024-06-30"), FISCAL_PRESETS.AUSTRALIA); // 2023
-getFiscalYear(new Date("2024-07-01"), FISCAL_PRESETS.AUSTRALIA); // 2024
-
-// US Federal fiscal year (October start)
-getFiscalYear(new Date("2024-09-30"), FISCAL_PRESETS.US_FEDERAL); // 2023
-getFiscalYear(new Date("2024-10-01"), FISCAL_PRESETS.US_FEDERAL); // 2024
-
-// Get fiscal year boundaries
-getFiscalYearStart(2024, FISCAL_PRESETS.UK_INDIA); // April 1, 2024
-getFiscalYearEnd(2024, FISCAL_PRESETS.UK_INDIA); // March 31, 2025
-
-// Format fiscal years
-formatFiscalYear(2024); // "FY2024"
-formatFiscalYear(2024, FISCAL_PRESETS.UK_INDIA, "long"); // "FY2024/25"
-
-// Get comprehensive fiscal info
-const info = getFiscalPeriodInfo(new Date("2024-06-15"));
-// { fiscalYear: 2024, fiscalQuarter: 2, fiscalMonth: 6, progress: 45.2, ... }
-```
-
-### Date Comparison & Sorting (NEW!)
-
-```ts
-import {
-  sortDates,
-  minDate,
-  maxDate,
-  closestDate,
-  uniqueDates,
-  groupDatesByMonth,
-  snapDate,
-  roundDate,
-  medianDate,
-} from "ts-time-utils/compare";
-
-const dates = [
-  new Date("2024-03-15"),
-  new Date("2024-01-10"),
-  new Date("2024-06-20"),
-];
-
-// Sort dates
-sortDates(dates); // [Jan 10, Mar 15, Jun 20]
-sortDates(dates, "desc"); // [Jun 20, Mar 15, Jan 10]
-
-// Find extremes
-minDate(dates); // Jan 10, 2024
-maxDate(dates); // Jun 20, 2024
-medianDate(dates); // Mar 15, 2024
-
-// Find closest to target
-const target = new Date("2024-04-01");
-closestDate(target, dates); // Mar 15, 2024
-
-// Remove duplicates
-uniqueDates([date1, date1Copy, date2]); // [date1, date2]
-uniqueDates(dates, "day"); // Unique by day precision
-
-// Group dates
-groupDatesByMonth(dates);
-// Map { "2024-01" => [Jan 10], "2024-03" => [Mar 15], "2024-06" => [Jun 20] }
-
-// Snap to intervals (e.g., 15-minute blocks)
-snapDate(new Date("2024-01-15T10:37:00"), 15); // 10:30:00
-snapDate(new Date("2024-01-15T10:37:00"), 15, "ceil"); // 10:45:00
-
-// Round to nearest unit
-roundDate(new Date("2024-01-15T10:37:00"), "hour"); // 11:00:00
-```
-
-### Date Iteration (NEW!)
-
-```ts
-import {
-  eachDay,
-  eachWeekday,
-  eachWeek,
-  eachMonth,
-  countWeekdays,
-  eachDayOfWeek,
-  iterateDays,
-  filterDays,
-} from "ts-time-utils/iterate";
-
-const start = new Date("2024-01-01");
-const end = new Date("2024-01-31");
-
-// Generate arrays of dates
-eachDay(start, end); // [Jan 1, Jan 2, ..., Jan 31] (31 dates)
-eachWeekday(start, end); // All Mon-Fri dates (23 dates)
-eachWeek(start, end); // [Jan 7, Jan 14, Jan 21, Jan 28] (Sundays)
-eachMonth(start, new Date("2024-06-30")); // [Feb 1, Mar 1, Apr 1, May 1, Jun 1]
-
-// Count dates
-countWeekdays(start, end); // 23
-
-// Get specific weekdays
-eachDayOfWeek(start, end, 1); // All Mondays in January
-
-// Lazy iteration (memory efficient for large ranges)
-for (const date of iterateDays(start, end)) {
-  console.log(date);
-}
-
-// Filter days by custom predicate
-filterDays(start, end, (d) => d.getDate() === 15); // [Jan 15]
-
-// Custom intervals
-eachInterval(start, end, { days: 7 }); // Every 7 days
-eachInterval(start, end, { hours: 6 }); // Every 6 hours
-```
-
-### International Holidays (NEW!)
-
-```ts
-import {
-  getHolidays,
-  isHoliday,
-  getHolidayName,
-  getNextHoliday,
-  getUpcomingHolidays,
-  getSupportedCountries,
-  getUKHolidays,
-  getCanadaHolidays,
-} from "ts-time-utils/holidays";
-
-// Get all holidays for a country and year
-const ukHolidays2024 = getHolidays(2024, "UK");
-console.log(ukHolidays2024);
-// [
-//   { name: "New Year's Day", date: Date, countryCode: "UK", type: "bank" },
-//   { name: "Good Friday", date: Date, countryCode: "UK", type: "bank" },
-//   { name: "Easter Monday", date: Date, countryCode: "UK", type: "bank" },
-//   ...
-// ]
-
-// Check if a date is a holiday
-const christmas = new Date(2024, 11, 25);
-isHoliday(christmas, "UK"); // true
-isHoliday(new Date(2024, 5, 15), "UK"); // false
-
-// Get holiday name for a date
-getHolidayName(christmas, "UK"); // "Christmas Day"
-getHolidayName(new Date(2024, 0, 1), "CA"); // "New Year's Day"
-
-// Find next holiday from a date
-const today = new Date();
-const nextHoliday = getNextHoliday(today, "CA");
-console.log(`Next holiday: ${nextHoliday?.name} on ${nextHoliday?.date}`);
-
-// Get upcoming holidays in the next 90 days
-const upcoming = getUpcomingHolidays(today, 90, "AU");
-upcoming.forEach((h) => {
-  console.log(`${h.name} - ${h.date.toDateString()}`);
+const businessPlugin = createPlugin('business', {
+  addBusinessDays(days: number) {
+    // Implementation
+    return this;
+  },
+  isBusinessDay() {
+    const day = this.toDate().getDay();
+    return day !== 0 && day !== 6;
+  }
 });
 
-// Get supported countries
-getSupportedCountries(); // ["UK", "NL", "DE", "CA", "AU", "IT", "ES", "CN", "IN", "US"]
+registerPlugin(businessPlugin);
 
-// Country-specific functions
-const nlHolidays = getHolidays(2024, "NL"); // Netherlands holidays (includes King's Day)
-const deHolidays = getHolidays(2024, "DE"); // German holidays (includes German Unity Day)
-const itHolidays = getHolidays(2024, "IT"); // Italian holidays (includes Republic Day)
-const esHolidays = getHolidays(2024, "ES"); // Spanish holidays (includes Constitution Day)
+chain(new Date())
+  .addBusinessDays(5)
+  .isBusinessDay();  // true/false
 ```
 
-### Locale Utilities
+---
 
-```ts
-import {
-  formatRelativeTime,
-  formatDateLocale,
-  formatTimeLocale,
-  formatDateTimeLocale,
-  registerLocale,
-  getLocaleConfig,
-  detectLocale,
-  getSupportedLocales,
-} from "ts-time-utils/locale";
+## API Reference
 
-// Relative time formatting in multiple languages
-const pastDate = new Date(Date.now() - 2 * 60 * 60 * 1000); // 2 hours ago
-formatRelativeTime(pastDate, { locale: "en" }); // "2 hours ago"
-formatRelativeTime(pastDate, { locale: "es" }); // "hace 2 horas"
-formatRelativeTime(pastDate, { locale: "fr" }); // "il y a 2 heures"
-formatRelativeTime(pastDate, { locale: "de" }); // "vor 2 Stunden"
-formatRelativeTime(pastDate, { locale: "nl" }); // "2 uur geleden"
-formatRelativeTime(pastDate, { locale: "it" }); // "2 ore fa"
-formatRelativeTime(pastDate, { locale: "zh" }); // "2小时前"
-formatRelativeTime(pastDate, { locale: "ja" }); // "2時間前"
-formatRelativeTime(pastDate, { locale: "fa" }); // "2 ساعت پیش"
+For complete API documentation, see the [Playground & Docs](https://ts-time-utils.h8frad.work).
 
-// Future dates
-const futureDate = new Date(Date.now() + 3 * 24 * 60 * 60 * 1000);
-formatRelativeTime(futureDate, { locale: "en" }); // "in 3 days"
-formatRelativeTime(futureDate, { locale: "es" }); // "en 3 días"
-formatRelativeTime(futureDate, { locale: "nl" }); // "over 3 dagen"
-formatRelativeTime(futureDate, { locale: "it" }); // "tra 3 giorni"
-formatRelativeTime(futureDate, { locale: "fa" }); // "3 روز دیگر"
+### All Modules
 
-// Relative time options
-formatRelativeTime(pastDate, {
-  locale: "en",
-  maxUnit: "days", // Don't use units larger than days
-  minUnit: "minutes", // Don't use units smaller than minutes
-  precision: 1, // Show 1 decimal place: "2.0 hours ago"
-  short: true, // Use abbreviated format: "2h ago"
-  numeric: "auto", // Use words when appropriate: "yesterday"
-});
+| Module | Description |
+|--------|-------------|
+| `format` | Duration formatting, time ago, date patterns |
+| `calculate` | Date arithmetic, differences, period boundaries |
+| `validate` | Date validation, comparisons, type checks |
+| `duration` | Immutable Duration class with arithmetic |
+| `chain` | Fluent chainable API |
+| `timezone` | Timezone conversions, DST handling |
+| `calendar` | ISO weeks, quarters, holidays, grids |
+| `dateRange` | Range operations: overlap, gaps, merge |
+| `recurrence` | RRULE-inspired recurring patterns |
+| `cron` | Cron expression parsing and matching |
+| `fiscal` | Fiscal year utilities |
+| `compare` | Date sorting, grouping, statistics |
+| `iterate` | Date iteration and counting |
+| `naturalLanguage` | Natural language date parsing |
+| `holidays` | International holiday calculations |
+| `locale` | Multi-language formatting (40+ locales) |
+| `workingHours` | Business hours calculations |
+| `serialize` | JSON date serialization |
+| `performance` | Async utilities, benchmarking |
+| `age` | Age calculations, birthdays |
+| `countdown` | Timer and countdown utilities |
+| `interval` | Time interval operations |
+| `rangePresets` | Common date range presets |
+| `parse` | Date parsing from various formats |
+| `plugins` | Plugin system for extensions |
+| `constants` | Time constants and types |
 
-// Date formatting
-const date = new Date("2024-01-15T14:30:45Z");
-formatDateLocale(date, "en", "medium"); // "Jan 15, 2024"
-formatDateLocale(date, "es", "medium"); // "15 ene 2024"
-formatDateLocale(date, "fr", "long"); // "15 janvier 2024"
-formatDateLocale(date, "de", "short"); // "15.1.2024"
+---
 
-// Time formatting
-formatTimeLocale(date, "en", "short"); // "2:30 PM"
-formatTimeLocale(date, "de", "medium"); // "14:30:45"
-formatTimeLocale(date, "fr", "long"); // "14:30:45 UTC"
-
-// Combined date and time
-formatDateTimeLocale(date, "en"); // "Jan 15, 2024 2:30:45 PM"
-
-// Auto-detect locale from browser/system
-const userLocale = detectLocale(); // e.g., 'en-US' or 'fr-FR'
-formatRelativeTime(pastDate, { locale: userLocale });
-
-// Get supported locales
-const locales = getSupportedLocales();
-// ['en', 'es', 'fr', 'de', 'zh', 'ja', ...]
-
-// Register custom locale
-registerLocale("custom", {
-  locale: "custom",
-  dateFormats: {
-    short: "M/d/yyyy",
-    medium: "MMM d, yyyy",
-    long: "MMMM d, yyyy",
-    full: "EEEE, MMMM d, yyyy",
-  },
-  timeFormats: {
-    short: "h:mm a",
-    medium: "h:mm:ss a",
-    long: "h:mm:ss a z",
-    full: "h:mm:ss a zzzz",
-  },
-  relativeTime: {
-    future: "in {0}",
-    past: "{0} ago",
-    units: {
-      second: "sec",
-      seconds: "secs",
-      minute: "min",
-      minutes: "mins",
-      hour: "hr",
-      hours: "hrs",
-      day: "day",
-      days: "days",
-      week: "wk",
-      weeks: "wks",
-      month: "mo",
-      months: "mos",
-      year: "yr",
-      years: "yrs",
-    },
-  },
-  calendar: {
-    weekStartsOn: 0, // Sunday
-    monthNames: ["Jan", "Feb", "Mar" /* ... */],
-    monthNamesShort: ["J", "F", "M" /* ... */],
-    dayNames: ["Sun", "Mon", "Tue" /* ... */],
-    dayNamesShort: ["S", "M", "T" /* ... */],
-  },
-  numbers: {
-    decimal: ".",
-    thousands: ",",
-  },
-});
-
-// Locale Conversion Utilities
-import {
-  convertRelativeTime,
-  detectLocaleFromRelativeTime,
-  convertFormatPattern,
-  convertFormattedDate,
-  convertRelativeTimeArray,
-  compareLocaleFormats,
-} from "ts-time-utils/locale";
-
-// Convert relative time between locales
-convertRelativeTime("2 hours ago", "en", "es"); // "hace 2 horas"
-convertRelativeTime("hace 3 días", "es", "fr"); // "il y a 3 jours"
-convertRelativeTime("2h ago", "en", "de"); // "vor 2h"
-convertRelativeTime("2 hours ago", "en", "nl"); // "2 uur geleden"
-convertRelativeTime("2 hours ago", "en", "it"); // "2 ore fa"
-convertRelativeTime("2 hours ago", "en", "fa"); // "2 ساعت پیش"
-convertRelativeTime("2 ساعت پیش", "fa", "en"); // "2 hours ago"
-
-// Detect locale from formatted text
-detectLocaleFromRelativeTime("2 hours ago"); // "en"
-detectLocaleFromRelativeTime("hace 2 horas"); // "es"
-detectLocaleFromRelativeTime("il y a 2 heures"); // "fr"
-detectLocaleFromRelativeTime("2 uur geleden"); // "nl"
-detectLocaleFromRelativeTime("2 ore fa"); // "it"
-detectLocaleFromRelativeTime("2 ساعت پیش"); // "fa"
-detectLocaleFromRelativeTime("vor 2 Stunden"); // "de"
-
-// Convert date format patterns between locales
-convertFormatPattern("M/d/yyyy", "en", "de"); // "dd.MM.yyyy"
-convertFormatPattern("MMM d, yyyy", "en", "fr", "long"); // "d MMMM yyyy"
-
-// Convert formatted dates between locales
-convertFormattedDate("Jan 15, 2024", "en", "es"); // "15 ene 2024"
-convertFormattedDate("15. Januar 2024", "de", "en"); // "Jan 15, 2024"
-
-// Bulk conversion of relative time arrays
-const englishTimes = ["2 hours ago", "in 3 days", "1 week ago"];
-convertRelativeTimeArray(englishTimes, "en", "es");
-// ["hace 2 horas", "en 3 días", "hace 1 semana"]
-
-// Compare format differences between locales
-const comparison = compareLocaleFormats("en", "de");
-console.log(comparison.dateFormats.short);
-// { locale1: "M/d/yyyy", locale2: "dd.MM.yyyy" }
-console.log(comparison.weekStartsOn);
-// { locale1: 0, locale2: 1 } // Sunday vs Monday
-```
-
-## 📊 API Reference
-
-### Duration Functions
-
-- `Duration` class - Immutable duration with full arithmetic support
-- `createDuration(input)` - Create duration from number, object, or string
-- `Duration.fromHours/Minutes/Seconds/Days/Weeks(n)` - Create from specific units
-- `Duration.fromString(str)` - Parse from string like "1h 30m 45s"
-- `Duration.between(start, end)` - Create from date range
-- `duration.add/subtract/multiply/divide()` - Arithmetic operations
-- `duration.equals/greaterThan/lessThan()` - Comparison methods
-- `formatDurationString(duration, options?)` - Format to readable string
-- `maxDuration/minDuration(...durations)` - Find extremes
-- `sumDurations/averageDuration(...durations)` - Aggregate operations
-
-### Serialization Functions
-
-- `serializeDate(date, options?)` - Serialize date to various formats (ISO, epoch, object, custom)
-- `deserializeDate(serialized, options?)` - Deserialize from string, number, or object
-- `parseJSONWithDates(jsonString, dateKeys?, options?)` - Parse JSON with automatic date conversion
-- `stringifyWithDates(obj, dateKeys?, options?)` - Stringify JSON with automatic date serialization
-- `createDateReviver/createDateReplacer(dateKeys?, options?)` - Create JSON reviver/replacer functions
-- `toEpochTimestamp/fromEpochTimestamp(input, precision?)` - Convert to/from epoch timestamps
-- `toDateObject/fromDateObject(input)` - Convert to/from safe object representation
-- `isValidISODateString/isValidEpochTimestamp(input)` - Validation utilities
-- `cloneDate(date)` - Safe date cloning
-- `datesEqual(date1, date2, precision?)` - Compare dates with precision control
-
-### Format Functions
-
-- `formatDuration(ms, options?)` - Format milliseconds to readable duration
-- `formatDurationCompact(ms)` - Format milliseconds as HH:MM:SS
-- `timeAgo(date, options?)` - Get "time ago" string for past/future dates
-- `formatTime(date, format?)` - Format time as 12h/24h/ISO
-- `formatDate(date, pattern?)` - Format date using patterns (YYYY-MM-DD, etc.)
-- `formatRelativeTime(date, locale?, options?)` - Format as relative time ("2 days ago")
-- `formatDateRange(start, end, options?)` - Format date ranges ("Jan 1-5, 2024")
-- `formatOrdinal(n)` - Format number as ordinal ("1st", "2nd", "3rd")
-- `formatDayOrdinal(date)` - Format day with ordinal ("1st", "15th")
-- `formatCalendarDate(date)` - Format as "Today", "Tomorrow", or day name
-- `parseDuration(duration)` - Parse duration string to milliseconds
-
-### Parse Functions
-
-- `parseISO8601Duration(duration)` - Parse ISO 8601 duration to object (P1Y2M3DT4H5M6S)
-- `parseISO8601DurationToMs(duration)` - Parse ISO 8601 duration to milliseconds
-- `parseTime(timeString)` - Parse time string ("14:30", "2:30 PM") to Date
-- `guessDateFormat(dateString)` - Guess the format of a date string
-- `parseAutoFormat(dateString)` - Auto-detect and parse date string
-- `parseRangeEndpoint(endpoint)` - Parse range endpoint (date string, Date, or number)
-
-### Calendar Functions
-
-- `getCalendarDays(year, month)` - Get array of days for a calendar month
-- `getWeekNumber(date)` - Get ISO week number (1-53)
-- `getQuarter(date)` - Get quarter (1-4)
-- `getFirstDayOfMonth(date)` / `getLastDayOfMonth(date)` - Month boundaries
-- `getFirstDayOfWeek(date)` / `getLastDayOfWeek(date)` - Week boundaries
-- `getNthDayOfMonth(year, month, dayOfWeek, n)` - Get nth occurrence of weekday in month
-- `getStartOfWeek(date, startDay?)` - Get start of week (configurable start day)
-- `getEndOfWeek(date, startDay?)` - Get end of week (configurable start day)
-- `getWeeksInMonth(year, month)` - Count weeks in a month
-
-#### US Federal Holidays
-
-- `getNewYearsDay(year)` - Get New Year's Day
-- `getMLKDay(year)` - Get Martin Luther King Jr. Day (3rd Monday of January)
-- `getPresidentsDay(year)` - Get Presidents Day (3rd Monday of February)
-- `getMemorialDay(year)` - Get Memorial Day (last Monday of May)
-- `getIndependenceDay(year)` - Get Independence Day (July 4th)
-- `getLaborDay(year)` - Get Labor Day (1st Monday of September)
-- `getColumbusDay(year)` - Get Columbus Day (2nd Monday of October)
-- `getVeteransDay(year)` - Get Veterans Day (November 11th)
-- `getThanksgivingDay(year)` - Get Thanksgiving Day (4th Thursday of November)
-- `getChristmasDay(year)` - Get Christmas Day
-- `getGoodFriday(year)` - Get Good Friday
-- `getUSHolidays(year)` - Get all US federal holidays for a year
-- `isUSHoliday(date)` - Check if date is a US federal holiday
-- `getUSHolidayName(date)` - Get name of US holiday (or null)
-
-### Timezone Functions
-
-- `getTimezoneOffset(timezone, date?)` - Get timezone offset in minutes
-- `convertTimezone(date, fromTz, toTz)` - Convert date between timezones
-- `getTimezoneNames()` - Get array of valid timezone names
-- `formatWithTimezone(date, timezone, format?)` - Format date in specific timezone
-- `isDST(date, timezone?)` - Check if DST is in effect
-- `getNextDSTTransition(date?, timezone?)` - Get next DST transition date
-- `findCommonWorkingHours(tz1, tz2, workStart?, workEnd?)` - Find overlapping work hours
-- `getTimezoneAbbreviation(date, timezone?)` - Get timezone abbreviation (EST, PST, etc.)
-- `convertBetweenZones(date, fromTz, toTz)` - Convert date between zones (returns new Date)
-- `getTimezoneDifferenceHours(tz1, tz2, date?)` - Get hour difference between timezones
-- `isSameTimezone(tz1, tz2, date?)` - Check if two timezones have same offset
-
-### Working Hours Functions
-
-- `isWithinWorkingHours(date, config?)` - Check if time is within working hours
-- `getNextWorkingHour(date, config?)` - Get next available working hour
-- `addWorkingMinutes(date, minutes, config?)` - Add minutes within working hours
-- `workingMinutesBetween(start, end, config?)` - Count working minutes between dates
-- `addWorkingDays(date, days, config?)` - Add working days to date
-- `subtractWorkingDays(date, days, config?)` - Subtract working days from date
-- `getNextWorkingDay(date, config?)` - Get next working day
-- `getPreviousWorkingDay(date, config?)` - Get previous working day
-- `getWorkingDaysInMonth(year, month, config?)` - Count working days in month
-- `getWorkingDaysInMonthArray(year, month, config?)` - Get array of working days
-- `workingDaysBetween(start, end, config?)` - Count working days between dates
-- `isBreakTime(date, breakStart?, breakEnd?)` - Check if time is during break
-- `getWorkDayStart(date, config?)` - Get start time of work day
-- `getWorkDayEnd(date, config?)` - Get end time of work day
-- `getWorkingHoursPerDay(config?)` - Get working hours per day
-
-### Cron Functions
-
-- `parseCronExpression(expression)` - Parse cron expression to object
-- `matchesCron(expression, date?)` - Check if date matches cron expression
-- `getNextCronDate(expression, after?)` - Get next date matching cron
-- `getNextCronDates(expression, count, after?)` - Get multiple future cron dates
-- `getPreviousCronDate(expression, before?)` - Get previous date matching cron
-- `isValidCron(expression)` - Validate cron expression syntax
-- `describeCron(expression)` - Get human-readable cron description
-- `CRON_PRESETS` - Common cron expressions (EVERY_MINUTE, HOURLY, DAILY, etc.)
-
-### Fiscal Year Functions
-
-- `getFiscalYear(date, config?)` - Get fiscal year for a date
-- `getFiscalQuarter(date, config?)` - Get fiscal quarter (1-4)
-- `getFiscalMonth(date, config?)` - Get fiscal month (1-12 within fiscal year)
-- `getFiscalWeek(date, config?)` - Get fiscal week number
-- `getFiscalYearStart(year, config?)` - Get start date of fiscal year
-- `getFiscalYearEnd(year, config?)` - Get end date of fiscal year
-- `getFiscalQuarterStart(year, quarter, config?)` - Get start of fiscal quarter
-- `getFiscalQuarterEnd(year, quarter, config?)` - Get end of fiscal quarter
-- `isSameFiscalYear(date1, date2, config?)` - Check if dates are in same fiscal year
-- `isSameFiscalQuarter(date1, date2, config?)` - Check if dates are in same fiscal quarter
-- `getDaysElapsedInFiscalYear(date, config?)` - Days elapsed in fiscal year
-- `getDaysRemainingInFiscalYear(date, config?)` - Days remaining in fiscal year
-- `getFiscalYearProgress(date, config?)` - Percentage of fiscal year completed
-- `formatFiscalYear(year, config?, format?)` - Format as "FY2024" or "FY2023/24"
-- `formatFiscalQuarter(year, quarter, config?)` - Format as "Q1 FY2024"
-- `getFiscalPeriodInfo(date, config?)` - Get comprehensive fiscal period info
-- `FISCAL_PRESETS` - CALENDAR, UK_INDIA, AUSTRALIA, US_FEDERAL
-
-### Compare Functions
-
-- `compareDates(a, b)` - Compare function for sorting dates
-- `compareDatesDesc(a, b)` - Compare function for reverse sorting
-- `sortDates(dates, direction?)` - Sort date array (asc/desc)
-- `minDate(dates)` - Find earliest date
-- `maxDate(dates)` - Find latest date
-- `dateExtent(dates)` - Get { min, max } from date array
-- `uniqueDates(dates, precision?)` - Remove duplicate dates
-- `closestDate(target, candidates)` - Find closest date to target
-- `closestFutureDate(target, candidates)` - Find closest future date
-- `closestPastDate(target, candidates)` - Find closest past date
-- `clampDate(date, min, max)` - Constrain date to range
-- `isDateInRange(date, min, max)` - Check if date is in range
-- `filterDatesInRange(dates, min, max)` - Filter dates in range
-- `groupDates(dates, keyFn)` - Group dates by custom key
-- `groupDatesByYear(dates)` - Group by year
-- `groupDatesByMonth(dates)` - Group by month (YYYY-MM)
-- `groupDatesByDay(dates)` - Group by day (YYYY-MM-DD)
-- `groupDatesByDayOfWeek(dates)` - Group by day of week (0-6)
-- `medianDate(dates)` - Calculate median date
-- `averageDate(dates)` - Calculate average/mean date
-- `roundDate(date, unit)` - Round to nearest minute/hour/day
-- `snapDate(date, intervalMinutes, mode?)` - Snap to interval grid
-- `isChronological(dates, strict?)` - Check if dates are in order
-- `dateSpan(dates)` - Get duration between min and max
-- `partitionDates(dates, predicate)` - Split into [matching, non-matching]
-- `nthDate(dates, n)` - Get nth date (supports negative indices)
-
-### Iterate Functions
-
-- `eachDay(start, end)` - Array of each day in range
-- `eachWeekday(start, end)` - Array of weekdays (Mon-Fri)
-- `eachWeekend(start, end)` - Array of weekend days (Sat-Sun)
-- `eachWeek(start, end, weekStartsOn?)` - Array of week starts
-- `eachMonth(start, end)` - Array of month starts
-- `eachMonthEnd(start, end)` - Array of month ends
-- `eachQuarter(start, end)` - Array of quarter starts
-- `eachYear(start, end)` - Array of year starts
-- `eachHour(start, end, step?)` - Array of hourly intervals
-- `eachMinute(start, end, step?)` - Array of minute intervals
-- `eachDayOfWeek(start, end, dayOfWeek)` - Array of specific weekday
-- `eachNthDayOfMonth(start, end, day)` - Array of nth day of each month
-- `eachInterval(start, end, interval)` - Array at custom intervals
-- `countDays(start, end)` - Count days in range
-- `countWeekdays(start, end)` - Count weekdays in range
-- `countWeekendDays(start, end)` - Count weekend days
-- `countWeeks(start, end)` - Count weeks in range
-- `countMonths(start, end)` - Count months in range
-- `iterateDates(start, end, step?)` - Lazy date generator
-- `iterateDays(start, end)` - Lazy day iterator
-- `iterateWeekdays(start, end)` - Lazy weekday iterator
-- `iterateMonths(start, end)` - Lazy month iterator
-- `filterDays(start, end, filter)` - Filter days by predicate
-
-### Holidays Functions
-
-- `getHolidays(year, countryCode)` - Get all holidays for a country and year
-- `isHoliday(date, countryCode)` - Check if date is a holiday
-- `getHolidayName(date, countryCode)` - Get holiday name for date (or null)
-- `getNextHoliday(date, countryCode)` - Find next holiday after date
-- `getUpcomingHolidays(date, days, countryCode)` - Get holidays in next N days
-- `getSupportedCountries()` - Get array of supported country codes
-- `getUKHolidays(year)` - Get UK bank holidays (New Year, Easter, Spring/Summer Bank Holiday, Christmas)
-- `getNetherlandsHolidays(year)` - Get Netherlands holidays (King's Day, Liberation Day, Easter, Ascension, Whit)
-- `getGermanyHolidays(year)` - Get German holidays (Unity Day, Labour Day, Easter, Ascension, Whit, Christmas)
-- `getCanadaHolidays(year)` - Get Canadian federal holidays (Victoria Day, Canada Day, Labour Day, Thanksgiving)
-- `getAustraliaHolidays(year)` - Get Australian holidays (Australia Day, Anzac Day, Queen's Birthday)
-- `getItalyHolidays(year)` - Get Italian holidays (Epiphany, Liberation Day, Republic Day, Assumption)
-- `getSpainHolidays(year)` - Get Spanish holidays (National Day, Constitution Day, Immaculate Conception)
-- `getChinaHolidays(year)` - Get Chinese holidays (Spring Festival, National Day, New Year) - simplified
-- `getIndiaHolidays(year)` - Get Indian holidays (Republic Day, Independence Day, Gandhi Jayanti) - simplified
-- **Types**: `CountryCode` = "UK" | "NL" | "DE" | "CA" | "AU" | "IT" | "ES" | "CN" | "IN" | "US"
-- **Holiday Interface**: `{ name: string, date: Date, countryCode: CountryCode, type: string }`
-
-### Calculate Functions
-
-- `differenceInUnits(date1, date2, unit?, precise?)` - Calculate difference between dates
-- `addTime(date, amount, unit)` - Add time to a date
-- `subtractTime(date, amount, unit)` - Subtract time from a date
-- `startOf(date, unit)` - Get start of time period
-- `endOf(date, unit)` - Get end of time period
-- `isBetween(date, start, end)` - Check if date is between two dates
-- `businessDaysBetween(start, end)` - Count business days between dates
-
-### Validation Functions
-
-- `isValidDate(date)` - Check if date is valid
-- `isLeapYear(year)` - Check if year is leap year
-- `isPast(date)` / `isFuture(date)` - Check if date is past/future
-- `isToday(date)` / `isYesterday(date)` / `isTomorrow(date)` - Date comparisons
-- `isSameDay(date1, date2)` - Check if dates are same day
-- `isSameWeek(date1, date2)` - Check if dates are in same week
-- `isSameMonth(date1, date2)` - Check if dates are in same month
-- `isSameYear(date1, date2)` - Check if dates are in same year
-- `isThisWeek(date)` - Check if date is in current week
-- `isThisMonth(date)` - Check if date is in current month
-- `isThisYear(date)` - Check if date is in current year
-- `isWeekend(date)` / `isWeekday(date)` - Check day type
-- `isBusinessDay(date)` - Check if date is a business day (weekday, not a US holiday)
-- `isInLastNDays(date, n)` - Check if date is within last N days
-- `isInNextNDays(date, n)` - Check if date is within next N days
-- `isValidTimeString(time)` - Validate HH:MM time format
-- `isValidISOString(dateString)` - Validate ISO 8601 date string
-
-### Locale Functions
-
-- `formatRelativeTime(date, options?)` - Format relative time with locale support
-  - Options: `locale`, `maxUnit`, `minUnit`, `precision`, `short`, `numeric`, `style`
-  - Supports 30+ locales: en, es, fr, de, it, pt, nl, sv, da, no, fi, pl, cs, sk, hu, ro, bg, hr, sl, et, lv, lt, ru, uk, tr, ar, he, hi, th, ko, zh, ja
-- `formatDateLocale(date, locale?, style?)` - Format date in locale-specific format
-  - Styles: 'short', 'medium', 'long', 'full'
-- `formatTimeLocale(date, locale?, style?)` - Format time in locale-specific format
-- `formatDateTimeLocale(date, locale?, dateStyle?, timeStyle?)` - Format both date and time
-- `registerLocale(locale, config)` - Register a custom locale configuration
-- `getLocaleConfig(locale)` - Get configuration for a specific locale
-- `detectLocale(fallback?)` - Auto-detect system/browser locale
-- `getSupportedLocales()` - Get array of all supported locale codes
-- `getMonthNames(locale?, short?)` - Get localized month names
-- `getDayNames(locale?, short?)` - Get localized day names
-- `getBestMatchingLocale(preferences, fallback?)` - Find best matching locale from preferences
-
-#### Locale Conversion Functions
-
-- `convertRelativeTime(text, fromLocale, toLocale)` - Convert relative time between locales
-  - Example: `convertRelativeTime("2 hours ago", "en", "es")` → `"hace 2 horas"`
-  - Example: `convertRelativeTime("2 hours ago", "en", "nl")` → `"2 uur geleden"`
-  - Example: `convertRelativeTime("2 hours ago", "en", "it")` → `"2 ore fa"`
-  - Example: `convertRelativeTime("2 hours ago", "en", "fa")` → `"2 ساعت پیش"`
-- `detectLocaleFromRelativeTime(text)` - Detect locale from relative time string
-  - Returns most likely locale or null if detection fails
-- `convertFormatPattern(pattern, fromLocale, toLocale, style?)` - Convert date format patterns
-  - Maps common patterns between locales or uses target locale's style
-- `convertFormattedDate(formattedDate, fromLocale, toLocale, targetStyle?)` - Convert formatted dates
-  - Parses date in source locale and reformats in target locale
-- `convertRelativeTimeArray(array, fromLocale, toLocale)` - Bulk convert relative time arrays
-  - Returns array with same length, null for unparseable strings
-- `compareLocaleFormats(locale1, locale2)` - Compare format differences between locales
-  - Returns object with dateFormats, timeFormats, and weekStartsOn comparisons
-
-## 🛠️ Development
+## Development
 
 ```bash
-# Install dependencies
-npm install
-
-# Build (both CommonJS and ES modules)
-npm run build
-
-# Run tests
-npm test
-
-# Run tests in watch mode
-npm run test:watch
-
-# Lint code
-npm run lint
+npm install      # Install dependencies
+npm run build    # Build both CJS and ESM
+npm test         # Run tests
+npm run lint     # Lint code
 ```
 
-## 📄 License
+## License
 
 MIT
