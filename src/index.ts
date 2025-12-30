@@ -582,3 +582,31 @@ export type {
   ChineseDate,
   CalendarType
 } from './calendars.js';
+
+// Temporal API compatibility layer
+export {
+  toPlainDate,
+  toPlainTime,
+  toPlainDateTime,
+  toZonedDateTime,
+  toInstant,
+  createDuration as createTemporalDuration,
+  parseDuration as parseTemporalDuration,
+  nowInstant,
+  nowPlainDateTime,
+  nowPlainDate,
+  nowPlainTime,
+  nowZonedDateTime,
+  fromTemporal
+} from './temporal.js';
+
+export type {
+  PlainDate,
+  PlainTime,
+  PlainDateTime,
+  ZonedDateTime,
+  Instant,
+  Duration as TemporalDuration,
+  DurationLike,
+  DurationUnit as TemporalDurationUnit
+} from './temporal.js';

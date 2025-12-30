@@ -111,7 +111,7 @@ function extractCalendarParts(date: Date, calendar: CalendarType): CalendarDate 
     });
     const relatedParts = relatedFormatter.formatToParts(date);
     for (const part of relatedParts) {
-      if (part.type === 'relatedYear') {
+      if ((part.type as string) === 'relatedYear') {
         result.year = parseInt(part.value, 10);
       }
     }
