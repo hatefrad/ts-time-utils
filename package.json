@@ -151,6 +151,11 @@
       "import": "./dist/esm/temporal.js",
       "require": "./dist/temporal.js",
       "types": "./dist/temporal.d.ts"
+    },
+    "./precision": {
+      "import": "./dist/esm/precision.js",
+      "require": "./dist/precision.js",
+      "types": "./dist/precision.d.ts"
     }
   },
   "files": [

@@ -610,3 +610,48 @@ export type {
   DurationLike,
   DurationUnit as TemporalDurationUnit
 } from './temporal.js';
+
+// High-precision utilities
+export {
+  createNanosecondTimestamp,
+  fromNanoseconds,
+  dateToNanoseconds,
+  nanosecondsToDate,
+  addNanoseconds,
+  subtractNanoseconds,
+  compareNanoseconds,
+  nowNanoseconds,
+  formatNanoseconds,
+  parseNanoseconds,
+  createHighResDuration,
+  addHighResDuration,
+  subtractHighResDuration,
+  highResDurationToMs,
+  msToHighResDuration,
+  toBigIntMs,
+  fromBigIntMs,
+  toBigIntSeconds,
+  fromBigIntSeconds,
+  addBigIntMs,
+  subtractBigIntMs,
+  diffBigIntMs,
+  isInDSTGap,
+  isInDSTOverlap,
+  getDSTTransitionsInYear,
+  resolveAmbiguousTime,
+  ValidDate,
+  ensureValidDate,
+  parseValidDate,
+  assertValidDate,
+  LEAP_SECONDS,
+  leapSecondsBetween,
+  isNearLeapSecond,
+  taiToUtc,
+  utcToTai
+} from './precision.js';
+
+export type {
+  NanosecondTimestamp,
+  HighResDuration,
+  DSTTransition
+} from './precision.js';
