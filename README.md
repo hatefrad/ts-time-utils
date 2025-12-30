@@ -469,6 +469,24 @@ npm test         # Run tests
 npm run lint     # Lint code
 ```
 
+## Releasing
+
+Releases are automated via GitHub Actions with npm trusted publishing (OIDC).
+
+**To release a new version:**
+
+```bash
+git tag v3.1.0        # Create tag (use semantic versioning)
+git push --tags       # Push tag → triggers publish workflow
+```
+
+The workflow automatically:
+1. Sets `package.json` version from tag
+2. Runs lint, tests, and build
+3. Publishes to npm with provenance
+
+**Version format:** Tags must match `v*` pattern (e.g., `v3.0.0`, `v3.1.0-beta.1`)
+
 ## License
 
 MIT
