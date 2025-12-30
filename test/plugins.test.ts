@@ -63,9 +63,10 @@ describe('Plugin system', () => {
         }
       });
 
-      const time = chain().valueOf();
-      expect((chain() as any).double()).toBe(time * 2);
-      expect((chain() as any).triple()).toBe(time * 3);
+      const fixedDate = new Date('2025-01-15T12:00:00Z');
+      const time = chain(fixedDate).valueOf();
+      expect((chain(fixedDate) as any).double()).toBe(time * 2);
+      expect((chain(fixedDate) as any).triple()).toBe(time * 3);
     });
 
     it('throws if plugin name already registered', () => {
