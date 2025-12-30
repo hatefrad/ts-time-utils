@@ -234,3 +234,139 @@ export function businessDaysBetween(startDate: Date, endDate: Date): number {
   
   return count;
 }
+
+/**
+ * Round a date to the nearest unit (rounds to closest)
+ * @param date - date to round
+ * @param unit - unit to round to
+ * @example
+ * roundToNearestUnit(new Date('2024-03-15T14:37:00'), 'hour') // 15:00
+ * roundToNearestUnit(new Date('2024-03-15T14:22:00'), 'hour') // 14:00
+ */
+export function roundToNearestUnit(
+  date: Date,
+  unit: 'second' | 'minute' | 'hour' | 'day' | 'week' | 'month'
+): Date {
+  const d = new Date(date);
+
+  switch (unit) {
+    case 'second':
+      if (d.getMilliseconds() >= 500) d.setSeconds(d.getSeconds() + 1);
+      d.setMilliseconds(0);
+      break;
+    case 'minute':
+      if (d.getSeconds() >= 30) d.setMinutes(d.getMinutes() + 1);
+      d.setSeconds(0, 0);
+      break;
+    case 'hour':
+      if (d.getMinutes() >= 30) d.setHours(d.getHours() + 1);
+      d.setMinutes(0, 0, 0);
+      break;
+    case 'day':
+      if (d.getHours() >= 12) d.setDate(d.getDate() + 1);
+      d.setHours(0, 0, 0, 0);
+      break;
+    case 'week': {
+      const dayOfWeek = d.getDay();
+      const daysFromMonday = dayOfWeek === 0 ? 6 : dayOfWeek - 1;
+      if (daysFromMonday >= 4) {
+        d.setDate(d.getDate() + (7 - daysFromMonday));
+      } else {
+        d.setDate(d.getDate() - daysFromMonday);
+      }
+      d.setHours(0, 0, 0, 0);
+      break;
+    }
+    case 'month': {
+      const daysInMonth = new Date(d.getFullYear(), d.getMonth() + 1, 0).getDate();
+      if (d.getDate() > daysInMonth / 2) {
+        d.setMonth(d.getMonth() + 1);
+      }
+      d.setDate(1);
+      d.setHours(0, 0, 0, 0);
+      break;
+    }
+  }
+
+  return d;
+}
+
+/**
+ * Round a date up (ceiling) to the specified unit
+ * @param date - date to round
+ * @param unit - unit to round to
+ * @example
+ * ceilDate(new Date('2024-03-15T14:01:00'), 'hour') // 15:00
+ */
+export function ceilDate(
+  date: Date,
+  unit: 'second' | 'minute' | 'hour' | 'day' | 'week' | 'month'
+): Date {
+  const floored = floorDate(date, unit);
+  if (floored.getTime() === date.getTime()) return new Date(date);
+
+  const d = new Date(floored);
+  switch (unit) {
+    case 'second':
+      d.setSeconds(d.getSeconds() + 1);
+      break;
+    case 'minute':
+      d.setMinutes(d.getMinutes() + 1);
+      break;
+    case 'hour':
+      d.setHours(d.getHours() + 1);
+      break;
+    case 'day':
+      d.setDate(d.getDate() + 1);
+      break;
+    case 'week':
+      d.setDate(d.getDate() + 7);
+      break;
+    case 'month':
+      d.setMonth(d.getMonth() + 1);
+      break;
+  }
+  return d;
+}
+
+/**
+ * Round a date down (floor) to the specified unit
+ * @param date - date to round
+ * @param unit - unit to round to
+ * @example
+ * floorDate(new Date('2024-03-15T14:59:00'), 'hour') // 14:00
+ */
+export function floorDate(
+  date: Date,
+  unit: 'second' | 'minute' | 'hour' | 'day' | 'week' | 'month'
+): Date {
+  const d = new Date(date);
+
+  switch (unit) {
+    case 'second':
+      d.setMilliseconds(0);
+      break;
+    case 'minute':
+      d.setSeconds(0, 0);
+      break;
+    case 'hour':
+      d.setMinutes(0, 0, 0);
+      break;
+    case 'day':
+      d.setHours(0, 0, 0, 0);
+      break;
+    case 'week': {
+      const dayOfWeek = d.getDay();
+      const daysFromMonday = dayOfWeek === 0 ? 6 : dayOfWeek - 1;
+      d.setDate(d.getDate() - daysFromMonday);
+      d.setHours(0, 0, 0, 0);
+      break;
+    }
+    case 'month':
+      d.setDate(1);
+      d.setHours(0, 0, 0, 0);
+      break;
+  }
+
+  return d;
+}

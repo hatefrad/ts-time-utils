@@ -503,3 +503,99 @@ export function eachNthDayOfMonth(
 
   return result;
 }
+
+/**
+ * Get all weekend days (Sat + Sun) in a specific month
+ * @param year - year
+ * @param month - month (0-11)
+ * @returns Array of weekend dates
+ */
+export function eachWeekendOfMonth(year: number, month: number): Date[] {
+  const result: Date[] = [];
+  const daysInMonth = new Date(year, month + 1, 0).getDate();
+
+  for (let day = 1; day <= daysInMonth; day++) {
+    const date = new Date(year, month, day);
+    const dayOfWeek = date.getDay();
+    if (dayOfWeek === 0 || dayOfWeek === 6) {
+      result.push(date);
+    }
+  }
+
+  return result;
+}
+
+/**
+ * Get all weekend days (Sat + Sun) in a specific year
+ * @param year - year
+ * @returns Array of weekend dates
+ */
+export function eachWeekendOfYear(year: number): Date[] {
+  const result: Date[] = [];
+
+  for (let month = 0; month < 12; month++) {
+    result.push(...eachWeekendOfMonth(year, month));
+  }
+
+  return result;
+}
+
+/**
+ * Get the previous occurrence of a specific day of week
+ * @param date - reference date
+ * @param dayOfWeek - target day (0=Sunday, 6=Saturday)
+ * @returns The previous occurrence (not including date itself)
+ */
+export function previousDay(date: Date, dayOfWeek: 0 | 1 | 2 | 3 | 4 | 5 | 6): Date {
+  const result = new Date(date);
+  result.setHours(0, 0, 0, 0);
+  const currentDay = result.getDay();
+  const diff = (currentDay - dayOfWeek + 7) % 7 || 7;
+  result.setDate(result.getDate() - diff);
+  return result;
+}
+
+/**
+ * Get the next occurrence of a specific day of week
+ * @param date - reference date
+ * @param dayOfWeek - target day (0=Sunday, 6=Saturday)
+ * @returns The next occurrence (not including date itself)
+ */
+export function nextDay(date: Date, dayOfWeek: 0 | 1 | 2 | 3 | 4 | 5 | 6): Date {
+  const result = new Date(date);
+  result.setHours(0, 0, 0, 0);
+  const currentDay = result.getDay();
+  const diff = (dayOfWeek - currentDay + 7) % 7 || 7;
+  result.setDate(result.getDate() + diff);
+  return result;
+}
+
+/** Get the previous Sunday */
+export function previousSunday(date: Date): Date { return previousDay(date, 0); }
+/** Get the previous Monday */
+export function previousMonday(date: Date): Date { return previousDay(date, 1); }
+/** Get the previous Tuesday */
+export function previousTuesday(date: Date): Date { return previousDay(date, 2); }
+/** Get the previous Wednesday */
+export function previousWednesday(date: Date): Date { return previousDay(date, 3); }
+/** Get the previous Thursday */
+export function previousThursday(date: Date): Date { return previousDay(date, 4); }
+/** Get the previous Friday */
+export function previousFriday(date: Date): Date { return previousDay(date, 5); }
+/** Get the previous Saturday */
+export function previousSaturday(date: Date): Date { return previousDay(date, 6); }
+
+/** Get the next Sunday */
+export function nextSunday(date: Date): Date { return nextDay(date, 0); }
+/** Get the next Monday */
+export function nextMonday(date: Date): Date { return nextDay(date, 1); }
+/** Get the next Tuesday */
+export function nextTuesday(date: Date): Date { return nextDay(date, 2); }
+/** Get the next Wednesday */
+export function nextWednesday(date: Date): Date { return nextDay(date, 3); }
+/** Get the next Thursday */
+export function nextThursday(date: Date): Date { return nextDay(date, 4); }
+/** Get the next Friday */
+export function nextFriday(date: Date): Date { return nextDay(date, 5); }
+/** Get the next Saturday */
+export function nextSaturday(date: Date): Date { return nextDay(date, 6); }

@@ -438,3 +438,77 @@ export function getWeeksInMonth(year: number, month: number): Date[][] {
   
   return weeks;
 }
+
+/**
+ * Get the ISO week-numbering year (year the week belongs to)
+ * @param date - date to get week year for
+ * @returns The year the ISO week belongs to (may differ from calendar year)
+ * @example
+ * getWeekYear(new Date('2024-01-01')) // 2024
+ * getWeekYear(new Date('2020-12-31')) // 2020 (belongs to week 53 of 2020)
+ */
+export function getWeekYear(date: Date): number {
+  const d = new Date(Date.UTC(date.getFullYear(), date.getMonth(), date.getDate()));
+  const dayNum = d.getUTCDay() || 7;
+  d.setUTCDate(d.getUTCDate() + 4 - dayNum);
+  return d.getUTCFullYear();
+}
+
+/**
+ * Get the last day of the decade containing the date
+ * @param date - any date
+ * @returns December 31 of the last year of the decade
+ * @example
+ * lastDayOfDecade(new Date('2024-06-15')) // 2029-12-31
+ */
+export function lastDayOfDecade(date: Date): Date {
+  const year = date.getFullYear();
+  const decadeEnd = Math.floor(year / 10) * 10 + 9;
+  return new Date(decadeEnd, 11, 31);
+}
+
+/**
+ * Get the first day of the decade containing the date
+ * @param date - any date
+ * @returns January 1 of the first year of the decade
+ * @example
+ * firstDayOfDecade(new Date('2024-06-15')) // 2020-01-01
+ */
+export function firstDayOfDecade(date: Date): Date {
+  const year = date.getFullYear();
+  const decadeStart = Math.floor(year / 10) * 10;
+  return new Date(decadeStart, 0, 1);
+}
+
+/**
+ * Get the last day of the century containing the date
+ * @param date - any date
+ * @returns December 31 of the last year of the century
+ * @example
+ * lastDayOfCentury(new Date('2024-06-15')) // 2099-12-31
+ */
+export function lastDayOfCentury(date: Date): Date {
+  const year = date.getFullYear();
+  const centuryEnd = Math.floor(year / 100) * 100 + 99;
+  return new Date(centuryEnd, 11, 31);
+}
+
+/**
+ * Get the start of a quarter
+ * @param date - any date
+ * @returns First day of the quarter
+ */
+export function getStartOfQuarter(date: Date): Date {
+  const month = Math.floor(date.getMonth() / 3) * 3;
+  return new Date(date.getFullYear(), month, 1);
+}
+
+/**
+ * Get the end of a quarter
+ * @param date - any date
+ * @returns Last day of the quarter
+ */
+export function getEndOfQuarter(date: Date): Date {
+  const month = Math.floor(date.getMonth() / 3) * 3 + 2;
+  return new Date(date.getFullYear(), month + 1, 0, 23, 59, 59, 999);
+}

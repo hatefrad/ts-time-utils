@@ -361,7 +361,17 @@ describe('International Holidays', () => {
         expect(countries).toContain('ES');
         expect(countries).toContain('CN');
         expect(countries).toContain('IN');
-        expect(countries.length).toBe(10);
+        expect(countries).toContain('JP');
+        expect(countries).toContain('FR');
+        expect(countries).toContain('BR');
+        expect(countries).toContain('MX');
+        expect(countries).toContain('KR');
+        expect(countries).toContain('SG');
+        expect(countries).toContain('PL');
+        expect(countries).toContain('SE');
+        expect(countries).toContain('BE');
+        expect(countries).toContain('CH');
+        expect(countries.length).toBe(20);
       });
     });
   });

@@ -1255,7 +1255,7 @@ function getUnitMilliseconds(unit: RelativeTimeUnit): number {
 function tryParseWithPattern(dateString: string, pattern: string, config: LocaleConfig): Date | null {
   // This is a simplified parser - could be made more sophisticated
   // For now, try common patterns
-  
+
   if (pattern === 'M/d/yyyy' || pattern === 'd/M/yyyy') {
     const parts = dateString.split('/');
     if (parts.length === 3) {
@@ -1271,4 +1271,182 @@ function tryParseWithPattern(dateString: string, pattern: string, config: Locale
   // Try ISO date parsing as fallback
   const isoDate = new Date(dateString);
   return isNaN(isoDate.getTime()) ? null : isoDate;
+}
+
+// ========================================
+// WEEK INFO UTILITIES
+// ========================================
+
+/**
+ * Get week information for a locale
+ * @param locale - locale code
+ * @returns Object with firstDay, weekend days, and minimalDays
+ */
+export function getWeekInfo(locale: SupportedLocale): {
+  firstDay: number;
+  weekend: number[];
+  minimalDays: number;
+} {
+  const config = getLocaleConfig(locale);
+  const firstDay = config.calendar?.weekStartsOn ?? 0;
+
+  // Most locales use Saturday-Sunday weekend
+  // Some Middle Eastern locales use Friday-Saturday
+  const middleEasternLocales = ['ar', 'fa', 'he', 'ur'];
+  const baseLang = locale.split('-')[0];
+  const weekend = middleEasternLocales.includes(baseLang) ? [5, 6] : [6, 0];
+
+  // Minimal days in first week (ISO = 4, US = 1)
+  const minimalDays = firstDay === 1 ? 4 : 1;
+
+  return { firstDay, weekend, minimalDays };
+}
+
+/**
+ * Get the day the week starts on for a locale
+ * @param locale - locale code
+ * @returns 0-6 (0 = Sunday, 1 = Monday, etc.)
+ */
+export function getLocaleWeekStartsOn(locale: SupportedLocale): number {
+  const config = getLocaleConfig(locale);
+  return config.calendar?.weekStartsOn ?? 0;
+}
+
+/**
+ * Get the weekend days for a locale
+ * @param locale - locale code
+ * @returns Array of day numbers (0 = Sunday, 6 = Saturday)
+ */
+export function getLocaleWeekendDays(locale: SupportedLocale): number[] {
+  const middleEasternLocales = ['ar', 'fa', 'he', 'ur'];
+  const baseLang = locale.split('-')[0];
+  return middleEasternLocales.includes(baseLang) ? [5, 6] : [6, 0];
+}
+
+/**
+ * Thin wrapper around Intl.DateTimeFormat
+ * @param date - date to format
+ * @param options - Intl.DateTimeFormatOptions
+ * @param locale - locale string (defaults to system locale)
+ */
+export function intlFormat(
+  date: Date,
+  options?: Intl.DateTimeFormatOptions,
+  locale?: string
+): string {
+  return new Intl.DateTimeFormat(locale, options).format(date);
+}
+
+/**
+ * Format only the date part in ISO format (YYYY-MM-DD)
+ * @param date - date to format
+ */
+export function formatISODate(date: Date): string {
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, '0');
+  const day = String(date.getDate()).padStart(2, '0');
+  return `${year}-${month}-${day}`;
+}
+
+/**
+ * Format only the time part in ISO format (HH:mm:ss)
+ * @param date - date to format
+ * @param includeMs - include milliseconds
+ */
+export function formatISOTime(date: Date, includeMs: boolean = false): string {
+  const hours = String(date.getHours()).padStart(2, '0');
+  const minutes = String(date.getMinutes()).padStart(2, '0');
+  const seconds = String(date.getSeconds()).padStart(2, '0');
+
+  if (includeMs) {
+    const ms = String(date.getMilliseconds()).padStart(3, '0');
+    return `${hours}:${minutes}:${seconds}.${ms}`;
+  }
+
+  return `${hours}:${minutes}:${seconds}`;
+}
+
+/**
+ * Format distance between two dates without approximation words like "about" or "almost"
+ * Returns exact values like "5 days" instead of "about 5 days"
+ * @param date - the date
+ * @param baseDate - the base date to compare against (defaults to now)
+ * @param options - formatting options
+ */
+export function formatDistanceStrict(
+  date: Date,
+  baseDate: Date = new Date(),
+  options: {
+    locale?: SupportedLocale;
+    unit?: 'second' | 'minute' | 'hour' | 'day' | 'week' | 'month' | 'year';
+    roundingMethod?: 'floor' | 'ceil' | 'round';
+    addSuffix?: boolean;
+  } = {}
+): string {
+  const {
+    locale = 'en',
+    unit,
+    roundingMethod = 'round',
+    addSuffix = false
+  } = options;
+
+  const config = getLocaleConfig(locale);
+  const diffMs = date.getTime() - baseDate.getTime();
+  const absDiffMs = Math.abs(diffMs);
+  const isPast = diffMs < 0;
+
+  const roundFn = roundingMethod === 'floor' ? Math.floor
+    : roundingMethod === 'ceil' ? Math.ceil
+    : Math.round;
+
+  // Unit definitions in ms
+  const units = {
+    second: 1000,
+    minute: 60 * 1000,
+    hour: 60 * 60 * 1000,
+    day: 24 * 60 * 60 * 1000,
+    week: 7 * 24 * 60 * 60 * 1000,
+    month: 30.44 * 24 * 60 * 60 * 1000,
+    year: 365.25 * 24 * 60 * 60 * 1000
+  };
+
+  let selectedUnit = unit;
+  let value: number;
+
+  if (selectedUnit) {
+    value = roundFn(absDiffMs / units[selectedUnit]);
+  } else {
+    // Auto-select unit based on duration
+    if (absDiffMs < units.minute) {
+      selectedUnit = 'second';
+    } else if (absDiffMs < units.hour) {
+      selectedUnit = 'minute';
+    } else if (absDiffMs < units.day) {
+      selectedUnit = 'hour';
+    } else if (absDiffMs < units.week) {
+      selectedUnit = 'day';
+    } else if (absDiffMs < units.month) {
+      selectedUnit = 'week';
+    } else if (absDiffMs < units.year) {
+      selectedUnit = 'month';
+    } else {
+      selectedUnit = 'year';
+    }
+    value = roundFn(absDiffMs / units[selectedUnit]);
+  }
+
+  // Get unit text
+  const unitKey = (value === 1 ? selectedUnit : selectedUnit + 's') as RelativeTimeUnit;
+  const unitText = config.relativeTime?.units?.[unitKey] || unitKey;
+
+  const result = `${value} ${unitText}`;
+
+  if (addSuffix) {
+    const template = isPast
+      ? (config.relativeTime?.past || '{0} ago')
+      : (config.relativeTime?.future || 'in {0}');
+    return template.replace('{0}', result);
+  }
+
+  return result;
 }

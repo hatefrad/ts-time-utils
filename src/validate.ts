@@ -228,10 +228,71 @@ export function isInNextNDays(date: Date, n: number): boolean {
   const now = new Date();
   const startOfToday = new Date(now);
   startOfToday.setHours(0, 0, 0, 0);
-  
+
   const nDaysFromNow = new Date(now);
   nDaysFromNow.setDate(nDaysFromNow.getDate() + n);
   nDaysFromNow.setHours(23, 59, 59, 999);
-  
+
   return date >= startOfToday && date <= nDaysFromNow;
+}
+
+/**
+ * Check if two dates are in the same hour
+ * @param date1 - first date
+ * @param date2 - second date
+ */
+export function isSameHour(date1: Date, date2: Date): boolean {
+  return (
+    date1.getFullYear() === date2.getFullYear() &&
+    date1.getMonth() === date2.getMonth() &&
+    date1.getDate() === date2.getDate() &&
+    date1.getHours() === date2.getHours()
+  );
+}
+
+/**
+ * Check if two dates are in the same minute
+ * @param date1 - first date
+ * @param date2 - second date
+ */
+export function isSameMinute(date1: Date, date2: Date): boolean {
+  return (
+    isSameHour(date1, date2) &&
+    date1.getMinutes() === date2.getMinutes()
+  );
+}
+
+/**
+ * Check if two dates are in the same second
+ * @param date1 - first date
+ * @param date2 - second date
+ */
+export function isSameSecond(date1: Date, date2: Date): boolean {
+  return (
+    isSameMinute(date1, date2) &&
+    date1.getSeconds() === date2.getSeconds()
+  );
+}
+
+/**
+ * Check if a date is in a specific quarter
+ * @param date - date to check
+ * @param quarter - quarter (1-4)
+ */
+export function isInQuarter(date: Date, quarter: 1 | 2 | 3 | 4): boolean {
+  const month = date.getMonth();
+  const dateQuarter = Math.floor(month / 3) + 1;
+  return dateQuarter === quarter;
+}
+
+/**
+ * Check if two dates are in the same quarter
+ * @param date1 - first date
+ * @param date2 - second date
+ */
+export function isSameQuarter(date1: Date, date2: Date): boolean {
+  return (
+    date1.getFullYear() === date2.getFullYear() &&
+    Math.floor(date1.getMonth() / 3) === Math.floor(date2.getMonth() / 3)
+  );
 }

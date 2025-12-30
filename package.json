@@ -141,6 +141,11 @@
       "import": "./dist/esm/plugins.js",
       "require": "./dist/plugins.js",
       "types": "./dist/plugins.d.ts"
+    },
+    "./calendars": {
+      "import": "./dist/esm/calendars.js",
+      "require": "./dist/calendars.js",
+      "types": "./dist/calendars.d.ts"
     }
   },
   "files": [

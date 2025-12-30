@@ -3,7 +3,7 @@
  * Calculate holidays for multiple countries including fixed, movable, and lunar-based holidays
  */
 
-export type CountryCode = 'UK' | 'NL' | 'DE' | 'CA' | 'AU' | 'IT' | 'ES' | 'CN' | 'IN' | 'US';
+export type CountryCode = 'UK' | 'NL' | 'DE' | 'CA' | 'AU' | 'IT' | 'ES' | 'CN' | 'IN' | 'US' | 'JP' | 'FR' | 'BR' | 'MX' | 'KR' | 'SG' | 'PL' | 'SE' | 'BE' | 'CH';
 
 export interface Holiday {
   name: string;
@@ -799,6 +799,245 @@ export function getIndiaHolidays(year: number): Holiday[] {
 }
 
 // ============================================================================
+// JAPAN HOLIDAYS
+// ============================================================================
+
+export function getJapanHolidays(year: number): Holiday[] {
+  const holidays: Holiday[] = [];
+
+  holidays.push({ name: "New Year's Day", date: new Date(year, 0, 1), countryCode: 'JP', type: 'public' });
+  holidays.push({ name: 'Coming of Age Day', date: getNthWeekdayOfMonth(year, 0, 1, 2), countryCode: 'JP', type: 'public' });
+  holidays.push({ name: 'National Foundation Day', date: new Date(year, 1, 11), countryCode: 'JP', type: 'public' });
+  holidays.push({ name: "Emperor's Birthday", date: new Date(year, 1, 23), countryCode: 'JP', type: 'public' });
+  holidays.push({ name: 'Vernal Equinox Day', date: new Date(year, 2, 20), countryCode: 'JP', type: 'public' });
+  holidays.push({ name: 'Showa Day', date: new Date(year, 3, 29), countryCode: 'JP', type: 'public' });
+  holidays.push({ name: 'Constitution Memorial Day', date: new Date(year, 4, 3), countryCode: 'JP', type: 'public' });
+  holidays.push({ name: 'Greenery Day', date: new Date(year, 4, 4), countryCode: 'JP', type: 'public' });
+  holidays.push({ name: "Children's Day", date: new Date(year, 4, 5), countryCode: 'JP', type: 'public' });
+  holidays.push({ name: 'Marine Day', date: getNthWeekdayOfMonth(year, 6, 1, 3), countryCode: 'JP', type: 'public' });
+  holidays.push({ name: 'Mountain Day', date: new Date(year, 7, 11), countryCode: 'JP', type: 'public' });
+  holidays.push({ name: 'Respect for the Aged Day', date: getNthWeekdayOfMonth(year, 8, 1, 3), countryCode: 'JP', type: 'public' });
+  holidays.push({ name: 'Autumnal Equinox Day', date: new Date(year, 8, 23), countryCode: 'JP', type: 'public' });
+  holidays.push({ name: 'Sports Day', date: getNthWeekdayOfMonth(year, 9, 1, 2), countryCode: 'JP', type: 'public' });
+  holidays.push({ name: 'Culture Day', date: new Date(year, 10, 3), countryCode: 'JP', type: 'public' });
+  holidays.push({ name: 'Labour Thanksgiving Day', date: new Date(year, 10, 23), countryCode: 'JP', type: 'public' });
+
+  return holidays;
+}
+
+// ============================================================================
+// FRANCE HOLIDAYS
+// ============================================================================
+
+export function getFranceHolidays(year: number): Holiday[] {
+  const holidays: Holiday[] = [];
+  const easter = getEasterSunday(year);
+
+  holidays.push({ name: "New Year's Day", date: new Date(year, 0, 1), countryCode: 'FR', type: 'public' });
+  holidays.push({ name: 'Easter Monday', date: new Date(easter.getFullYear(), easter.getMonth(), easter.getDate() + 1), countryCode: 'FR', type: 'public' });
+  holidays.push({ name: 'Labour Day', date: new Date(year, 4, 1), countryCode: 'FR', type: 'public' });
+  holidays.push({ name: 'Victory in Europe Day', date: new Date(year, 4, 8), countryCode: 'FR', type: 'public' });
+  holidays.push({ name: 'Ascension Day', date: new Date(easter.getFullYear(), easter.getMonth(), easter.getDate() + 39), countryCode: 'FR', type: 'public' });
+  holidays.push({ name: 'Whit Monday', date: new Date(easter.getFullYear(), easter.getMonth(), easter.getDate() + 50), countryCode: 'FR', type: 'public' });
+  holidays.push({ name: 'Bastille Day', date: new Date(year, 6, 14), countryCode: 'FR', type: 'public' });
+  holidays.push({ name: 'Assumption of Mary', date: new Date(year, 7, 15), countryCode: 'FR', type: 'public' });
+  holidays.push({ name: "All Saints' Day", date: new Date(year, 10, 1), countryCode: 'FR', type: 'public' });
+  holidays.push({ name: 'Armistice Day', date: new Date(year, 10, 11), countryCode: 'FR', type: 'public' });
+  holidays.push({ name: 'Christmas Day', date: new Date(year, 11, 25), countryCode: 'FR', type: 'public' });
+
+  return holidays;
+}
+
+// ============================================================================
+// BRAZIL HOLIDAYS
+// ============================================================================
+
+export function getBrazilHolidays(year: number): Holiday[] {
+  const holidays: Holiday[] = [];
+  const easter = getEasterSunday(year);
+
+  holidays.push({ name: "New Year's Day", date: new Date(year, 0, 1), countryCode: 'BR', type: 'public' });
+  holidays.push({ name: 'Carnival', date: new Date(easter.getFullYear(), easter.getMonth(), easter.getDate() - 47), countryCode: 'BR', type: 'public' });
+  holidays.push({ name: 'Good Friday', date: new Date(easter.getFullYear(), easter.getMonth(), easter.getDate() - 2), countryCode: 'BR', type: 'public' });
+  holidays.push({ name: 'Tiradentes Day', date: new Date(year, 3, 21), countryCode: 'BR', type: 'public' });
+  holidays.push({ name: 'Labour Day', date: new Date(year, 4, 1), countryCode: 'BR', type: 'public' });
+  holidays.push({ name: 'Corpus Christi', date: new Date(easter.getFullYear(), easter.getMonth(), easter.getDate() + 60), countryCode: 'BR', type: 'public' });
+  holidays.push({ name: 'Independence Day', date: new Date(year, 8, 7), countryCode: 'BR', type: 'public' });
+  holidays.push({ name: 'Our Lady of Aparecida', date: new Date(year, 9, 12), countryCode: 'BR', type: 'public' });
+  holidays.push({ name: "All Souls' Day", date: new Date(year, 10, 2), countryCode: 'BR', type: 'public' });
+  holidays.push({ name: 'Republic Proclamation Day', date: new Date(year, 10, 15), countryCode: 'BR', type: 'public' });
+  holidays.push({ name: 'Christmas Day', date: new Date(year, 11, 25), countryCode: 'BR', type: 'public' });
+
+  return holidays;
+}
+
+// ============================================================================
+// MEXICO HOLIDAYS
+// ============================================================================
+
+export function getMexicoHolidays(year: number): Holiday[] {
+  const holidays: Holiday[] = [];
+
+  holidays.push({ name: "New Year's Day", date: new Date(year, 0, 1), countryCode: 'MX', type: 'public' });
+  holidays.push({ name: 'Constitution Day', date: getNthWeekdayOfMonth(year, 1, 1, 1), countryCode: 'MX', type: 'public' });
+  holidays.push({ name: 'Benito Juárez Birthday', date: getNthWeekdayOfMonth(year, 2, 1, 3), countryCode: 'MX', type: 'public' });
+  holidays.push({ name: 'Labour Day', date: new Date(year, 4, 1), countryCode: 'MX', type: 'public' });
+  holidays.push({ name: 'Independence Day', date: new Date(year, 8, 16), countryCode: 'MX', type: 'public' });
+  holidays.push({ name: 'Revolution Day', date: getNthWeekdayOfMonth(year, 10, 1, 3), countryCode: 'MX', type: 'public' });
+  holidays.push({ name: 'Christmas Day', date: new Date(year, 11, 25), countryCode: 'MX', type: 'public' });
+
+  return holidays;
+}
+
+// ============================================================================
+// SOUTH KOREA HOLIDAYS
+// ============================================================================
+
+export function getSouthKoreaHolidays(year: number): Holiday[] {
+  const holidays: Holiday[] = [];
+
+  holidays.push({ name: "New Year's Day", date: new Date(year, 0, 1), countryCode: 'KR', type: 'public' });
+  holidays.push({ name: 'Independence Movement Day', date: new Date(year, 2, 1), countryCode: 'KR', type: 'public' });
+  holidays.push({ name: "Children's Day", date: new Date(year, 4, 5), countryCode: 'KR', type: 'public' });
+  holidays.push({ name: 'Memorial Day', date: new Date(year, 5, 6), countryCode: 'KR', type: 'public' });
+  holidays.push({ name: 'Liberation Day', date: new Date(year, 7, 15), countryCode: 'KR', type: 'public' });
+  holidays.push({ name: 'National Foundation Day', date: new Date(year, 9, 3), countryCode: 'KR', type: 'public' });
+  holidays.push({ name: 'Hangul Day', date: new Date(year, 9, 9), countryCode: 'KR', type: 'public' });
+  holidays.push({ name: 'Christmas Day', date: new Date(year, 11, 25), countryCode: 'KR', type: 'public' });
+  // Note: Lunar New Year and Chuseok are lunar-based
+
+  return holidays;
+}
+
+// ============================================================================
+// SINGAPORE HOLIDAYS
+// ============================================================================
+
+export function getSingaporeHolidays(year: number): Holiday[] {
+  const holidays: Holiday[] = [];
+  const easter = getEasterSunday(year);
+
+  holidays.push({ name: "New Year's Day", date: new Date(year, 0, 1), countryCode: 'SG', type: 'public' });
+  holidays.push({ name: 'Good Friday', date: new Date(easter.getFullYear(), easter.getMonth(), easter.getDate() - 2), countryCode: 'SG', type: 'public' });
+  holidays.push({ name: 'Labour Day', date: new Date(year, 4, 1), countryCode: 'SG', type: 'public' });
+  holidays.push({ name: 'National Day', date: new Date(year, 7, 9), countryCode: 'SG', type: 'public' });
+  holidays.push({ name: 'Christmas Day', date: new Date(year, 11, 25), countryCode: 'SG', type: 'public' });
+  // Note: Chinese New Year, Vesak Day, Hari Raya, Deepavali are lunar-based
+
+  return holidays;
+}
+
+// ============================================================================
+// POLAND HOLIDAYS
+// ============================================================================
+
+export function getPolandHolidays(year: number): Holiday[] {
+  const holidays: Holiday[] = [];
+  const easter = getEasterSunday(year);
+
+  holidays.push({ name: "New Year's Day", date: new Date(year, 0, 1), countryCode: 'PL', type: 'public' });
+  holidays.push({ name: 'Epiphany', date: new Date(year, 0, 6), countryCode: 'PL', type: 'public' });
+  holidays.push({ name: 'Easter Sunday', date: easter, countryCode: 'PL', type: 'public' });
+  holidays.push({ name: 'Easter Monday', date: new Date(easter.getFullYear(), easter.getMonth(), easter.getDate() + 1), countryCode: 'PL', type: 'public' });
+  holidays.push({ name: 'Labour Day', date: new Date(year, 4, 1), countryCode: 'PL', type: 'public' });
+  holidays.push({ name: 'Constitution Day', date: new Date(year, 4, 3), countryCode: 'PL', type: 'public' });
+  holidays.push({ name: 'Whit Sunday', date: new Date(easter.getFullYear(), easter.getMonth(), easter.getDate() + 49), countryCode: 'PL', type: 'public' });
+  holidays.push({ name: 'Corpus Christi', date: new Date(easter.getFullYear(), easter.getMonth(), easter.getDate() + 60), countryCode: 'PL', type: 'public' });
+  holidays.push({ name: 'Assumption of Mary', date: new Date(year, 7, 15), countryCode: 'PL', type: 'public' });
+  holidays.push({ name: "All Saints' Day", date: new Date(year, 10, 1), countryCode: 'PL', type: 'public' });
+  holidays.push({ name: 'Independence Day', date: new Date(year, 10, 11), countryCode: 'PL', type: 'public' });
+  holidays.push({ name: 'Christmas Day', date: new Date(year, 11, 25), countryCode: 'PL', type: 'public' });
+  holidays.push({ name: 'Second Day of Christmas', date: new Date(year, 11, 26), countryCode: 'PL', type: 'public' });
+
+  return holidays;
+}
+
+// ============================================================================
+// SWEDEN HOLIDAYS
+// ============================================================================
+
+export function getSwedenHolidays(year: number): Holiday[] {
+  const holidays: Holiday[] = [];
+  const easter = getEasterSunday(year);
+
+  holidays.push({ name: "New Year's Day", date: new Date(year, 0, 1), countryCode: 'SE', type: 'public' });
+  holidays.push({ name: 'Epiphany', date: new Date(year, 0, 6), countryCode: 'SE', type: 'public' });
+  holidays.push({ name: 'Good Friday', date: new Date(easter.getFullYear(), easter.getMonth(), easter.getDate() - 2), countryCode: 'SE', type: 'public' });
+  holidays.push({ name: 'Easter Sunday', date: easter, countryCode: 'SE', type: 'public' });
+  holidays.push({ name: 'Easter Monday', date: new Date(easter.getFullYear(), easter.getMonth(), easter.getDate() + 1), countryCode: 'SE', type: 'public' });
+  holidays.push({ name: 'Labour Day', date: new Date(year, 4, 1), countryCode: 'SE', type: 'public' });
+  holidays.push({ name: 'Ascension Day', date: new Date(easter.getFullYear(), easter.getMonth(), easter.getDate() + 39), countryCode: 'SE', type: 'public' });
+  holidays.push({ name: 'National Day', date: new Date(year, 5, 6), countryCode: 'SE', type: 'public' });
+  holidays.push({ name: 'Midsummer Eve', date: getFridayBefore(year, 5, 26), countryCode: 'SE', type: 'public' });
+  holidays.push({ name: "All Saints' Day", date: getSaturdayBetween(year, 10, 31, 11, 6), countryCode: 'SE', type: 'public' });
+  holidays.push({ name: 'Christmas Eve', date: new Date(year, 11, 24), countryCode: 'SE', type: 'public' });
+  holidays.push({ name: 'Christmas Day', date: new Date(year, 11, 25), countryCode: 'SE', type: 'public' });
+  holidays.push({ name: 'Second Day of Christmas', date: new Date(year, 11, 26), countryCode: 'SE', type: 'public' });
+
+  return holidays;
+}
+
+// Helper for Swedish Midsummer
+function getFridayBefore(year: number, month: number, maxDay: number): Date {
+  for (let d = maxDay; d >= maxDay - 6; d--) {
+    const date = new Date(year, month, d);
+    if (date.getDay() === 5) return date;
+  }
+  return new Date(year, month, maxDay);
+}
+
+// Helper for Swedish All Saints
+function getSaturdayBetween(year: number, startMonth: number, startDay: number, endMonth: number, endDay: number): Date {
+  const start = new Date(year, startMonth, startDay);
+  const end = new Date(year, endMonth, endDay);
+  for (let d = new Date(start); d <= end; d.setDate(d.getDate() + 1)) {
+    if (d.getDay() === 6) return new Date(d);
+  }
+  return start;
+}
+
+// ============================================================================
+// BELGIUM HOLIDAYS
+// ============================================================================
+
+export function getBelgiumHolidays(year: number): Holiday[] {
+  const holidays: Holiday[] = [];
+  const easter = getEasterSunday(year);
+
+  holidays.push({ name: "New Year's Day", date: new Date(year, 0, 1), countryCode: 'BE', type: 'public' });
+  holidays.push({ name: 'Easter Monday', date: new Date(easter.getFullYear(), easter.getMonth(), easter.getDate() + 1), countryCode: 'BE', type: 'public' });
+  holidays.push({ name: 'Labour Day', date: new Date(year, 4, 1), countryCode: 'BE', type: 'public' });
+  holidays.push({ name: 'Ascension Day', date: new Date(easter.getFullYear(), easter.getMonth(), easter.getDate() + 39), countryCode: 'BE', type: 'public' });
+  holidays.push({ name: 'Whit Monday', date: new Date(easter.getFullYear(), easter.getMonth(), easter.getDate() + 50), countryCode: 'BE', type: 'public' });
+  holidays.push({ name: 'Belgian National Day', date: new Date(year, 6, 21), countryCode: 'BE', type: 'public' });
+  holidays.push({ name: 'Assumption of Mary', date: new Date(year, 7, 15), countryCode: 'BE', type: 'public' });
+  holidays.push({ name: "All Saints' Day", date: new Date(year, 10, 1), countryCode: 'BE', type: 'public' });
+  holidays.push({ name: 'Armistice Day', date: new Date(year, 10, 11), countryCode: 'BE', type: 'public' });
+  holidays.push({ name: 'Christmas Day', date: new Date(year, 11, 25), countryCode: 'BE', type: 'public' });
+
+  return holidays;
+}
+
+// ============================================================================
+// SWITZERLAND HOLIDAYS (Federal only - cantons have additional)
+// ============================================================================
+
+export function getSwitzerlandHolidays(year: number): Holiday[] {
+  const holidays: Holiday[] = [];
+  const easter = getEasterSunday(year);
+
+  holidays.push({ name: "New Year's Day", date: new Date(year, 0, 1), countryCode: 'CH', type: 'public' });
+  holidays.push({ name: 'Good Friday', date: new Date(easter.getFullYear(), easter.getMonth(), easter.getDate() - 2), countryCode: 'CH', type: 'public' });
+  holidays.push({ name: 'Easter Monday', date: new Date(easter.getFullYear(), easter.getMonth(), easter.getDate() + 1), countryCode: 'CH', type: 'public' });
+  holidays.push({ name: 'Ascension Day', date: new Date(easter.getFullYear(), easter.getMonth(), easter.getDate() + 39), countryCode: 'CH', type: 'public' });
+  holidays.push({ name: 'Whit Monday', date: new Date(easter.getFullYear(), easter.getMonth(), easter.getDate() + 50), countryCode: 'CH', type: 'public' });
+  holidays.push({ name: 'Swiss National Day', date: new Date(year, 7, 1), countryCode: 'CH', type: 'public' });
+  holidays.push({ name: 'Christmas Day', date: new Date(year, 11, 25), countryCode: 'CH', type: 'public' });
+
+  return holidays;
+}
+
+// ============================================================================
 // UNIFIED API
 // ============================================================================
 
@@ -828,6 +1067,26 @@ export function getHolidays(year: number, countryCode: CountryCode): Holiday[] {
       return getChinaHolidays(year);
     case 'IN':
       return getIndiaHolidays(year);
+    case 'JP':
+      return getJapanHolidays(year);
+    case 'FR':
+      return getFranceHolidays(year);
+    case 'BR':
+      return getBrazilHolidays(year);
+    case 'MX':
+      return getMexicoHolidays(year);
+    case 'KR':
+      return getSouthKoreaHolidays(year);
+    case 'SG':
+      return getSingaporeHolidays(year);
+    case 'PL':
+      return getPolandHolidays(year);
+    case 'SE':
+      return getSwedenHolidays(year);
+    case 'BE':
+      return getBelgiumHolidays(year);
+    case 'CH':
+      return getSwitzerlandHolidays(year);
     case 'US':
       // Import from existing calendar module
       return [];
@@ -927,5 +1186,5 @@ export function getUpcomingHolidays(
  * @returns Array of country codes
  */
 export function getSupportedCountries(): CountryCode[] {
-  return ['UK', 'NL', 'DE', 'CA', 'AU', 'IT', 'ES', 'CN', 'IN', 'US'];
+  return ['UK', 'NL', 'DE', 'CA', 'AU', 'IT', 'ES', 'CN', 'IN', 'US', 'JP', 'FR', 'BR', 'MX', 'KR', 'SG', 'PL', 'SE', 'BE', 'CH'];
 }

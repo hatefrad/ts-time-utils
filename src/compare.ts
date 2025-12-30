@@ -469,3 +469,58 @@ export function nthDate(dates: Date[], n: number): Date | undefined {
   if (index < 0 || index >= sorted.length) return undefined;
   return sorted[index];
 }
+
+/**
+ * Find the index of the closest date to a target in an array
+ * @param dates - Array of candidate dates
+ * @param target - The target date
+ * @returns Index of the closest date, or -1 if array is empty
+ * @example
+ * closestIndexTo([date1, date2, date3], targetDate) // 1
+ */
+export function closestIndexTo(dates: Date[], target: Date): number {
+  if (dates.length === 0) return -1;
+
+  const targetTime = target.getTime();
+  let closestIndex = 0;
+  let minDiff = Math.abs(dates[0].getTime() - targetTime);
+
+  for (let i = 1; i < dates.length; i++) {
+    const diff = Math.abs(dates[i].getTime() - targetTime);
+    if (diff < minDiff) {
+      minDiff = diff;
+      closestIndex = i;
+    }
+  }
+
+  return closestIndex;
+}
+
+/**
+ * Get the number of overlapping days between two date ranges
+ * @param range1 - First range { start, end }
+ * @param range2 - Second range { start, end }
+ * @returns Number of overlapping days (0 if no overlap)
+ * @example
+ * getOverlappingDaysInIntervals(
+ *   { start: new Date('2024-01-01'), end: new Date('2024-01-10') },
+ *   { start: new Date('2024-01-05'), end: new Date('2024-01-15') }
+ * ) // 6 (Jan 5-10 inclusive)
+ */
+export function getOverlappingDaysInIntervals(
+  range1: { start: Date; end: Date },
+  range2: { start: Date; end: Date }
+): number {
+  const start1 = new Date(range1.start.getFullYear(), range1.start.getMonth(), range1.start.getDate());
+  const end1 = new Date(range1.end.getFullYear(), range1.end.getMonth(), range1.end.getDate());
+  const start2 = new Date(range2.start.getFullYear(), range2.start.getMonth(), range2.start.getDate());
+  const end2 = new Date(range2.end.getFullYear(), range2.end.getMonth(), range2.end.getDate());
+
+  const overlapStart = start1 > start2 ? start1 : start2;
+  const overlapEnd = end1 < end2 ? end1 : end2;
+
+  if (overlapStart > overlapEnd) return 0;
+
+  const diffMs = overlapEnd.getTime() - overlapStart.getTime();
+  return Math.floor(diffMs / 86400000) + 1;
+}

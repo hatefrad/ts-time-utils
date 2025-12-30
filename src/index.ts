@@ -17,26 +17,29 @@ export {
   formatCalendarDate
 } from './format.js';
 
-// Calculation utilities  
-export { 
-  differenceInUnits, 
-  addTime, 
-  subtractTime, 
-  startOf, 
-  endOf, 
-  isBetween, 
-  businessDaysBetween 
+// Calculation utilities
+export {
+  differenceInUnits,
+  addTime,
+  subtractTime,
+  startOf,
+  endOf,
+  isBetween,
+  businessDaysBetween,
+  roundToNearestUnit,
+  ceilDate,
+  floorDate
 } from './calculate.js';
 
 // Validation utilities
-export { 
-  isValidDate, 
-  isLeapYear, 
-  isPast, 
-  isFuture, 
-  isToday, 
-  isYesterday, 
-  isTomorrow, 
+export {
+  isValidDate,
+  isLeapYear,
+  isPast,
+  isFuture,
+  isToday,
+  isYesterday,
+  isTomorrow,
   isSameDay,
   isSameWeek,
   isSameMonth,
@@ -44,13 +47,18 @@ export {
   isThisWeek,
   isThisMonth,
   isThisYear,
-  isWeekend, 
+  isWeekend,
   isWeekday,
   isBusinessDay,
   isInLastNDays,
   isInNextNDays,
-  isValidTimeString, 
-  isValidISOString 
+  isValidTimeString,
+  isValidISOString,
+  isSameHour,
+  isSameMinute,
+  isSameSecond,
+  isInQuarter,
+  isSameQuarter
 } from './validate.js';
 
 // Age utilities
@@ -97,7 +105,13 @@ export {
   getUSHolidayName,
   getStartOfWeek,
   getEndOfWeek,
-  getWeeksInMonth
+  getWeeksInMonth,
+  getWeekYear,
+  lastDayOfDecade,
+  firstDayOfDecade,
+  lastDayOfCentury,
+  getStartOfQuarter,
+  getEndOfQuarter
 } from './calendar.js';
 
 export type { USHoliday } from './calendar.js';
@@ -244,7 +258,7 @@ export {
   stringifyWithDates
 } from './serialize.js';
 
-// Locale utilities  
+// Locale utilities
 export {
   registerLocale,
   getLocaleConfig,
@@ -265,7 +279,15 @@ export {
   convertFormatPattern,
   convertFormattedDate,
   convertRelativeTimeArray,
-  compareLocaleFormats
+  compareLocaleFormats,
+  // Week info utilities
+  getWeekInfo,
+  getLocaleWeekStartsOn,
+  getLocaleWeekendDays,
+  intlFormat,
+  formatISODate,
+  formatISOTime,
+  formatDistanceStrict
 } from './locale.js';
 
 // Recurrence utilities
@@ -434,7 +456,9 @@ export {
   isChronological,
   dateSpan,
   partitionDates,
-  nthDate
+  nthDate,
+  closestIndexTo,
+  getOverlappingDaysInIntervals
 } from './compare.js';
 
 // Date iteration utilities
@@ -461,7 +485,25 @@ export {
   iterateMonths,
   filterDays,
   eachMonthEnd,
-  eachNthDayOfMonth
+  eachNthDayOfMonth,
+  eachWeekendOfMonth,
+  eachWeekendOfYear,
+  previousDay,
+  nextDay,
+  previousSunday,
+  previousMonday,
+  previousTuesday,
+  previousWednesday,
+  previousThursday,
+  previousFriday,
+  previousSaturday,
+  nextSunday,
+  nextMonday,
+  nextTuesday,
+  nextWednesday,
+  nextThursday,
+  nextFriday,
+  nextSaturday
 } from './iterate.js';
 
 // International holidays utilities
@@ -475,6 +517,16 @@ export {
   getSpainHolidays,
   getChinaHolidays,
   getIndiaHolidays,
+  getJapanHolidays,
+  getFranceHolidays,
+  getBrazilHolidays,
+  getMexicoHolidays,
+  getSouthKoreaHolidays,
+  getSingaporeHolidays,
+  getPolandHolidays,
+  getSwedenHolidays,
+  getBelgiumHolidays,
+  getSwitzerlandHolidays,
   getHolidays,
   isHoliday,
   getHolidayName,
@@ -492,3 +544,41 @@ export { chain, ChainedDate, formatMs } from './chain.js';
 // Plugin system for extending ChainedDate
 export { extend, uninstall, getRegisteredPlugins, getPluginMethods, isPluginRegistered } from './plugins.js';
 export type { PluginFunction, Plugin } from './plugins.js';
+
+// Non-Gregorian calendar utilities
+export {
+  toHebrewDate,
+  toIslamicDate,
+  toBuddhistDate,
+  toJapaneseDate,
+  toPersianDate,
+  toChineseDate,
+  formatInCalendar,
+  getCalendarMonthNames,
+  getJapaneseEra,
+  getJapaneseEras,
+  isHebrewLeapYear,
+  getHebrewMonthName,
+  getIslamicMonthName,
+  getPersianMonthName,
+  isPersianLeapYear,
+  getChineseZodiac,
+  getChineseElement,
+  getChineseZodiacFull,
+  calendarDateToString,
+  compareCalendarDates,
+  today as calendarToday,
+  isSameCalendarDay,
+  getSupportedCalendars
+} from './calendars.js';
+
+export type {
+  CalendarDate,
+  HebrewDate,
+  IslamicDate,
+  BuddhistDate,
+  JapaneseDate,
+  PersianDate,
+  ChineseDate,
+  CalendarType
+} from './calendars.js';
