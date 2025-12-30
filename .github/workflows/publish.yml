@@ -18,7 +18,6 @@ jobs:
         with:
           node-version: '20'
           cache: 'npm'
-          registry-url: 'https://registry.npmjs.org'
 
       - run: npm ci
 
@@ -29,4 +28,7 @@ jobs:
       - run: npm test
       - run: npm run build
 
-      - run: npm publish --provenance --access public
+      - name: Setup npm trusted publishing
+        uses: azu/setup-npm-trusted-publish@v1
+
+      - run: npm publish --access public
