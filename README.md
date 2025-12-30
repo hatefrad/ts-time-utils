@@ -1,6 +1,6 @@
 # ts-time-utils
 
-A comprehensive TypeScript utility library for time, dates, durations, and calendar operations. Zero dependencies, full tree-shaking support, 320+ functions across 26 categories.
+A comprehensive TypeScript utility library for time, dates, durations, and calendar operations. Zero dependencies, full tree-shaking support, 400+ functions across 29 categories.
 
 [![npm version](https://img.shields.io/npm/v/ts-time-utils.svg)](https://www.npmjs.com/package/ts-time-utils)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
@@ -12,7 +12,7 @@ A comprehensive TypeScript utility library for time, dates, durations, and calen
 - **Lightweight** — Import only what you need with tree-shaking support
 - **Zero dependencies** — Pure TypeScript, no external packages
 - **Type-safe** — Full TypeScript support with IntelliSense
-- **Comprehensive** — 320+ functions across 26 utility categories
+- **Comprehensive** — 400+ functions across 29 utility categories
 - **Fluent API** — Chain operations with the `chain()` API
 - **Extensible** — Plugin system for custom functionality
 
@@ -256,7 +256,7 @@ extractDatesFromText('Meeting tomorrow at 3pm');
 
 ### International Holidays
 
-Public holidays for 10 countries.
+Public holidays for 20 countries.
 
 ```ts
 import { getHolidays, isHoliday, getNextHoliday } from 'ts-time-utils/holidays';
@@ -266,7 +266,8 @@ getHolidays(2025, 'DE');      // German holidays
 isHoliday(date, 'CA');        // Is Canadian holiday?
 getNextHoliday(date, 'AU');   // Next Australian holiday
 
-// Supported: UK, NL, DE, CA, AU, IT, ES, CN, IN, US
+// Supported: UK, NL, DE, CA, AU, IT, ES, CN, IN, US,
+//            JP, FR, BR, MX, KR, SG, PL, SE, BE, CH
 ```
 
 ### Locale
@@ -381,6 +382,69 @@ thisWeek();     // Current week
 thisMonth();    // Current month
 ```
 
+### Non-Gregorian Calendars
+
+Convert dates between calendar systems using Intl.DateTimeFormat.
+
+```ts
+import { toHebrewDate, toIslamicDate, toJapaneseDate, getChineseZodiac } from 'ts-time-utils/calendars';
+
+toHebrewDate(new Date());        // { year: 5785, month: 4, day: 23, calendar: 'hebrew' }
+toIslamicDate(new Date());       // { year: 1446, month: 7, day: 1, calendar: 'islamic-umalqura' }
+toJapaneseDate(new Date());      // { year: 6, era: 'Reiwa', calendar: 'japanese' }
+getChineseZodiac(2024);          // 'Dragon'
+
+// Supported: Hebrew, Islamic, Buddhist, Japanese, Persian, Chinese
+```
+
+### Temporal API Compatibility
+
+Future-proof with Temporal-like objects that work with native Date.
+
+```ts
+import { toPlainDate, toPlainDateTime, toZonedDateTime, toInstant } from 'ts-time-utils/temporal';
+
+const date = toPlainDate(2024, 3, 25);
+date.add({ days: 7 });           // PlainDate
+date.until(otherDate);           // Duration
+date.dayOfWeek;                  // 1 (Monday, ISO)
+
+const zdt = toZonedDateTime(new Date(), 'America/New_York');
+zdt.hour;                        // Hour in that timezone
+zdt.toInstant();                 // Epoch-based Instant
+
+const instant = toInstant(Date.now());
+instant.toZonedDateTime('UTC');  // Convert to any timezone
+```
+
+### High-Precision Utilities
+
+Nanosecond timestamps, BigInt support, DST handling, and leap seconds.
+
+```ts
+import {
+  createNanosecondTimestamp, nowNanoseconds,
+  toBigIntMs, ValidDate, isInDSTGap, leapSecondsBetween
+} from 'ts-time-utils/precision';
+
+// Nanosecond precision
+const ts = createNanosecondTimestamp(Date.now(), 500000);
+ts.totalNanoseconds;             // BigInt
+
+// BigInt timestamps for large date ranges
+toBigIntMs(new Date());          // BigInt milliseconds
+
+// DST transition detection
+isInDSTGap(new Date('2024-03-10T02:30:00'));
+
+// Validated dates (never invalid)
+const valid = ValidDate.from(date);  // Throws if invalid
+const maybe = ValidDate.tryFrom(date);  // Returns null if invalid
+
+// Leap second awareness
+leapSecondsBetween(date1, date2);  // Number of leap seconds
+```
+
 ### Parse
 
 Date parsing from various formats.
@@ -432,12 +496,15 @@ For complete API documentation, see the [Playground & Docs](https://ts-time-util
 | Module | Description |
 |--------|-------------|
 | `format` | Duration formatting, time ago, date patterns |
-| `calculate` | Date arithmetic, differences, period boundaries |
+| `calculate` | Date arithmetic, differences, rounding |
 | `validate` | Date validation, comparisons, type checks |
 | `duration` | Immutable Duration class with arithmetic |
 | `chain` | Fluent chainable API |
 | `timezone` | Timezone conversions, DST handling |
 | `calendar` | ISO weeks, quarters, holidays, grids |
+| `calendars` | Non-Gregorian calendars (Hebrew, Islamic, etc.) |
+| `temporal` | Temporal API compatibility layer |
+| `precision` | Nanoseconds, BigInt, DST, leap seconds |
 | `dateRange` | Range operations: overlap, gaps, merge |
 | `recurrence` | RRULE-inspired recurring patterns |
 | `cron` | Cron expression parsing and matching |
@@ -445,7 +512,7 @@ For complete API documentation, see the [Playground & Docs](https://ts-time-util
 | `compare` | Date sorting, grouping, statistics |
 | `iterate` | Date iteration and counting |
 | `naturalLanguage` | Natural language date parsing |
-| `holidays` | International holiday calculations |
+| `holidays` | International holidays (20 countries) |
 | `locale` | Multi-language formatting (40+ locales) |
 | `workingHours` | Business hours calculations |
 | `serialize` | JSON date serialization |
@@ -476,7 +543,7 @@ Releases are automated via GitHub Actions with npm trusted publishing (OIDC).
 **To release a new version:**
 
 ```bash
-git tag v3.1.0        # Create tag (use semantic versioning)
+git tag v4.0.1        # Create tag (use semantic versioning)
 git push --tags       # Push tag → triggers publish workflow
 ```
 
@@ -485,7 +552,7 @@ The workflow automatically:
 2. Runs lint, tests, and build
 3. Publishes to npm with provenance
 
-**Version format:** Tags must match `v*` pattern (e.g., `v3.0.0`, `v3.1.0-beta.1`)
+**Version format:** Tags must match `v*` pattern (e.g., `v4.0.0`, `v4.1.0-beta.1`)
 
 ## License
 
