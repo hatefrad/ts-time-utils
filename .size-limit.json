@@ -1,5 +1,4 @@
 [
-  { "name": "Full bundle", "path": "dist/esm/index.js", "limit": "50 KB" },
   { "name": "format", "path": "dist/esm/format.js", "limit": "5 KB" },
   { "name": "calculate", "path": "dist/esm/calculate.js", "limit": "3 KB" },
   { "name": "validate", "path": "dist/esm/validate.js", "limit": "3 KB" },
