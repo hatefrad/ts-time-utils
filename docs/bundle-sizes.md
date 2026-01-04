@@ -5,7 +5,7 @@ All sizes are brotli-compressed. Tree-shake by importing specific modules.
 ## Per-Module Sizes
 
 | Module          | Size    | Import Path                     |
-| --------------- | ------- | ------------------------------- | --- | --------- | ------- | ------------------------- |
+| --------------- | ------- | ------------------------------- |
 | constants       | 189 B   | `ts-time-utils/constants`       |
 | rangePresets    | 694 B   | `ts-time-utils/rangePresets`    |
 | age             | 801 B   | `ts-time-utils/age`             |
@@ -21,6 +21,7 @@ All sizes are brotli-compressed. Tree-shake by importing specific modules.
 | chain           | 2.21 KB | `ts-time-utils/chain`           |
 | duration        | 2.23 KB | `ts-time-utils/duration`        |
 | iterate         | 2.40 KB | `ts-time-utils/iterate`         |
+| scheduling      | 2.41 KB | `ts-time-utils/scheduling`      |
 | dateRange       | 2.42 KB | `ts-time-utils/dateRange`       |
 | serialize       | 2.52 KB | `ts-time-utils/serialize`       |
 | timezone        | 2.55 KB | `ts-time-utils/timezone`        |
@@ -30,7 +31,10 @@ All sizes are brotli-compressed. Tree-shake by importing specific modules.
 | naturalLanguage | 2.88 KB | `ts-time-utils/naturalLanguage` |
 | compare         | 3.09 KB | `ts-time-utils/compare`         |
 | format          | 3.10 KB | `ts-time-utils/format`          |
-| parse           | 3.13 KB | `ts-time-utils/parse`           |     | precision | 3.55 KB | `ts-time-utils/precision` |
+| parse           | 3.13 KB | `ts-time-utils/parse`           |
+| healthcare      | 3.15 KB | `ts-time-utils/healthcare`      |
+| finance         | 3.17 KB | `ts-time-utils/finance`         |
+| precision       | 3.55 KB | `ts-time-utils/precision`       |
 | temporal        | 3.85 KB | `ts-time-utils/temporal`        |
 | holidays        | 4.07 KB | `ts-time-utils/holidays`        |
 | locale          | 8.23 KB | `ts-time-utils/locale`          |
@@ -39,9 +43,9 @@ All sizes are brotli-compressed. Tree-shake by importing specific modules.
 
 **Smallest footprint** (~1 KB): `constants`, `rangePresets`, `age`, `interval`, `validate`, `plugins`
 
-**Medium** (1-3 KB): Most modules including `calculate`, `chain`, `calendar`, `calendars`, `timezone`, `format`
+**Medium** (1-3 KB): Most modules including `calculate`, `chain`, `calendar`, `calendars`, `timezone`, `format`, `scheduling`
 
-**Larger** (3+ KB): `precision`, `temporal`, `holidays`, `locale` (8.23 KB - contains 40+ locale configs)
+**Larger** (3+ KB): `precision`, `temporal`, `holidays`, `finance`, `healthcare`, `locale` (8.23 KB - contains 40+ locale configs)
 
 ## Example: Minimal Import
 

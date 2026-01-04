@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-ts-time-utils is a comprehensive TypeScript utility library for time, dates, durations, and calendar operations. It is designed with tree-shaking support, allowing consumers to import only the functions they need. The library has zero dependencies and provides 400+ functions across 29 utility categories.
+ts-time-utils is a comprehensive TypeScript utility library for time, dates, durations, and calendar operations. It is designed with tree-shaking support, allowing consumers to import only the functions they need. The library has zero dependencies and provides 430+ functions across 32 utility categories.
 
 ## Build Commands
 
@@ -73,8 +73,11 @@ Each `.ts` file in `src/` represents a category of utilities:
 26. **calendars.ts** - Non-Gregorian calendars (Hebrew, Islamic, etc.)
 27. **temporal.ts** - Temporal API compatibility layer
 28. **precision.ts** - Nanosecond timestamps, BigInt, DST gap detection
-29. **types.ts** - Shared TypeScript types
-30. **constants.ts** - Time constants and type definitions
+29. **scheduling.ts** - Appointment slots, availability, booking conflicts
+30. **finance.ts** - Market hours, trading days, settlement dates
+31. **healthcare.ts** - Medication schedules, shifts, on-call rotations
+32. **types.ts** - Shared TypeScript types
+33. **constants.ts** - Time constants and type definitions
 
 ### Testing
 

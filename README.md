@@ -1,6 +1,6 @@
 # ts-time-utils
 
-A comprehensive TypeScript utility library for time, dates, durations, and calendar operations. Zero dependencies, full tree-shaking support, 400+ functions across 29 categories.
+A comprehensive TypeScript utility library for time, dates, durations, and calendar operations. Zero dependencies, full tree-shaking support, 430+ functions across 32 categories.
 
 [![npm version](https://img.shields.io/npm/v/ts-time-utils.svg)](https://www.npmjs.com/package/ts-time-utils)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
@@ -12,7 +12,7 @@ A comprehensive TypeScript utility library for time, dates, durations, and calen
 - **Lightweight** — Import only what you need with tree-shaking support
 - **Zero dependencies** — Pure TypeScript, no external packages
 - **Type-safe** — Full TypeScript support with IntelliSense
-- **Comprehensive** — 400+ functions across 29 utility categories
+- **Comprehensive** — 430+ functions across 32 utility categories
 - **Fluent API** — Chain operations with the `chain()` API
 - **Extensible** — Plugin system for custom functionality
 
