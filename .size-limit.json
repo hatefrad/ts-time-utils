@@ -27,5 +27,7 @@
   { "name": "plugins", "path": "dist/esm/plugins.js", "limit": "2 KB" },
   { "name": "calendars", "path": "dist/esm/calendars.js", "limit": "3 KB" },
   { "name": "temporal", "path": "dist/esm/temporal.js", "limit": "5 KB" },
-  { "name": "precision", "path": "dist/esm/precision.js", "limit": "4 KB" }
+  { "name": "precision", "path": "dist/esm/precision.js", "limit": "4 KB" },
+  { "name": "scheduling", "path": "dist/esm/scheduling.js", "limit": "3 KB" },
+  { "name": "finance", "path": "dist/esm/finance.js", "limit": "4 KB" }
 ]

@@ -611,6 +611,55 @@ export type {
   DurationUnit as TemporalDurationUnit
 } from './temporal.js';
 
+// Finance utilities
+export {
+  isMarketOpen,
+  isMarketHoliday,
+  isTradingDay,
+  getMarketHours,
+  getMarketOpen,
+  getMarketClose,
+  getNextMarketOpen,
+  getNextMarketClose,
+  getSettlementDate,
+  getTradeDateFromSettlement,
+  eachTradingDay,
+  countTradingDays,
+  addTradingDays,
+  getOptionsExpiration,
+  MARKET_HOURS,
+  US_MARKET_HOLIDAYS
+} from './finance.js';
+
+export type {
+  USMarket,
+  MarketHours,
+  OptionsExpirationType
+} from './finance.js';
+
+// Scheduling utilities
+export {
+  generateSlots,
+  generateSlotsForRange,
+  getAvailableSlots,
+  findNextAvailable,
+  isSlotAvailable,
+  findConflicts,
+  hasConflict,
+  addBuffer,
+  removeBuffer,
+  expandRecurringAvailability,
+  mergeBookings,
+  splitSlot,
+  DEFAULT_SCHEDULING_CONFIG
+} from './scheduling.js';
+
+export type {
+  SchedulingConfig,
+  Slot,
+  Booking
+} from './scheduling.js';
+
 // High-precision utilities
 export {
   createNanosecondTimestamp,

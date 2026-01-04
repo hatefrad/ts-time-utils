@@ -156,6 +156,16 @@
       "import": "./dist/esm/precision.js",
       "require": "./dist/precision.js",
       "types": "./dist/precision.d.ts"
+    },
+    "./scheduling": {
+      "import": "./dist/esm/scheduling.js",
+      "require": "./dist/scheduling.js",
+      "types": "./dist/scheduling.d.ts"
+    },
+    "./finance": {
+      "import": "./dist/esm/finance.js",
+      "require": "./dist/finance.js",
+      "types": "./dist/finance.d.ts"
     }
   },
   "files": [
