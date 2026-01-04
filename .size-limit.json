@@ -29,5 +29,6 @@
   { "name": "temporal", "path": "dist/esm/temporal.js", "limit": "5 KB" },
   { "name": "precision", "path": "dist/esm/precision.js", "limit": "4 KB" },
   { "name": "scheduling", "path": "dist/esm/scheduling.js", "limit": "3 KB" },
-  { "name": "finance", "path": "dist/esm/finance.js", "limit": "4 KB" }
+  { "name": "finance", "path": "dist/esm/finance.js", "limit": "4 KB" },
+  { "name": "healthcare", "path": "dist/esm/healthcare.js", "limit": "4 KB" }
 ]

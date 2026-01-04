@@ -704,3 +704,30 @@ export type {
   HighResDuration,
   DSTTransition
 } from './precision.js';
+
+// Healthcare utilities
+export {
+  getMedicationTimes,
+  getNextMedicationTime,
+  parseMedicationFrequency,
+  generateShiftSchedule,
+  getShiftForTime,
+  isOnShift,
+  createOnCallRotation,
+  getOnCallStaff,
+  isWithinComplianceWindow,
+  getComplianceDeadline,
+  timeUntilDeadline,
+  calculateRestBetweenShifts,
+  MEDICATION_FREQUENCIES,
+  SHIFT_DURATIONS,
+  DEFAULT_MEDICATION_CONFIG
+} from './healthcare.js';
+
+export type {
+  MedicationFrequency,
+  ShiftPattern,
+  ShiftConfig,
+  MedicationConfig,
+  OnCallSlot
+} from './healthcare.js';

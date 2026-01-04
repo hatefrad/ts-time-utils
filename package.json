@@ -166,6 +166,11 @@
       "import": "./dist/esm/finance.js",
       "require": "./dist/finance.js",
       "types": "./dist/finance.d.ts"
+    },
+    "./healthcare": {
+      "import": "./dist/esm/healthcare.js",
+      "require": "./dist/healthcare.js",
+      "types": "./dist/healthcare.d.ts"
     }
   },
   "files": [
