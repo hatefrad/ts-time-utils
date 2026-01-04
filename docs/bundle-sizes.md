@@ -10,39 +10,39 @@ All sizes are brotli-compressed. Tree-shake by importing specific modules.
 | rangePresets | 694 B | `ts-time-utils/rangePresets` |
 | age | 801 B | `ts-time-utils/age` |
 | interval | 949 B | `ts-time-utils/interval` |
-| calculate | 1.11 KB | `ts-time-utils/calculate` |
-| validate | 1.15 KB | `ts-time-utils/validate` |
-| plugins | 1.20 KB | `ts-time-utils/plugins` |
+| validate | 1.31 KB | `ts-time-utils/validate` |
 | performance | 1.35 KB | `ts-time-utils/performance` |
-| calendars | 1.45 KB | `ts-time-utils/calendars` |
+| plugins | 1.39 KB | `ts-time-utils/plugins` |
+| calculate | 1.55 KB | `ts-time-utils/calculate` |
 | workingHours | 1.64 KB | `ts-time-utils/workingHours` |
-| precision | 1.85 KB | `ts-time-utils/precision` |
 | cron | 1.90 KB | `ts-time-utils/cron` |
-| iterate | 1.99 KB | `ts-time-utils/iterate` |
 | fiscal | 2.07 KB | `ts-time-utils/fiscal` |
 | countdown | 2.11 KB | `ts-time-utils/countdown` |
+| chain | 2.21 KB | `ts-time-utils/chain` |
 | duration | 2.23 KB | `ts-time-utils/duration` |
-| calendar | 2.37 KB | `ts-time-utils/calendar` |
+| iterate | 2.40 KB | `ts-time-utils/iterate` |
 | dateRange | 2.42 KB | `ts-time-utils/dateRange` |
 | serialize | 2.52 KB | `ts-time-utils/serialize` |
 | timezone | 2.55 KB | `ts-time-utils/timezone` |
 | recurrence | 2.61 KB | `ts-time-utils/recurrence` |
-| compare | 2.76 KB | `ts-time-utils/compare` |
-| holidays | 2.81 KB | `ts-time-utils/holidays` |
+| calendar | 2.69 KB | `ts-time-utils/calendar` |
+| calendars | 2.86 KB | `ts-time-utils/calendars` |
 | naturalLanguage | 2.88 KB | `ts-time-utils/naturalLanguage` |
+| compare | 3.09 KB | `ts-time-utils/compare` |
 | format | 3.10 KB | `ts-time-utils/format` |
 | parse | 3.13 KB | `ts-time-utils/parse` |
-| temporal | 3.45 KB | `ts-time-utils/temporal` |
-| chain | 4.20 KB | `ts-time-utils/chain` |
-| locale | 7.26 KB | `ts-time-utils/locale` |
+| precision | 3.55 KB | `ts-time-utils/precision` |
+| temporal | 3.85 KB | `ts-time-utils/temporal` |
+| holidays | 4.07 KB | `ts-time-utils/holidays` |
+| locale | 8.23 KB | `ts-time-utils/locale` |
 
 ## Recommendations
 
-**Smallest footprint** (~1 KB): `constants`, `rangePresets`, `age`, `interval`, `plugins`
+**Smallest footprint** (~1 KB): `constants`, `rangePresets`, `age`, `interval`, `validate`, `plugins`
 
-**Medium** (1-3 KB): Most modules including `format`, `calculate`, `validate`, `calendar`, `timezone`, `calendars`, `precision`
+**Medium** (1-3 KB): Most modules including `calculate`, `chain`, `calendar`, `calendars`, `timezone`, `format`
 
-**Larger** (3+ KB): `chain` (4.20 KB), `temporal` (3.45 KB), `locale` (7.26 KB - contains 40+ locale configs)
+**Larger** (3+ KB): `precision`, `temporal`, `holidays`, `locale` (8.23 KB - contains 40+ locale configs)
 
 ## Example: Minimal Import
 

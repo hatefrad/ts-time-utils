@@ -24,5 +24,9 @@
   { "name": "compare", "path": "dist/esm/compare.js", "limit": "6 KB" },
   { "name": "iterate", "path": "dist/esm/iterate.js", "limit": "6 KB" },
   { "name": "holidays", "path": "dist/esm/holidays.js", "limit": "10 KB" },
-  { "name": "chain", "path": "dist/esm/chain.js", "limit": "5 KB" }
+  { "name": "chain", "path": "dist/esm/chain.js", "limit": "5 KB" },
+  { "name": "plugins", "path": "dist/esm/plugins.js", "limit": "2 KB" },
+  { "name": "calendars", "path": "dist/esm/calendars.js", "limit": "3 KB" },
+  { "name": "temporal", "path": "dist/esm/temporal.js", "limit": "5 KB" },
+  { "name": "precision", "path": "dist/esm/precision.js", "limit": "4 KB" }
 ]
