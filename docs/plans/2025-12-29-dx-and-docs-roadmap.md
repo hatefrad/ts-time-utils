@@ -8,10 +8,10 @@ Phased plan to improve developer experience and documentation. No backwards comp
 
 ### 1A: Bundle Size Analysis
 - [x] Add `size-limit` to devDependencies
-- [x] Configure per-subpath size tracking (all 26 exports)
+- [x] Configure per-subpath size tracking (all 29 exports)
 - [x] Add CI job that fails on size regression
 - [x] Generate `docs/bundle-sizes.md` with breakdown table
-- [ ] Add size badges to README
+- [x] ~~Add size badges to README~~ (deferred - npm badge sufficient)
 
 ### 1B: Integration Guides
 - [x] Create `docs/guides/` directory

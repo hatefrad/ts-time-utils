@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-ts-time-utils is a comprehensive TypeScript utility library for time, dates, durations, and calendar operations. It is designed with tree-shaking support, allowing consumers to import only the functions they need. The library has zero dependencies and provides 320+ functions across 26+ utility categories.
+ts-time-utils is a comprehensive TypeScript utility library for time, dates, durations, and calendar operations. It is designed with tree-shaking support, allowing consumers to import only the functions they need. The library has zero dependencies and provides 400+ functions across 29 utility categories.
 
 ## Build Commands
 
@@ -67,9 +67,14 @@ Each `.ts` file in `src/` represents a category of utilities:
 20. **fiscal.ts** - Fiscal year utilities
 21. **compare.ts** - Date sorting, grouping, statistical operations
 22. **iterate.ts** - Date iteration and counting
-23. **holidays.ts** - International holiday calculations (9 countries)
-24. **types.ts** - Shared TypeScript types
-25. **constants.ts** - Time constants and type definitions
+23. **holidays.ts** - International holiday calculations (20 countries)
+24. **chain.ts** - Fluent chainable API for date operations
+25. **plugins.ts** - Plugin system for extending chain API
+26. **calendars.ts** - Non-Gregorian calendars (Hebrew, Islamic, etc.)
+27. **temporal.ts** - Temporal API compatibility layer
+28. **precision.ts** - Nanosecond timestamps, BigInt, DST gap detection
+29. **types.ts** - Shared TypeScript types
+30. **constants.ts** - Time constants and type definitions
 
 ### Testing
 
@@ -132,9 +137,10 @@ The library supports 40+ locales with built-in configurations. Locale utilities 
 
 ### International Features
 
-- **Holidays**: Supports UK, Netherlands, Germany, Canada, Australia, Italy, Spain, China, India, US
+- **Holidays**: Supports 20 countries (UK, NL, DE, CA, AU, IT, ES, CN, IN, US, JP, FR, BR, MX, KR, SG, PL, SE, BE, CH)
 - **Fiscal Years**: Configurable fiscal year start (calendar, UK/India April, Australia July, US Federal October)
 - **Cron**: Standard 5-field cron expression parsing
+- **Calendars**: Non-Gregorian calendars (Hebrew, Islamic, Buddhist, Japanese, Persian, Chinese)
 
 ### Tree-Shaking Design
 
