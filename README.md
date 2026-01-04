@@ -458,6 +458,98 @@ parseTime('2:30 PM');  // { hour: 14, minute: 30 }
 autoDetectFormat('2025-09-14');  // 'YYYY-MM-DD'
 ```
 
+### Scheduling
+
+Appointment slots, availability, and booking conflict detection.
+
+```ts
+import {
+  generateSlots, getAvailableSlots, findNextAvailable,
+  hasConflict, findConflicts, mergeBookings
+} from 'ts-time-utils/scheduling';
+
+// Generate 30-min slots for a day
+const slots = generateSlots(new Date(), {
+  slotDuration: 30,
+  workingHours: { startTime: { hour: 9, minute: 0 }, endTime: { hour: 17, minute: 0 } }
+});
+
+// Find available slots (excluding existing bookings)
+const available = getAvailableSlots(new Date(), existingBookings, config);
+
+// Find next available slot of specific duration
+findNextAvailable(new Date(), bookings, 60, config);  // 60-min slot
+
+// Check for conflicts
+hasConflict(bookings, proposedSlot);  // true/false
+findConflicts(bookings, proposedSlot);  // Array of conflicting bookings
+
+// Merge adjacent bookings
+mergeBookings(bookings);
+```
+
+### Finance
+
+Market hours, trading days, and settlement date calculations.
+
+```ts
+import {
+  isMarketOpen, isTradingDay, getMarketHours,
+  getNextMarketOpen, addTradingDays, getSettlementDate,
+  eachTradingDay, getOptionsExpiration
+} from 'ts-time-utils/finance';
+
+// Check market status
+isMarketOpen(new Date(), 'NYSE');      // Is NYSE open right now?
+isTradingDay(new Date(), 'NASDAQ');    // Is today a trading day?
+getMarketHours('NYSE');                // { open: {hour:9,minute:30}, close: {hour:16,minute:0} }
+
+// Market timing
+getNextMarketOpen(new Date());         // Next market open time
+addTradingDays(new Date(), 5);         // 5 trading days from now
+
+// Settlement (T+2, etc.)
+getSettlementDate(tradeDate, 2);       // T+2 settlement date
+
+// Iterate trading days
+eachTradingDay(start, end);            // Array of trading days
+
+// Options expiration (3rd Friday)
+getOptionsExpiration(2025, 3);         // March 2025 expiration
+```
+
+### Healthcare
+
+Medication scheduling, shift patterns, and compliance windows.
+
+```ts
+import {
+  getMedicationTimes, getNextMedicationTime, parseMedicationFrequency,
+  generateShiftSchedule, getShiftForTime, isOnShift,
+  createOnCallRotation, getOnCallStaff,
+  getComplianceDeadline, timeUntilDeadline
+} from 'ts-time-utils/healthcare';
+
+// Medication times (BID = twice daily, TID = 3x daily, etc.)
+getMedicationTimes(new Date(), 'BID');   // [8am, 8pm] (default wake/sleep times)
+getMedicationTimes(new Date(), 'q6h');   // Every 6 hours
+getNextMedicationTime(now, 'TID');       // Next scheduled dose
+parseMedicationFrequency('twice daily'); // 'BID'
+
+// Shift scheduling
+generateShiftSchedule(start, end, { pattern: '12hr', startTime: { hour: 7, minute: 0 } });
+getShiftForTime(now, shiftConfig);       // Current shift
+isOnShift(now, shiftStart, config);      // Is within shift?
+
+// On-call rotations
+const rotation = createOnCallRotation(start, end, ['Dr. Smith', 'Dr. Jones'], 24);
+getOnCallStaff(now, rotation);           // Who's on call?
+
+// Compliance windows
+getComplianceDeadline(eventDate, 72);    // 72-hour window
+timeUntilDeadline(eventDate, deadline);  // Duration remaining
+```
+
 ---
 
 ## Plugin System
@@ -522,6 +614,9 @@ For complete API documentation, see the [Playground & Docs](https://ts-time-util
 | `interval` | Time interval operations |
 | `rangePresets` | Common date range presets |
 | `parse` | Date parsing from various formats |
+| `scheduling` | Appointment slots, availability, booking |
+| `finance` | Market hours, trading days, settlement |
+| `healthcare` | Medication schedules, shifts, on-call |
 | `plugins` | Plugin system for extensions |
 | `constants` | Time constants and types |
 
