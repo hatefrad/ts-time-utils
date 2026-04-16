@@ -17,8 +17,6 @@ export interface ParseOptions {
   strict?: boolean;
   /** Timezone to use for parsing */
   timezone?: string;
-  /** Default locale for parsing */
-  locale?: string;
 }
 
 /** Options for formatting operations */
