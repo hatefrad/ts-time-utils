@@ -1,6 +1,6 @@
 # ts-time-utils
 
-A comprehensive TypeScript utility library for time, dates, durations, and calendar operations. Zero dependencies, full tree-shaking support, 430+ functions across 32 categories.
+A comprehensive TypeScript utility library for time, dates, durations, and calendar operations. Zero dependencies, full tree-shaking support, 430+ functions across 32 public modules.
 
 [![npm version](https://img.shields.io/npm/v/ts-time-utils.svg)](https://www.npmjs.com/package/ts-time-utils)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
@@ -12,7 +12,7 @@ A comprehensive TypeScript utility library for time, dates, durations, and calen
 - **Lightweight** — Import only what you need with tree-shaking support
 - **Zero dependencies** — Pure TypeScript, no external packages
 - **Type-safe** — Full TypeScript support with IntelliSense
-- **Comprehensive** — 430+ functions across 32 utility categories
+- **Comprehensive** — 430+ functions across 32 public modules
 - **Fluent API** — Chain operations with the `chain()` API
 - **Extensible** — Plugin system for custom functionality
 
@@ -643,8 +643,8 @@ Releases are automated via GitHub Actions with npm trusted publishing (OIDC).
 **To release a new version:**
 
 ```bash
-git tag v4.0.1        # Create tag (use semantic versioning)
-git push --tags       # Push tag → triggers publish workflow
+git tag v4.2.0        # Create tag (use semantic versioning)
+git push --tags       # Push tag -> triggers publish workflow
 ```
 
 The workflow automatically:
@@ -652,7 +652,16 @@ The workflow automatically:
 2. Runs lint, tests, build, and `npm run test:package`
 3. Publishes to npm with provenance
 
-**Version format:** Tags must match `v*` pattern (e.g., `v4.0.0`, `v4.1.0-beta.1`)
+**Version format:** Tags must match `v*` pattern (e.g., `v4.2.0`, `v4.1.0-beta.1`)
+
+Before tagging, run:
+
+```bash
+npm run lint
+npm test
+npm run build
+npm run test:package
+```
 
 ## License
 

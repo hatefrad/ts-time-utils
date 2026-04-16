@@ -2,6 +2,14 @@
 
 When adding a new module to ts-time-utils, ensure these files are updated:
 
+## Release Preparation Checklist
+
+- [ ] Update `CHANGELOG.md` with the release summary
+- [ ] Confirm README module counts match `package.json` exports
+- [ ] Confirm version references point at the current release baseline
+- [ ] Run `npm run lint`, `npm test`, `npm run build`, and `npm run test:package`
+- [ ] Verify release instructions still match `.github/workflows/ci.yml` and `.github/workflows/publish.yml`
+
 ## 1. README.md
 
 - [ ] Update feature count in main description (line ~14)
@@ -74,12 +82,12 @@ const result = utilFunction(input);
 
 ```
 
-## Current Module Status (v4.0.0):
+## Current Module Status (v4.2.0):
 
-All 29 utility modules complete:
-- format, calculate, validate, age, calendar, parse, performance
+All 32 public modules complete:
+- format, calculate, validate, constants, age, calendar, parse, performance
 - interval, timezone, workingHours, rangePresets, duration, serialize
 - locale, recurrence, countdown, dateRange, naturalLanguage, cron
 - fiscal, compare, iterate, holidays, chain, plugins
-- calendars, temporal, precision
+- calendars, temporal, precision, scheduling, finance, healthcare
 ```
