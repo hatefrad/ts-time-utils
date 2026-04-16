@@ -13,7 +13,7 @@ When adding a new module to ts-time-utils, ensure these files are updated:
 ## 1. README.md
 
 - [ ] Update feature count in main description (line ~14)
-- [ ] Add module description in features section (after "### 🎯 Shared Types")
+- [ ] Add module description in the most relevant README feature or module section
 - [ ] Add import example in usage section
 - [ ] Add detailed examples section for the module
 - [ ] Add API reference section for the module

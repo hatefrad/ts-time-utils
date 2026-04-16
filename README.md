@@ -643,7 +643,7 @@ Releases are automated via GitHub Actions with npm trusted publishing (OIDC).
 **To release a new version:**
 
 ```bash
-git tag v4.2.0        # Create tag (use semantic versioning)
+git tag vX.Y.Z        # Create a semantic version tag for the release
 git push --tags       # Push tag -> triggers publish workflow
 ```
 
@@ -652,7 +652,7 @@ The workflow automatically:
 2. Runs lint, tests, build, and `npm run test:package`
 3. Publishes to npm with provenance
 
-**Version format:** Tags must match `v*` pattern (e.g., `v4.2.0`, `v4.1.0-beta.1`)
+**Version format:** Tags must match `v*` pattern (e.g., `v1.2.3`, `v1.2.3-beta.1`)
 
 Before tagging, run:
 
