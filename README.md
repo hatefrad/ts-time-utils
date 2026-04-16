@@ -632,6 +632,7 @@ For complete API documentation, see the [Playground & Docs](https://ts-time-util
 npm install      # Install dependencies
 npm run build    # Build both CJS and ESM
 npm test         # Run tests
+npm run test:package  # Verify built package exports after build
 npm run lint     # Lint code
 ```
 
@@ -648,7 +649,7 @@ git push --tags       # Push tag → triggers publish workflow
 
 The workflow automatically:
 1. Sets `package.json` version from tag
-2. Runs lint, tests, and build
+2. Runs lint, tests, build, and the built-package export check
 3. Publishes to npm with provenance
 
 **Version format:** Tags must match `v*` pattern (e.g., `v4.0.0`, `v4.1.0-beta.1`)
