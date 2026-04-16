@@ -66,9 +66,9 @@ const result = utilFunction(input);
 
 // Advanced usage
 // ... more examples
-````
-
 ```
+
+````
 
 ### API Reference Template:
 ```
