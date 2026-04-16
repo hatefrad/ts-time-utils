@@ -254,6 +254,8 @@ extractDatesFromText('Meeting tomorrow at 3pm');
 // [{ date: Date, text: 'tomorrow at 3pm', confidence: 0.9 }]
 ```
 
+`parseNaturalDate` accepts `referenceDate`, `defaultTime`, and `strict`. When `strict` is `true`, the parser only returns the library's recognized patterns and skips the permissive `Date` fallback.
+
 ### International Holidays
 
 Public holidays for 20 countries.

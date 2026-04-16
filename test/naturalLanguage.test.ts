@@ -60,6 +60,11 @@ describe('NaturalLanguage', () => {
       const result = parseNaturalDate('not a date');
       expect(result).toBeNull();
     });
+
+    it('should reject fallback date parsing in strict mode', () => {
+      expect(parseNaturalDate('2024-01-15')).not.toBeNull();
+      expect(parseNaturalDate('2024-01-15', { strict: true })).toBeNull();
+    });
   });
 
   describe('parseRelativePhrase', () => {
