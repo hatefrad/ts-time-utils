@@ -125,6 +125,8 @@ chain(new Date())
   .format('YYYY-MM-DD');  // Next week Monday
 ```
 
+Plugin extensions are imported from `ts-time-utils/plugins`, and that module now loads the chain class directly. You can import `plugins` before or after `chain` without any hidden global setup.
+
 ### Timezone
 
 Timezone conversions, DST handling, and zone comparisons.

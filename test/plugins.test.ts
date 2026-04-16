@@ -1,4 +1,4 @@
-import { describe, it, expect, beforeEach } from 'vitest';
+import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
 import { extend, uninstall, getRegisteredPlugins, getPluginMethods, isPluginRegistered } from '../src/plugins.js';
 import { chain, ChainedDate } from '../src/chain.js';
 
@@ -12,6 +12,74 @@ describe('Plugin system', () => {
       } catch (e) {
         // Ignore if already uninstalled
       }
+    });
+  });
+
+  afterEach(() => {
+    vi.resetModules();
+    vi.unmock('../src/chain.js');
+  });
+
+  describe('module loading contract', () => {
+    it('registers plugins when plugins are imported before chain', async () => {
+      const originalChainClass = (globalThis as any).__chainedDateClass;
+      try {
+        delete (globalThis as any).__chainedDateClass;
+        vi.resetModules();
+
+        const { extend: freshExtend, uninstall: freshUninstall } = await import('../src/plugins.js');
+
+        freshExtend('import-order-safe', {
+          sayHello(this: any): string {
+            return 'hello';
+          }
+        });
+
+        const { chain: freshChain } = await import('../src/chain.js');
+        expect((freshChain() as any).sayHello()).toBe('hello');
+        freshUninstall('import-order-safe');
+      } finally {
+        (globalThis as any).__chainedDateClass = originalChainClass;
+      }
+    });
+
+    it('throws a clear error when ChainedDate is unavailable', async () => {
+      const originalChainClass = (globalThis as any).__chainedDateClass;
+      try {
+        delete (globalThis as any).__chainedDateClass;
+        vi.resetModules();
+        vi.doMock('../src/chain.js', () => ({
+          chain: () => new Date(),
+          ChainedDate: undefined
+        }));
+
+        const { extend: freshExtend } = await import('../src/plugins.js');
+
+        expect(() => {
+          freshExtend('not-ready', {
+            method() {}
+          });
+        }).toThrow('ChainedDate export is not available yet');
+      } finally {
+        (globalThis as any).__chainedDateClass = originalChainClass;
+      }
+    });
+
+    it('restores overwritten methods on uninstall', () => {
+      const originalFormat = ChainedDate.prototype.format;
+
+      extend('format-override', {
+        format(this: ChainedDate): string {
+          return 'overridden';
+        }
+      });
+
+      expect((chain(new Date('2025-01-15')) as any).format()).toBe('overridden');
+
+      uninstall('format-override');
+
+      expect(ChainedDate.prototype.format).toBe(originalFormat);
+      expect(chain(new Date('2025-01-15')).format('YYYY-MM-DD')).toBe('2025-01-15');
     });
   });
 

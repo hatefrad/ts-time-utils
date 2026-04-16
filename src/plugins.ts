@@ -20,37 +20,18 @@
  * ```
  */
 
-// Import ChainedDate class directly - safe because chain.js doesn't import plugins.js
-// We need the actual class (not just the type) to modify its prototype
-let ChainedDateConstructor: any = null;
+import { ChainedDate } from './chain.js';
 
 /**
- * Get ChainedDate class lazily to ensure it's fully initialized
+ * Get ChainedDate class for prototype mutation.
+ * Importing `plugins` now brings in `chain` directly, so the class is available
+ * without a hidden global handshake.
  */
 function getChainedDate() {
-  if (!ChainedDateConstructor) {
-    // Use dynamic import that works in both CJS and ESM
-    try {
-      // Try ESM import path first
-      ChainedDateConstructor = (globalThis as any).__chainedDateClass;
-      if (!ChainedDateConstructor) {
-        // Fallback: The class will be set by chain.js when it loads
-        throw new Error('ChainedDate not yet loaded. Import chain.js before using plugins.');
-      }
-    } catch (e) {
-      throw new Error('ChainedDate class not available. Ensure chain.js is imported before registering plugins.');
-    }
+  if (!ChainedDate) {
+    throw new Error('ChainedDate export is not available yet. Import chain.js before registering plugins.');
   }
-  return ChainedDateConstructor;
-}
-
-/**
- * Initialize the plugin system with ChainedDate class
- * This is called automatically when chain.js is imported
- * @internal
- */
-export function __initPluginSystem(ChainedDateClass: any) {
-  ChainedDateConstructor = ChainedDateClass;
+  return ChainedDate;
 }
 
 /**
