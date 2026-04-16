@@ -96,6 +96,18 @@ describe('package exports', () => {
       sample: '5 seconds',
     });
 
+    const cjsPlugins = runNode([
+      '-e',
+      `const pkg = require(${JSON.stringify(`${packageJson.name}/plugins`)}); process.stdout.write(JSON.stringify({
+        extend: typeof pkg.extend
+      }));`,
+    ]);
+    expect(cjsPlugins.status).toBe(0);
+    expect(cjsPlugins.stderr).toBe('');
+    expect(JSON.parse(cjsPlugins.stdout)).toEqual({
+      extend: 'function',
+    });
+
     const esmNaturalLanguage = runNode([
       '--input-type=module',
       '-e',
