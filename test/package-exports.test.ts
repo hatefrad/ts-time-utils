@@ -108,6 +108,19 @@ describe('package exports', () => {
       extend: 'function',
     });
 
+    const esmPlugins = runNode([
+      '--input-type=module',
+      '-e',
+      `const pkg = await import(${JSON.stringify(`${packageJson.name}/plugins`)}); process.stdout.write(JSON.stringify({
+        extend: typeof pkg.extend
+      }));`,
+    ]);
+    expect(esmPlugins.status).toBe(0);
+    expect(esmPlugins.stderr).toBe('');
+    expect(JSON.parse(esmPlugins.stdout)).toEqual({
+      extend: 'function',
+    });
+
     const esmNaturalLanguage = runNode([
       '--input-type=module',
       '-e',

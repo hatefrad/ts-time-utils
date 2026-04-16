@@ -179,7 +179,7 @@
   ],
   "scripts": {
     "build": "npm run build:cjs && npm run build:esm",
-    "build:cjs": "tsc -p tsconfig.json --module commonjs --moduleResolution node && for file in dist/*.js; do mv \"$file\" \"${file%.js}.cjs\"; done && node -e 'const fs=require(\"fs\"); const path=require(\"path\"); for (const file of fs.readdirSync(\"dist\")) { if (!file.endsWith(\".cjs\")) continue; const p=path.join(\"dist\", file); const s=fs.readFileSync(p, \"utf8\").replace(/require\\(\"\\.\\/([^\"]+)\\.js\"\\)/g, \"require(\\\"./$1.cjs\\\")\"); fs.writeFileSync(p, s); }'",
+    "build:cjs": "tsc -p tsconfig.json --module commonjs --moduleResolution node && node scripts/prepare-cjs-build.mjs",
     "build:esm": "tsc -p tsconfig.esm.json",
     "test": "vitest run --exclude test/package-exports.test.ts",
     "test:package": "vitest run test/package-exports.test.ts",

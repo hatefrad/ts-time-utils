@@ -649,7 +649,7 @@ git push --tags       # Push tag → triggers publish workflow
 
 The workflow automatically:
 1. Sets `package.json` version from tag
-2. Runs lint, tests, build, and the built-package export check
+2. Runs lint, tests, build, and `npm run test:package`
 3. Publishes to npm with provenance
 
 **Version format:** Tags must match `v*` pattern (e.g., `v4.0.0`, `v4.1.0-beta.1`)
