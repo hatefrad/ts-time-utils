@@ -236,7 +236,11 @@ export function extractDatesFromText(
       processed.add(`${index}-${matchedText}`);
       
       // Try to parse the matched text
-      const parsed = parseNaturalDate(matchedText, { referenceDate });
+      const parsed = parseNaturalDate(matchedText, {
+        referenceDate,
+        defaultTime: options.defaultTime,
+        strict: options.strict
+      });
       
       if (parsed) {
         results.push({
