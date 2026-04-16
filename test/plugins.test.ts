@@ -17,52 +17,41 @@ describe('Plugin system', () => {
 
   afterEach(() => {
     vi.resetModules();
-    vi.unmock('../src/chain.js');
+    vi.doUnmock('../src/chain.js');
+    vi.doUnmock('../src/plugins.js');
   });
 
   describe('module loading contract', () => {
     it('registers plugins when plugins are imported before chain', async () => {
-      const originalChainClass = (globalThis as any).__chainedDateClass;
-      try {
-        delete (globalThis as any).__chainedDateClass;
-        vi.resetModules();
+      vi.resetModules();
 
-        const { extend: freshExtend, uninstall: freshUninstall } = await import('../src/plugins.js');
+      const { extend: freshExtend, uninstall: freshUninstall } = await import('../src/plugins.js');
 
-        freshExtend('import-order-safe', {
-          sayHello(this: any): string {
-            return 'hello';
-          }
-        });
+      freshExtend('import-order-safe', {
+        sayHello(this: any): string {
+          return 'hello';
+        }
+      });
 
-        const { chain: freshChain } = await import('../src/chain.js');
-        expect((freshChain() as any).sayHello()).toBe('hello');
-        freshUninstall('import-order-safe');
-      } finally {
-        (globalThis as any).__chainedDateClass = originalChainClass;
-      }
+      const { chain: freshChain } = await import('../src/chain.js');
+      expect((freshChain() as any).sayHello()).toBe('hello');
+      freshUninstall('import-order-safe');
     });
 
     it('throws a clear error when ChainedDate is unavailable', async () => {
-      const originalChainClass = (globalThis as any).__chainedDateClass;
-      try {
-        delete (globalThis as any).__chainedDateClass;
-        vi.resetModules();
-        vi.doMock('../src/chain.js', () => ({
-          chain: () => new Date(),
-          ChainedDate: undefined
-        }));
+      vi.resetModules();
+      vi.doMock('../src/chain.js', () => ({
+        chain: () => new Date(),
+        ChainedDate: undefined
+      }));
 
-        const { extend: freshExtend } = await import('../src/plugins.js');
+      const { extend: freshExtend } = await import('../src/plugins.js');
 
-        expect(() => {
-          freshExtend('not-ready', {
-            method() {}
-          });
-        }).toThrow('ChainedDate export is not available yet');
-      } finally {
-        (globalThis as any).__chainedDateClass = originalChainClass;
-      }
+      expect(() => {
+        freshExtend('not-ready', {
+          method() {}
+        });
+      }).toThrow('ChainedDate export is not available yet');
     });
 
     it('restores overwritten methods on uninstall', () => {
@@ -77,6 +66,33 @@ describe('Plugin system', () => {
       expect((chain(new Date('2025-01-15')) as any).format()).toBe('overridden');
 
       uninstall('format-override');
+
+      expect(ChainedDate.prototype.format).toBe(originalFormat);
+      expect(chain(new Date('2025-01-15')).format('YYYY-MM-DD')).toBe('2025-01-15');
+    });
+
+    it('keeps the latest override when an older plugin is uninstalled', () => {
+      const originalFormat = ChainedDate.prototype.format;
+
+      extend('format-a', {
+        format(this: ChainedDate): string {
+          return 'A';
+        }
+      });
+
+      extend('format-b', {
+        format(this: ChainedDate): string {
+          return 'B';
+        }
+      });
+
+      expect(chain(new Date('2025-01-15')).format('YYYY-MM-DD')).toBe('B');
+
+      uninstall('format-a');
+
+      expect(chain(new Date('2025-01-15')).format('YYYY-MM-DD')).toBe('B');
+
+      uninstall('format-b');
 
       expect(ChainedDate.prototype.format).toBe(originalFormat);
       expect(chain(new Date('2025-01-15')).format('YYYY-MM-DD')).toBe('2025-01-15');
