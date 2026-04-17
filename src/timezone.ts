@@ -112,6 +112,11 @@ export function reinterpretAsZone(date: Date, targetZone: string): Date | null {
 export function isDST(date: Date, zone: string): boolean | null {
   if (!isValidTimeZone(zone)) return null;
 
+  const zonedDate = convertDateToZone(date, zone);
+  if (!zonedDate) {
+    return null;
+  }
+
   const currentOffset = getTimezoneOffset(zone, date);
   if (currentOffset === null) {
     return null;
@@ -119,7 +124,7 @@ export function isDST(date: Date, zone: string): boolean | null {
 
   const yearlyOffsets = new Set<number>();
   for (const month of YEAR_MONTHS) {
-    const sample = new Date(Date.UTC(date.getUTCFullYear(), month, 1, 12, 0, 0));
+    const sample = new Date(Date.UTC(zonedDate.year, month, 1, 12, 0, 0));
     const offset = getTimezoneOffset(zone, sample);
     if (offset === null) {
       return null;
