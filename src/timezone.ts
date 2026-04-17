@@ -4,6 +4,9 @@
 
 import type { ZonedTime } from './types.js';
 
+const DAY_MS = 24 * 60 * 60 * 1000;
+const YEAR_MONTHS = Array.from({ length: 12 }, (_, month) => month);
+
 /** Get offset (minutes) for a zone at a given date */
 export function getTimezoneOffset(zone: string, date: Date = new Date()): number | null {
   try {
@@ -108,30 +111,27 @@ export function reinterpretAsZone(date: Date, targetZone: string): Date | null {
  */
 export function isDST(date: Date, zone: string): boolean | null {
   if (!isValidTimeZone(zone)) return null;
-  
-  // Compare offset in January vs July - the one with larger offset is DST
-  const january = new Date(date.getFullYear(), 0, 1);
-  const july = new Date(date.getFullYear(), 6, 1);
-  
-  const janOffset = getTimezoneOffset(zone, january);
-  const julOffset = getTimezoneOffset(zone, july);
+
   const currentOffset = getTimezoneOffset(zone, date);
-  
-  if (janOffset === null || julOffset === null || currentOffset === null) {
+  if (currentOffset === null) {
     return null;
   }
-  
-  // If offsets are the same, no DST in this zone
-  if (janOffset === julOffset) {
+
+  const yearlyOffsets = new Set<number>();
+  for (const month of YEAR_MONTHS) {
+    const sample = new Date(Date.UTC(date.getUTCFullYear(), month, 1, 12, 0, 0));
+    const offset = getTimezoneOffset(zone, sample);
+    if (offset === null) {
+      return null;
+    }
+    yearlyOffsets.add(offset);
+  }
+
+  if (yearlyOffsets.size <= 1) {
     return false;
   }
-  
-  // In northern hemisphere, summer (July) has larger offset
-  // In southern hemisphere, summer (January) has larger offset
-  // DST is whichever is the "larger" offset
-  const maxOffset = Math.max(janOffset, julOffset);
-  
-  return currentOffset === maxOffset;
+
+  return currentOffset === Math.max(...yearlyOffsets);
 }
 
 /**
@@ -142,53 +142,39 @@ export function isDST(date: Date, zone: string): boolean | null {
  */
 export function getNextDSTTransition(date: Date, zone: string): Date | null {
   if (!isValidTimeZone(zone)) return null;
-  
-  const january = new Date(date.getFullYear(), 0, 1);
-  const july = new Date(date.getFullYear(), 6, 1);
-  
-  const janOffset = getTimezoneOffset(zone, january);
-  const julOffset = getTimezoneOffset(zone, july);
-  
-  if (janOffset === null || julOffset === null) return null;
-  
-  // No DST if offsets are the same
-  if (janOffset === julOffset) return null;
-  
-  // Binary search for the transition within the next year
+
   const currentOffset = getTimezoneOffset(zone, date);
   if (currentOffset === null) return null;
-  
-  // Check day by day for up to 366 days
-  const searchDate = new Date(date);
-  for (let i = 1; i <= 366; i++) {
-    searchDate.setDate(searchDate.getDate() + 1);
-    const newOffset = getTimezoneOffset(zone, searchDate);
-    if (newOffset !== null && newOffset !== currentOffset) {
-      // Found a transition, now narrow it down
-      const prevDay = new Date(searchDate);
-      prevDay.setDate(prevDay.getDate() - 1);
-      
-      // Binary search within the day
-      let low = prevDay.getTime();
-      let high = searchDate.getTime();
-      
-      while (high - low > 60000) { // 1 minute precision
-        const mid = Math.floor((low + high) / 2);
-        const midDate = new Date(mid);
-        const midOffset = getTimezoneOffset(zone, midDate);
-        
-        if (midOffset === currentOffset) {
-          low = mid;
-        } else {
-          high = mid;
-        }
-      }
-      
-      return new Date(high);
+
+  const startTime = date.getTime() + 1;
+  const searchLimit = startTime + 366 * DAY_MS;
+
+  let low = startTime;
+  let high: number | null = null;
+  for (let probeTime = startTime + DAY_MS; probeTime <= searchLimit; probeTime += DAY_MS) {
+    const probeOffset = getTimezoneOffset(zone, new Date(probeTime));
+    if (probeOffset !== null && probeOffset !== currentOffset) {
+      low = probeTime - DAY_MS;
+      high = probeTime;
+      break;
     }
   }
-  
-  return null;
+
+  if (high === null) {
+    return null;
+  }
+
+  while (high - low > 1) {
+    const mid = Math.floor((low + high) / 2);
+    const midOffset = getTimezoneOffset(zone, new Date(mid));
+    if (midOffset === currentOffset) {
+      low = mid;
+    } else {
+      high = mid;
+    }
+  }
+
+  return new Date(high);
 }
 
 /**
@@ -211,11 +197,12 @@ export function findCommonWorkingHours(
   const utcRanges = zones.map(zone => {
     const offset = getTimezoneOffset(zone, date);
     if (offset === null) return null;
-    
-    // Offset is in minutes, positive means ahead of UTC
-    // So to convert local time to UTC, we subtract the offset
+
+    // Offset is in minutes, positive means ahead of UTC.
+    // Normalize windows that cross midnight in the source zone before converting.
+    const endHour = workHoursEnd < workHoursStart ? workHoursEnd + 24 : workHoursEnd;
     const startUTC = workHoursStart - (offset / 60);
-    const endUTC = workHoursEnd - (offset / 60);
+    const endUTC = endHour - (offset / 60);
     
     return { startUTC, endUTC };
   });
