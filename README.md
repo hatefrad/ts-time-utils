@@ -47,6 +47,10 @@ import { differenceInUnits } from 'ts-time-utils/calculate';
 import { isValidDate } from 'ts-time-utils/validate';
 ```
 
+Every public module is also available as a subpath import such as
+`ts-time-utils/timezone`, `ts-time-utils/workingHours`, or
+`ts-time-utils/naturalLanguage`.
+
 ---
 
 ## Utility Categories
@@ -291,7 +295,10 @@ detectLocale();                                   // Auto-detect system locale
 
 ### Working Hours
 
-Business hours calculations with break support.
+Business hours calculations with break support. These helpers use the
+`Date` values you pass in directly; if you need a different timezone's wall
+clock, adapt the instant first with a timezone helper such as
+`convertDateToZone()` or `reinterpretAsZone()`.
 
 ```ts
 import { isWorkingTime, addWorkingDays, workingDaysBetween } from 'ts-time-utils/workingHours';

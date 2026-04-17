@@ -80,8 +80,6 @@ export interface WorkingHoursConfig {
   hours: { start: number; end: number };
   /** Break periods during working hours */
   breaks?: { start: number; end: number }[];
-  /** Timezone for working hours calculation */
-  timezone?: string;
 }
 
 /** Result of age calculation */
