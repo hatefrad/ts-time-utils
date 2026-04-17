@@ -5,7 +5,31 @@
 import type { ZonedTime } from './types.js';
 
 const DAY_MS = 24 * 60 * 60 * 1000;
+const DAY_HOURS = 24;
 const YEAR_MONTHS = Array.from({ length: 12 }, (_, month) => month);
+
+type HourInterval = {
+  start: number;
+  end: number;
+};
+
+function normalizeHourValue(hour: number): number {
+  return ((hour % DAY_HOURS) + DAY_HOURS) % DAY_HOURS;
+}
+
+function expandUtcHourIntervals(startUTC: number, endUTC: number): HourInterval[] {
+  const duration = endUTC - startUTC;
+  if (duration <= 0) return [];
+
+  const normalizedStart = normalizeHourValue(startUTC);
+  const baseInterval = { start: normalizedStart, end: normalizedStart + duration };
+  const shiftedInterval = {
+    start: baseInterval.start + DAY_HOURS,
+    end: baseInterval.end + DAY_HOURS
+  };
+
+  return [baseInterval, shiftedInterval].filter(interval => interval.start < DAY_HOURS * 2 && interval.end > 0);
+}
 
 /** Get offset (minutes) for a zone at a given date */
 export function getTimezoneOffset(zone: string, date: Date = new Date()): number | null {
@@ -106,6 +130,8 @@ export function reinterpretAsZone(date: Date, targetZone: string): Date | null {
 
 /**
  * Check if a date is in Daylight Saving Time for a given timezone
+ * Uses a yearly-offset heuristic: sample the zone's local year and treat the
+ * maximum observed UTC offset as the DST offset for that year.
  * @param date - date to check
  * @param zone - IANA timezone string
  */
@@ -188,7 +214,8 @@ export function getNextDSTTransition(date: Date, zone: string): Date | null {
  * @param workHoursStart - work hours start (0-24)
  * @param workHoursEnd - work hours end (0-24)
  * @param date - reference date (default: today)
- * @returns array of overlapping hour ranges in UTC, or null if no overlap
+ * @returns overlapping UTC clock hours; wrapped overlaps are returned with
+ * `endUTC` normalized back into the 0-24 range and may be less than `startUTC`
  */
 export function findCommonWorkingHours(
   zones: string[],
@@ -198,33 +225,46 @@ export function findCommonWorkingHours(
 ): { startUTC: number; endUTC: number } | null {
   if (zones.length === 0) return null;
   
-  // Convert each zone's work hours to UTC
   const utcRanges = zones.map(zone => {
     const offset = getTimezoneOffset(zone, date);
     if (offset === null) return null;
 
-    // Offset is in minutes, positive means ahead of UTC.
-    // Normalize windows that cross midnight in the source zone before converting.
     const endHour = workHoursEnd < workHoursStart ? workHoursEnd + 24 : workHoursEnd;
     const startUTC = workHoursStart - (offset / 60);
     const endUTC = endHour - (offset / 60);
-    
-    return { startUTC, endUTC };
+
+    return expandUtcHourIntervals(startUTC, endUTC);
   });
   
   if (utcRanges.some(r => r === null)) return null;
   
-  const validRanges = utcRanges as { startUTC: number; endUTC: number }[];
-  
-  // Find intersection of all ranges
-  let overlapStart = Math.max(...validRanges.map(r => r.startUTC));
-  let overlapEnd = Math.min(...validRanges.map(r => r.endUTC));
-  
-  if (overlapStart >= overlapEnd) {
-    return null; // No overlap
+  let overlaps = (utcRanges[0] as HourInterval[]).map(interval => ({ ...interval }));
+  for (const zoneRanges of utcRanges.slice(1) as HourInterval[][]) {
+    const nextOverlaps: HourInterval[] = [];
+    for (const overlap of overlaps) {
+      for (const zoneRange of zoneRanges) {
+        const start = Math.max(overlap.start, zoneRange.start);
+        const end = Math.min(overlap.end, zoneRange.end);
+        if (start < end) {
+          nextOverlaps.push({ start, end });
+        }
+      }
+    }
+
+    if (nextOverlaps.length === 0) {
+      return null;
+    }
+
+    overlaps = nextOverlaps;
   }
-  
-  return { startUTC: overlapStart, endUTC: overlapEnd };
+
+  overlaps.sort((a, b) => a.start - b.start);
+  const overlap = overlaps[0];
+  const duration = overlap.end - overlap.start;
+  const startUTC = normalizeHourValue(overlap.start);
+  const endUTC = normalizeHourValue(overlap.start + duration);
+
+  return { startUTC, endUTC };
 }
 
 /**

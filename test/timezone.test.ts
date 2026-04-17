@@ -140,6 +140,17 @@ describe('timezone utilities', () => {
 
       expect(result).toEqual({ startUTC: 16.5, endUTC: 17.5 });
     });
+
+    it('finds overlap when only some UTC ranges land on the adjacent day', () => {
+      const result = findCommonWorkingHours(
+        ['America/Los_Angeles', 'Pacific/Auckland'],
+        0,
+        4,
+        new Date('2025-01-15T00:00:00Z')
+      );
+
+      expect(result).toEqual({ startUTC: 11, endUTC: 12 });
+    });
   });
 
   describe('getTimezoneAbbreviation', () => {
