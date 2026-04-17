@@ -220,7 +220,8 @@ export function getNextDSTTransition(date: Date, zone: string): Date | null {
  * @param workHoursStart - work hours start (0-24)
  * @param workHoursEnd - work hours end (0-24)
  * @param date - reference date (default: today)
- * @returns overlapping UTC clock hours; a full-day overlap is returned as
+ * @returns one contiguous UTC overlap window, specifically the longest
+ * contiguous overlap slice. A full-day overlap is returned as
  * `{ startUTC: 0, endUTC: 24 }`, and wrapped overlaps are returned with
  * `endUTC` normalized back into the 0-24 range and may be less than `startUTC`
  */
@@ -265,7 +266,10 @@ export function findCommonWorkingHours(
     overlaps = nextOverlaps;
   }
 
-  overlaps.sort((a, b) => a.start - b.start);
+  overlaps.sort((a, b) => {
+    const durationDifference = (b.end - b.start) - (a.end - a.start);
+    return durationDifference !== 0 ? durationDifference : a.start - b.start;
+  });
   const overlap = overlaps[0];
   const duration = overlap.end - overlap.start;
   if (duration >= DAY_HOURS) {

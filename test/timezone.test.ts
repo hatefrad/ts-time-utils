@@ -162,6 +162,17 @@ describe('timezone utilities', () => {
 
       expect(result).toEqual({ startUTC: 0, endUTC: 24 });
     });
+
+    it('returns the single longest contiguous overlap window when UTC overlap splits', () => {
+      const result = findCommonWorkingHours(
+        ['UTC', 'Australia/Adelaide'],
+        0,
+        14,
+        new Date('2025-01-15T00:00:00Z')
+      );
+
+      expect(result).toEqual({ startUTC: 0, endUTC: 3.5 });
+    });
   });
 
   describe('getTimezoneAbbreviation', () => {
