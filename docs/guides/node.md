@@ -36,16 +36,16 @@ Reject requests outside business hours:
 
 ```ts
 import { Request, Response, NextFunction } from 'express';
-import { isWithinWorkingHours } from 'ts-time-utils/workingHours';
+import { isWorkingTime } from 'ts-time-utils/workingHours';
 
 const config = {
   workingDays: [1, 2, 3, 4, 5],
-  startTime: { hour: 9, minute: 0 },
-  endTime: { hour: 17, minute: 0 }
+  hours: { start: 9, end: 17 },
+  breaks: [{ start: 12, end: 13 }]
 };
 
 function businessHoursOnly(req: Request, res: Response, next: NextFunction) {
-  if (!isWithinWorkingHours(new Date(), config)) {
+  if (!isWorkingTime(new Date(), config)) {
     return res.status(503).json({
       error: 'Service available Mon-Fri 9am-5pm'
     });
@@ -59,7 +59,7 @@ app.use('/api/support', businessHoursOnly);
 ### Holiday-Aware Scheduling
 
 ```ts
-import { isHoliday, getHolidaysForYear } from 'ts-time-utils/holidays';
+import { isHoliday } from 'ts-time-utils/holidays';
 
 function noHolidayProcessing(req: Request, res: Response, next: NextFunction) {
   if (isHoliday(new Date(), 'US')) {
@@ -76,10 +76,10 @@ function noHolidayProcessing(req: Request, res: Response, next: NextFunction) {
 ### Cron Job Validation
 
 ```ts
-import { parseCron, matchesCron, getNextCronDate } from 'ts-time-utils/cron';
+import { parseCronExpression, matchesCron, getNextCronDate } from 'ts-time-utils/cron';
 
 function scheduleJob(cronExpression: string, callback: () => void) {
-  const parsed = parseCron(cronExpression);
+  const parsed = parseCronExpression(cronExpression);
   if (!parsed) throw new Error('Invalid cron expression');
 
   const checkAndRun = () => {
@@ -104,13 +104,15 @@ scheduleJob('0 9 * * 1-5', () => {
 ### Recurrence Patterns
 
 ```ts
-import { generateRecurrenceDates } from 'ts-time-utils/recurrence';
+import { createRecurrence } from 'ts-time-utils/recurrence';
 
 // Generate next 10 occurrences of weekly meeting
-const meetings = generateRecurrenceDates(
-  { frequency: 'weekly', byWeekday: ['TU', 'TH'], count: 10 },
-  new Date()
-);
+const meetings = createRecurrence({
+  frequency: 'weekly',
+  interval: 1,
+  startDate: new Date(),
+  byWeekday: [2, 4]
+}).getAllOccurrences(10);
 
 console.log('Upcoming meetings:', meetings.map(d => d.toISOString()));
 ```
@@ -120,7 +122,7 @@ console.log('Upcoming meetings:', meetings.map(d => d.toISOString()));
 ### Date Serialization
 
 ```ts
-import { toISOString, toEpoch, dateReplacer } from 'ts-time-utils/serialize';
+import { serializeDate } from 'ts-time-utils/serialize';
 
 // Consistent ISO format
 app.get('/api/events', (req, res) => {
@@ -128,22 +130,25 @@ app.get('/api/events', (req, res) => {
     { name: 'Meeting', date: new Date() }
   ];
 
-  // Automatic date serialization
-  res.json(JSON.parse(JSON.stringify(events, dateReplacer)));
+  // Explicit date serialization
+  res.json(events.map(event => ({
+    ...event,
+    date: serializeDate(event.date)
+  })));
 });
 ```
 
 ### Relative Time in Responses
 
 ```ts
-import { formatTimeAgo } from 'ts-time-utils/format';
+import { timeAgo } from 'ts-time-utils/format';
 
 app.get('/api/posts', async (req, res) => {
   const posts = await getPosts();
 
   res.json(posts.map(post => ({
     ...post,
-    createdAtRelative: formatTimeAgo(post.createdAt)
+    createdAtRelative: timeAgo(post.createdAt)
   })));
 });
 ```
@@ -153,17 +158,17 @@ app.get('/api/posts', async (req, res) => {
 ### Fiscal Year Queries
 
 ```ts
-import { getFiscalYear, getFiscalQuarter, FISCAL_PRESETS } from 'ts-time-utils/fiscal';
+import { getFiscalYear, getFiscalQuarter } from 'ts-time-utils/fiscal';
 
 async function getQuarterlyRevenue(date: Date) {
-  const fiscal = getFiscalYear(date, FISCAL_PRESETS.US_FEDERAL);
-  const quarter = getFiscalQuarter(date, FISCAL_PRESETS.US_FEDERAL);
+  const fiscalYear = getFiscalYear(date, { startMonth: 10 });
+  const quarter = getFiscalQuarter(date, { startMonth: 10 });
 
   return db.query(`
     SELECT SUM(amount) as revenue
     FROM transactions
     WHERE fiscal_year = $1 AND fiscal_quarter = $2
-  `, [fiscal.year, quarter.quarter]);
+  `, [fiscalYear, quarter]);
 }
 ```
 
@@ -173,12 +178,18 @@ async function getQuarterlyRevenue(date: Date) {
 import { workingDaysBetween, addWorkingDays } from 'ts-time-utils/workingHours';
 
 function calculateDeliveryDate(orderDate: Date, processingDays: number) {
-  const config = { workingDays: [1, 2, 3, 4, 5] };
+  const config = {
+    workingDays: [1, 2, 3, 4, 5],
+    hours: { start: 9, end: 17 }
+  };
   return addWorkingDays(orderDate, processingDays, config);
 }
 
 function getBusinessDaysRemaining(deadline: Date) {
-  const config = { workingDays: [1, 2, 3, 4, 5] };
+  const config = {
+    workingDays: [1, 2, 3, 4, 5],
+    hours: { start: 9, end: 17 }
+  };
   return workingDaysBetween(new Date(), deadline, config);
 }
 ```
@@ -188,8 +199,8 @@ function getBusinessDaysRemaining(deadline: Date) {
 ### API Input Validation
 
 ```ts
-import { parseDate, parseDateFormat } from 'ts-time-utils/parse';
-import { isValidDate, isFutureDate } from 'ts-time-utils/validate';
+import { parseDate } from 'ts-time-utils/parse';
+import { isValidDate, isFuture } from 'ts-time-utils/validate';
 
 function validateDateInput(input: unknown): Date | null {
   if (typeof input !== 'string') return null;
@@ -207,7 +218,7 @@ app.post('/api/bookings', (req, res) => {
     return res.status(400).json({ error: 'Invalid date format' });
   }
 
-  if (!isFutureDate(date)) {
+  if (!isFuture(date)) {
     return res.status(400).json({ error: 'Date must be in the future' });
   }
 

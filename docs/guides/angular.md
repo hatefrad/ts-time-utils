@@ -13,13 +13,13 @@ npm install ts-time-utils
 ```ts
 // pipes/relative-time.pipe.ts
 import { Pipe, PipeTransform } from '@angular/core';
-import { formatTimeAgo } from 'ts-time-utils/format';
+import { timeAgo } from 'ts-time-utils/format';
 
 @Pipe({ name: 'relativeTime', pure: false })
 export class RelativeTimePipe implements PipeTransform {
   transform(date: Date | string | number): string {
     const d = date instanceof Date ? date : new Date(date);
-    return formatTimeAgo(d);
+    return timeAgo(d);
   }
 }
 ```
@@ -63,7 +63,7 @@ export class LocaleDatePipe implements PipeTransform {
     locale = 'en-US',
     style: 'short' | 'medium' | 'long' | 'full' = 'medium'
   ): string {
-    return formatDateLocale(date, locale, { dateStyle: style });
+    return formatDateLocale(date, locale, style);
   }
 }
 ```
@@ -81,21 +81,21 @@ export class LocaleDatePipe implements PipeTransform {
 // services/countdown.service.ts
 import { Injectable, OnDestroy } from '@angular/core';
 import { BehaviorSubject, interval, takeUntil, Subject } from 'rxjs';
-import { getTimeRemaining, TimeRemaining } from 'ts-time-utils/countdown';
+import { getRemainingTime, RemainingTime } from 'ts-time-utils/countdown';
 
 @Injectable({ providedIn: 'root' })
 export class CountdownService implements OnDestroy {
   private destroy$ = new Subject<void>();
 
   createCountdown(targetDate: Date) {
-    const remaining$ = new BehaviorSubject<TimeRemaining>(
-      getTimeRemaining(targetDate)
+    const remaining$ = new BehaviorSubject<RemainingTime>(
+      getRemainingTime(targetDate)
     );
 
     interval(1000)
       .pipe(takeUntil(this.destroy$))
       .subscribe(() => {
-        const r = getTimeRemaining(targetDate);
+        const r = getRemainingTime(targetDate);
         remaining$.next(r);
         if (r.isExpired) remaining$.complete();
       });
@@ -112,6 +112,8 @@ export class CountdownService implements OnDestroy {
 
 ```ts
 // component usage
+import { Observable } from 'rxjs';
+
 @Component({
   selector: 'app-sale-countdown',
   template: `
@@ -124,7 +126,7 @@ export class CountdownService implements OnDestroy {
   `
 })
 export class SaleCountdownComponent implements OnInit {
-  remaining$!: Observable<TimeRemaining>;
+  remaining$!: Observable<RemainingTime>;
 
   constructor(private countdown: CountdownService) {}
 
@@ -141,34 +143,34 @@ export class SaleCountdownComponent implements OnInit {
 ```ts
 // services/business-hours.service.ts
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, interval, map, startWith } from 'rxjs';
+import { interval, map, startWith } from 'rxjs';
 import {
-  isWithinWorkingHours,
-  getNextWorkingHourStart,
+  isWorkingTime,
+  nextWorkingTime,
   WorkingHoursConfig
 } from 'ts-time-utils/workingHours';
-import { formatTimeAgo } from 'ts-time-utils/format';
+import { timeAgo } from 'ts-time-utils/format';
 
 @Injectable({ providedIn: 'root' })
 export class BusinessHoursService {
   private config: WorkingHoursConfig = {
     workingDays: [1, 2, 3, 4, 5],
-    startTime: { hour: 9, minute: 0 },
-    endTime: { hour: 17, minute: 0 }
+    hours: { start: 9, end: 17 },
+    breaks: [{ start: 12, end: 13 }]
   };
 
   readonly status$ = interval(60000).pipe(
     startWith(0),
     map(() => {
       const now = new Date();
-      const isOpen = isWithinWorkingHours(now, this.config);
+      const isOpen = isWorkingTime(now, this.config);
       const nextOpen = !isOpen
-        ? getNextWorkingHourStart(now, this.config)
+        ? nextWorkingTime(now, this.config)
         : null;
 
       return {
         isOpen,
-        nextOpenText: nextOpen ? `Opens ${formatTimeAgo(nextOpen)}` : null
+        nextOpenText: nextOpen ? `Opens ${timeAgo(nextOpen)}` : null
       };
     })
   );
@@ -183,7 +185,7 @@ export class BusinessHoursService {
 // validators/date.validators.ts
 import { AbstractControl, ValidatorFn } from '@angular/forms';
 import { parseDate } from 'ts-time-utils/parse';
-import { isValidDate, isFutureDate, isPastDate } from 'ts-time-utils/validate';
+import { isValidDate, isFuture, isPast } from 'ts-time-utils/validate';
 
 export class DateValidators {
   static validDate(): ValidatorFn {
@@ -202,7 +204,7 @@ export class DateValidators {
       const date = parseDate(control.value);
       if (!date) return { invalidDate: true };
 
-      return isFutureDate(date) ? null : { notFutureDate: true };
+      return isFuture(date) ? null : { notFutureDate: true };
     };
   }
 
@@ -213,7 +215,7 @@ export class DateValidators {
       const date = parseDate(control.value);
       if (!date) return { invalidDate: true };
 
-      return isPastDate(date) ? null : { notPastDate: true };
+      return isPast(date) ? null : { notPastDate: true };
     };
   }
 
@@ -246,7 +248,6 @@ import { Component } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { DateValidators } from './validators/date.validators';
 import { parseDate } from 'ts-time-utils/parse';
-import { addDays } from 'ts-time-utils/calculate';
 
 @Component({
   selector: 'app-booking-form',
@@ -298,10 +299,10 @@ export class TimeUtilsModule {}
 
 ```ts
 // Good - only imports format module (~3KB)
-import { formatTimeAgo } from 'ts-time-utils/format';
+import { timeAgo } from 'ts-time-utils/format';
 
 // Avoid - imports entire library
-import { formatTimeAgo } from 'ts-time-utils';
+import { timeAgo } from 'ts-time-utils';
 ```
 
 Angular's build optimizer will tree-shake unused exports when using subpath imports.

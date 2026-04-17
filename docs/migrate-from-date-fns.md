@@ -28,9 +28,9 @@ npm install ts-time-utils
 | date-fns | ts-time-utils |
 |----------|---------------|
 | `format(date, 'yyyy-MM-dd')` | `formatDate(date, 'YYYY-MM-DD')` |
-| `formatDistance(date, base)` | `formatTimeAgo(date)` |
+| `formatDistance(date, base)` | `timeAgo(date)` |
 | `formatDuration({ hours: 2 })` | `formatDuration(7200000)` |
-| `formatRelative(date, base)` | `formatTimeAgo(date)` |
+| `formatRelative(date, base)` | `timeAgo(date)` |
 
 ```ts
 // date-fns
@@ -39,16 +39,16 @@ format(new Date(), 'yyyy-MM-dd');
 formatDistance(date, new Date());
 
 // ts-time-utils
-import { formatDate, formatTimeAgo } from 'ts-time-utils/format';
+import { formatDate, timeAgo } from 'ts-time-utils/format';
 formatDate(new Date(), 'YYYY-MM-DD');
-formatTimeAgo(date);
+timeAgo(date);
 ```
 
 ### Parsing
 
 | date-fns | ts-time-utils |
 |----------|---------------|
-| `parse(str, 'yyyy-MM-dd', new Date())` | `parseDateFormat(str, 'YYYY-MM-DD')` |
+| `parse(str, 'yyyy-MM-dd', new Date())` | `parseCustomFormat(str, 'YYYY-MM-DD')` |
 | `parseISO(str)` | `parseDate(str)` |
 | `isValid(date)` | `isValidDate(date)` |
 
@@ -59,9 +59,9 @@ parse('2025-01-15', 'yyyy-MM-dd', new Date());
 parseISO('2025-01-15T12:00:00Z');
 
 // ts-time-utils
-import { parseDateFormat, parseDate } from 'ts-time-utils/parse';
+import { parseCustomFormat, parseDate } from 'ts-time-utils/parse';
 import { isValidDate } from 'ts-time-utils/validate';
-parseDateFormat('2025-01-15', 'YYYY-MM-DD');
+parseCustomFormat('2025-01-15', 'YYYY-MM-DD');
 parseDate('2025-01-15T12:00:00Z');
 ```
 
@@ -69,12 +69,12 @@ parseDate('2025-01-15T12:00:00Z');
 
 | date-fns | ts-time-utils |
 |----------|---------------|
-| `addDays(date, 5)` | `addDays(date, 5)` |
-| `addMonths(date, 2)` | `addMonths(date, 2)` |
-| `addYears(date, 1)` | `addYears(date, 1)` |
-| `subDays(date, 5)` | `addDays(date, -5)` |
-| `differenceInDays(a, b)` | `differenceInDays(a, b)` |
-| `differenceInMonths(a, b)` | `differenceInMonths(a, b)` |
+| `addDays(date, 5)` | `addTime(date, 5, 'days')` |
+| `addMonths(date, 2)` | `addTime(date, 2, 'months')` |
+| `addYears(date, 1)` | `addTime(date, 1, 'years')` |
+| `subDays(date, 5)` | `subtractTime(date, 5, 'days')` |
+| `differenceInDays(a, b)` | `differenceInUnits(a, b, 'days')` |
+| `differenceInMonths(a, b)` | `differenceInUnits(a, b, 'months')` |
 
 ```ts
 // date-fns
@@ -84,59 +84,67 @@ subDays(date, 3);
 differenceInDays(end, start);
 
 // ts-time-utils
-import { addDays, differenceInDays } from 'ts-time-utils/calculate';
-addDays(date, 5);
-addDays(date, -3); // subtract
-differenceInDays(end, start);
+import { addTime, subtractTime, differenceInUnits } from 'ts-time-utils/calculate';
+addTime(date, 5, 'days');
+subtractTime(date, 3, 'days');
+differenceInUnits(end, start, 'days');
 ```
 
 ### Comparison
 
 | date-fns | ts-time-utils |
 |----------|---------------|
-| `isBefore(a, b)` | `isBefore(a, b)` |
-| `isAfter(a, b)` | `isAfter(a, b)` |
-| `isEqual(a, b)` | `isSameDay(a, b)` |
+| `isBefore(a, b)` | `a.getTime() < b.getTime()` |
+| `isAfter(a, b)` | `a.getTime() > b.getTime()` |
+| `isEqual(a, b)` | `a.getTime() === b.getTime()` |
 | `isSameDay(a, b)` | `isSameDay(a, b)` |
 | `isSameMonth(a, b)` | `isSameMonth(a, b)` |
 | `isToday(date)` | `isToday(date)` |
-| `isFuture(date)` | `isFutureDate(date)` |
-| `isPast(date)` | `isPastDate(date)` |
+| `isFuture(date)` | `isFuture(date)` |
+| `isPast(date)` | `isPast(date)` |
 
 ```ts
 // date-fns
 import { isBefore, isAfter, isToday, isFuture } from 'date-fns';
 
 // ts-time-utils
-import { isBefore, isAfter, isToday, isFutureDate } from 'ts-time-utils/validate';
+import { isToday, isFuture, isPast } from 'ts-time-utils/validate';
+const date1 = new Date();
+const date2 = new Date(Date.now() + 1000);
+const isEarlier = date1.getTime() < date2.getTime();
+const isLater = date1.getTime() > date2.getTime();
+isToday(date);
+isFuture(date);
+isPast(date);
 ```
 
 ### Start/End of Period
 
 | date-fns | ts-time-utils |
 |----------|---------------|
-| `startOfDay(date)` | `startOfDay(date)` |
-| `endOfDay(date)` | `endOfDay(date)` |
-| `startOfWeek(date)` | `startOfWeek(date)` |
-| `startOfMonth(date)` | `startOfMonth(date)` |
-| `startOfYear(date)` | `startOfYear(date)` |
+| `startOfDay(date)` | `startOf(date, 'day')` |
+| `endOfDay(date)` | `endOf(date, 'day')` |
+| `startOfWeek(date)` | `startOf(date, 'week')` |
+| `startOfMonth(date)` | `startOf(date, 'month')` |
+| `startOfYear(date)` | `startOf(date, 'year')` |
 
 ```ts
 // date-fns
 import { startOfDay, endOfDay, startOfMonth } from 'date-fns';
 
 // ts-time-utils
-import { startOfDay, endOfDay, startOfMonth } from 'ts-time-utils/calculate';
+import { startOf, endOf } from 'ts-time-utils/calculate';
+startOf(new Date(), 'day');
+endOf(new Date(), 'day');
 ```
 
 ### Intervals
 
 | date-fns | ts-time-utils |
 |----------|---------------|
-| `eachDayOfInterval({ start, end })` | `iterateDays(start, end)` |
-| `eachWeekOfInterval({ start, end })` | `iterateWeeks(start, end)` |
-| `eachMonthOfInterval({ start, end })` | `iterateMonths(start, end)` |
-| `areIntervalsOverlapping(a, b)` | `rangesOverlap(a, b)` |
+| `eachDayOfInterval({ start, end })` | `splitIntervalByDay(createInterval(start, end)!)` |
+| `areIntervalsOverlapping(a, b)` | `intervalsOverlap(a, b)` |
+| `mergeIntervals(intervals)` | `mergeIntervals(intervals)` |
 
 ```ts
 // date-fns
@@ -144,15 +152,15 @@ import { eachDayOfInterval } from 'date-fns';
 eachDayOfInterval({ start, end });
 
 // ts-time-utils
-import { iterateDays } from 'ts-time-utils/iterate';
-[...iterateDays(start, end)]; // Returns generator
+import { createInterval, splitIntervalByDay } from 'ts-time-utils/interval';
+const parts = splitIntervalByDay(createInterval(start, end)!);
 ```
 
 ### Calendar
 
 | date-fns | ts-time-utils |
 |----------|---------------|
-| `getISOWeek(date)` | `getISOWeek(date)` |
+| `getISOWeek(date)` | `getWeekNumber(date)` |
 | `getQuarter(date)` | `getQuarter(date)` |
 | `getDaysInMonth(date)` | `getDaysInMonth(date)` |
 | `isLeapYear(date)` | `isLeapYear(date.getFullYear())` |
@@ -162,7 +170,7 @@ import { iterateDays } from 'ts-time-utils/iterate';
 import { getISOWeek, getQuarter, isLeapYear } from 'date-fns';
 
 // ts-time-utils
-import { getISOWeek, getQuarter } from 'ts-time-utils/calendar';
+import { getWeekNumber, getQuarter, getDaysInMonth } from 'ts-time-utils/calendar';
 import { isLeapYear } from 'ts-time-utils/validate';
 ```
 
@@ -184,24 +192,24 @@ import { isLeapYear } from 'ts-time-utils/validate';
 ### Holidays
 
 ```ts
-import { getHolidaysForYear, isHoliday } from 'ts-time-utils/holidays';
+import { getHolidays, isHoliday } from 'ts-time-utils/holidays';
 
-getHolidaysForYear(2025, 'US');
+getHolidays(2025, 'US');
 isHoliday(new Date(), 'UK');
 ```
 
 ### Fiscal Years
 
 ```ts
-import { getFiscalYear, FISCAL_PRESETS } from 'ts-time-utils/fiscal';
+import { getFiscalYear } from 'ts-time-utils/fiscal';
 
-getFiscalYear(new Date(), FISCAL_PRESETS.UK);
+getFiscalYear(new Date(), { startMonth: 4 });
 ```
 
 ### Cron
 
 ```ts
-import { parseCron, getNextCronDate } from 'ts-time-utils/cron';
+import { getNextCronDate } from 'ts-time-utils/cron';
 
 getNextCronDate('0 9 * * 1-5'); // Next weekday 9am
 ```
@@ -209,23 +217,22 @@ getNextCronDate('0 9 * * 1-5'); // Next weekday 9am
 ### Working Hours
 
 ```ts
-import { isWithinWorkingHours } from 'ts-time-utils/workingHours';
+import { isWorkingTime } from 'ts-time-utils/workingHours';
 
-isWithinWorkingHours(new Date(), {
+isWorkingTime(new Date(), {
   workingDays: [1, 2, 3, 4, 5],
-  startTime: { hour: 9, minute: 0 },
-  endTime: { hour: 17, minute: 0 }
+  hours: { start: 9, end: 17 }
 });
 ```
 
 ### Recurrence
 
 ```ts
-import { generateRecurrenceDates } from 'ts-time-utils/recurrence';
+import { createRecurrence } from 'ts-time-utils/recurrence';
 
-generateRecurrenceDates({
+createRecurrence({
   frequency: 'weekly',
-  byWeekday: ['MO', 'WE', 'FR'],
-  count: 10
-}, new Date());
+  startDate: new Date(),
+  byWeekday: [1, 3, 5]
+}).getAllOccurrences(10);
 ```

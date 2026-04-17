@@ -14,13 +14,13 @@ Auto-updating relative time display:
 
 ```tsx
 import { useState, useEffect } from 'react';
-import { formatTimeAgo } from 'ts-time-utils/format';
+import { timeAgo } from 'ts-time-utils/format';
 
 function useRelativeTime(date: Date, intervalMs = 60000) {
-  const [text, setText] = useState(() => formatTimeAgo(date));
+  const [text, setText] = useState(() => timeAgo(date));
 
   useEffect(() => {
-    const id = setInterval(() => setText(formatTimeAgo(date)), intervalMs);
+    const id = setInterval(() => setText(timeAgo(date)), intervalMs);
     return () => clearInterval(id);
   }, [date, intervalMs]);
 
@@ -40,16 +40,16 @@ Countdown timer with callbacks:
 
 ```tsx
 import { useState, useEffect, useCallback } from 'react';
-import { getTimeRemaining } from 'ts-time-utils/countdown';
+import { getRemainingTime } from 'ts-time-utils/countdown';
 
 function useCountdown(targetDate: Date) {
-  const [remaining, setRemaining] = useState(() => getTimeRemaining(targetDate));
+  const [remaining, setRemaining] = useState(() => getRemainingTime(targetDate));
 
   useEffect(() => {
     const id = setInterval(() => {
-      const r = getTimeRemaining(targetDate);
+      const r = getRemainingTime(targetDate);
       setRemaining(r);
-      if (r.total <= 0) clearInterval(id);
+      if (r.totalMilliseconds <= 0) clearInterval(id);
     }, 1000);
     return () => clearInterval(id);
   }, [targetDate]);
@@ -72,7 +72,7 @@ Form validation hook:
 
 ```tsx
 import { useState, useCallback } from 'react';
-import { isValidDate, isFutureDate, isPastDate } from 'ts-time-utils/validate';
+import { isValidDate, isFuture, isPast } from 'ts-time-utils/validate';
 import { parseDate } from 'ts-time-utils/parse';
 
 function useDateValidation(rules: { required?: boolean; future?: boolean; past?: boolean }) {
@@ -90,12 +90,12 @@ function useDateValidation(rules: { required?: boolean; future?: boolean; past?:
       return false;
     }
 
-    if (rules.future && !isFutureDate(date)) {
+    if (rules.future && !isFuture(date)) {
       setError('Date must be in the future');
       return false;
     }
 
-    if (rules.past && !isPastDate(date)) {
+    if (rules.past && !isPast(date)) {
       setError('Date must be in the past');
       return false;
     }
@@ -136,7 +136,7 @@ interface FormattedDateProps {
 }
 
 function FormattedDate({ date, locale = 'en-US', format = 'medium' }: FormattedDateProps) {
-  const formatted = formatDateLocale(date, locale, { dateStyle: format });
+  const formatted = formatDateLocale(date, locale, format);
   return <time dateTime={date.toISOString()}>{formatted}</time>;
 }
 ```
@@ -146,25 +146,26 @@ function FormattedDate({ date, locale = 'en-US', format = 'medium' }: FormattedD
 Show if currently open:
 
 ```tsx
-import { isWithinWorkingHours, getNextWorkingHourStart } from 'ts-time-utils/workingHours';
-import { formatTimeAgo } from 'ts-time-utils/format';
+import { isWorkingTime, nextWorkingTime } from 'ts-time-utils/workingHours';
+import { timeAgo } from 'ts-time-utils/format';
 
 const config = {
   workingDays: [1, 2, 3, 4, 5], // Mon-Fri
-  startTime: { hour: 9, minute: 0 },
-  endTime: { hour: 17, minute: 0 }
+  hours: { start: 9, end: 17 },
+  breaks: [{ start: 12, end: 13 }]
 };
 
 function BusinessHoursIndicator() {
-  const isOpen = isWithinWorkingHours(new Date(), config);
-  const nextOpen = !isOpen ? getNextWorkingHourStart(new Date(), config) : null;
+  const now = new Date();
+  const isOpen = isWorkingTime(now, config);
+  const nextOpen = !isOpen ? nextWorkingTime(now, config) : null;
 
   return (
     <div>
       <span className={isOpen ? 'open' : 'closed'}>
         {isOpen ? 'Open' : 'Closed'}
       </span>
-      {nextOpen && <span>Opens {formatTimeAgo(nextOpen)}</span>}
+      {nextOpen && <span>Opens {timeAgo(nextOpen)}</span>}
     </div>
   );
 }
@@ -176,8 +177,8 @@ function BusinessHoursIndicator() {
 
 ```tsx
 import { Controller, useForm } from 'react-hook-form';
-import { parseDate, parseDateFormat } from 'ts-time-utils/parse';
-import { isValidDate, isFutureDate } from 'ts-time-utils/validate';
+import { parseDate } from 'ts-time-utils/parse';
+import { isValidDate, isFuture } from 'ts-time-utils/validate';
 
 function EventForm() {
   const { control, handleSubmit } = useForm();
@@ -190,7 +191,7 @@ function EventForm() {
         rules={{
           validate: {
             validDate: v => isValidDate(parseDate(v)) || 'Invalid date',
-            futureDate: v => isFutureDate(parseDate(v)!) || 'Must be future date'
+            futureDate: v => isFuture(parseDate(v)!) || 'Must be future date'
           }
         }}
         render={({ field, fieldState }) => (
@@ -211,8 +212,8 @@ Import only what you need:
 
 ```tsx
 // Good - only imports format module (~3KB)
-import { formatTimeAgo } from 'ts-time-utils/format';
+import { timeAgo } from 'ts-time-utils/format';
 
 // Avoid - imports entire library
-import { formatTimeAgo } from 'ts-time-utils';
+import { timeAgo } from 'ts-time-utils';
 ```

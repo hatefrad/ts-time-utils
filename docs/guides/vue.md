@@ -15,15 +15,15 @@ Auto-updating relative time:
 ```ts
 // composables/useRelativeTime.ts
 import { ref, onMounted, onUnmounted, watch } from 'vue';
-import { formatTimeAgo } from 'ts-time-utils/format';
+import { timeAgo } from 'ts-time-utils/format';
 
 export function useRelativeTime(date: Date | (() => Date), intervalMs = 60000) {
   const getDate = () => (typeof date === 'function' ? date() : date);
-  const text = ref(formatTimeAgo(getDate()));
+  const text = ref(timeAgo(getDate()));
   let timer: ReturnType<typeof setInterval>;
 
   const update = () => {
-    text.value = formatTimeAgo(getDate());
+    text.value = timeAgo(getDate());
   };
 
   onMounted(() => {
@@ -60,16 +60,16 @@ Reactive countdown timer:
 ```ts
 // composables/useCountdown.ts
 import { ref, computed, onMounted, onUnmounted } from 'vue';
-import { getTimeRemaining } from 'ts-time-utils/countdown';
+import { getRemainingTime } from 'ts-time-utils/countdown';
 
 export function useCountdown(targetDate: Date) {
-  const remaining = ref(getTimeRemaining(targetDate));
+  const remaining = ref(getRemainingTime(targetDate));
   let timer: ReturnType<typeof setInterval>;
 
   onMounted(() => {
     timer = setInterval(() => {
-      remaining.value = getTimeRemaining(targetDate);
-      if (remaining.value.total <= 0) clearInterval(timer);
+      remaining.value = getRemainingTime(targetDate);
+      if (remaining.value.totalMilliseconds <= 0) clearInterval(timer);
     }, 1000);
   });
 
@@ -104,7 +104,7 @@ Form validation composable:
 ```ts
 // composables/useDateValidation.ts
 import { ref, computed } from 'vue';
-import { isValidDate, isFutureDate, isPastDate } from 'ts-time-utils/validate';
+import { isValidDate, isFuture, isPast } from 'ts-time-utils/validate';
 import { parseDate } from 'ts-time-utils/parse';
 
 interface ValidationRules {
@@ -124,8 +124,8 @@ export function useDateValidation(rules: ValidationRules = {}) {
 
     const date = parseDate(value.value);
     if (!date || !isValidDate(date)) return 'Invalid date format';
-    if (rules.future && !isFutureDate(date)) return 'Date must be in the future';
-    if (rules.past && !isPastDate(date)) return 'Date must be in the past';
+    if (rules.future && !isFuture(date)) return 'Date must be in the future';
+    if (rules.past && !isPast(date)) return 'Date must be in the past';
 
     return null;
   });
@@ -178,7 +178,7 @@ const props = withDefaults(defineProps<{
 });
 
 const formatted = computed(() =>
-  formatDateLocale(props.date, props.locale, { dateStyle: props.format })
+  formatDateLocale(props.date, props.locale, props.format)
 );
 </script>
 
@@ -192,13 +192,13 @@ const formatted = computed(() =>
 ```vue
 <script setup lang="ts">
 import { ref, onMounted, onUnmounted } from 'vue';
-import { isWithinWorkingHours, getNextWorkingHourStart } from 'ts-time-utils/workingHours';
-import { formatTimeAgo } from 'ts-time-utils/format';
+import { isWorkingTime, nextWorkingTime } from 'ts-time-utils/workingHours';
+import { timeAgo } from 'ts-time-utils/format';
 
 const config = {
   workingDays: [1, 2, 3, 4, 5],
-  startTime: { hour: 9, minute: 0 },
-  endTime: { hour: 17, minute: 0 }
+  hours: { start: 9, end: 17 },
+  breaks: [{ start: 12, end: 13 }]
 };
 
 const isOpen = ref(false);
@@ -207,10 +207,10 @@ let timer: ReturnType<typeof setInterval>;
 
 const update = () => {
   const now = new Date();
-  isOpen.value = isWithinWorkingHours(now, config);
+  isOpen.value = isWorkingTime(now, config);
   if (!isOpen.value) {
-    const next = getNextWorkingHourStart(now, config);
-    nextOpenText.value = next ? `Opens ${formatTimeAgo(next)}` : '';
+    const next = nextWorkingTime(now, config);
+    nextOpenText.value = next ? `Opens ${timeAgo(next)}` : '';
   }
 };
 
@@ -238,13 +238,13 @@ onUnmounted(() => clearInterval(timer));
 <script setup lang="ts">
 import { useField, useForm } from 'vee-validate';
 import { parseDate } from 'ts-time-utils/parse';
-import { isValidDate, isFutureDate } from 'ts-time-utils/validate';
+import { isValidDate, isFuture } from 'ts-time-utils/validate';
 
 const validateFutureDate = (value: string) => {
   if (!value) return 'Date is required';
   const date = parseDate(value);
   if (!date || !isValidDate(date)) return 'Invalid date';
-  if (!isFutureDate(date)) return 'Must be a future date';
+  if (!isFuture(date)) return 'Must be a future date';
   return true;
 };
 
@@ -265,8 +265,8 @@ const { value, errorMessage } = useField('eventDate', validateFutureDate);
 
 ```ts
 // Good - only imports format module (~3KB)
-import { formatTimeAgo } from 'ts-time-utils/format';
+import { timeAgo } from 'ts-time-utils/format';
 
 // Avoid - imports entire library
-import { formatTimeAgo } from 'ts-time-utils';
+import { timeAgo } from 'ts-time-utils';
 ```

@@ -16,6 +16,12 @@ A comprehensive TypeScript utility library for time, dates, durations, and calen
 - **Fluent API** — Chain operations with the `chain()` API
 - **Extensible** — Plugin system for custom functionality
 
+## When Not To Use This Library
+
+- You only need a single built-in `Date` helper or one `Intl` formatter.
+- You want the standardized Temporal API rather than a utility library.
+- You need a mutable Moment-style wrapper with implicit global locale state.
+
 ## Installation
 
 ```bash
@@ -50,6 +56,12 @@ import { isValidDate } from 'ts-time-utils/validate';
 Every public module is also available as a subpath import such as
 `ts-time-utils/timezone`, `ts-time-utils/workingHours`, or
 `ts-time-utils/naturalLanguage`.
+
+### Module Selection
+
+- Use `ts-time-utils` when you need a few core utilities from different areas.
+- Use `ts-time-utils/format` or `ts-time-utils/calculate` when one module is enough.
+- Use dedicated subpaths like `ts-time-utils/chain`, `ts-time-utils/plugins`, `ts-time-utils/locale`, or `ts-time-utils/workingHours` for those feature areas.
 
 ---
 
@@ -136,11 +148,11 @@ Plugin extensions are imported from `ts-time-utils/plugins`, and that module now
 Timezone conversions, DST handling, and zone comparisons.
 
 ```ts
-import { formatInTimeZone, isDST, convertTimezone } from 'ts-time-utils/timezone';
+import { formatInTimeZone, isDST, convertBetweenZones } from 'ts-time-utils/timezone';
 
-formatInTimeZone(date, 'America/New_York');
+formatInTimeZone(new Date(), 'America/New_York');
 isDST(new Date('2025-07-14'), 'America/New_York');  // true
-convertTimezone(date, 'UTC', 'Asia/Tokyo');
+convertBetweenZones(new Date(), 'UTC', 'Asia/Tokyo');
 ```
 
 `isDST()` uses a yearly-offset heuristic rather than authoritative transition metadata.
@@ -199,12 +211,14 @@ recurrenceToString(weekly.rule);  // "Every week on Monday, Wednesday, Friday"
 Parse and match cron expressions.
 
 ```ts
-import { matchesCron, getNextCronDate, describeCron, CRON_PRESETS } from 'ts-time-utils/cron';
+import { parseCronExpression, matchesCron, getNextCronDate, describeCron } from 'ts-time-utils/cron';
 
-matchesCron('0 9 * * 1-5', date);         // true if weekday 9am
+const date = new Date();
+
+parseCronExpression('0 9 * * 1-5');       // minute/hour/day/month/day-of-week parts
+matchesCron(date, '0 9 * * 1-5');         // true if weekday 9am
 getNextCronDate('0 9 * * *');             // Next 9am
 describeCron('0 9 * * 1-5');              // "At 09:00 on Monday through Friday"
-CRON_PRESETS.DAILY;                       // "0 0 * * *"
 ```
 
 ### Fiscal Year
@@ -212,11 +226,13 @@ CRON_PRESETS.DAILY;                       // "0 0 * * *"
 Fiscal year utilities with configurable start month.
 
 ```ts
-import { getFiscalYear, getFiscalQuarter, FISCAL_PRESETS } from 'ts-time-utils/fiscal';
+import { getFiscalYear, getFiscalQuarter } from 'ts-time-utils/fiscal';
 
-getFiscalYear(date, FISCAL_PRESETS.UK_INDIA);     // April start
-getFiscalYear(date, FISCAL_PRESETS.AUSTRALIA);   // July start
-getFiscalYear(date, FISCAL_PRESETS.US_FEDERAL);  // October start
+const date = new Date();
+
+getFiscalYear(date, { startMonth: 4 });          // April start
+getFiscalYear(date, { startMonth: 7 });          // July start
+getFiscalYear(date, { startMonth: 10 });         // October start
 getFiscalQuarter(date, { startMonth: 4 });       // Q2 for UK fiscal
 ```
 
@@ -271,10 +287,12 @@ Public holidays for 20 countries.
 ```ts
 import { getHolidays, isHoliday, getNextHoliday } from 'ts-time-utils/holidays';
 
+const today = new Date();
+
 getHolidays(2025, 'UK');      // UK bank holidays
 getHolidays(2025, 'DE');      // German holidays
-isHoliday(date, 'CA');        // Is Canadian holiday?
-getNextHoliday(date, 'AU');   // Next Australian holiday
+isHoliday(today, 'CA');       // Is Canadian holiday?
+getNextHoliday(today, 'AU');   // Next Australian holiday
 
 // Supported: UK, NL, DE, CA, AU, IT, ES, CN, IN, US,
 //            JP, FR, BR, MX, KR, SG, PL, SE, BE, CH
@@ -286,6 +304,9 @@ Multi-language formatting with 40+ locales.
 
 ```ts
 import { formatRelativeTime, formatDateLocale, detectLocale } from 'ts-time-utils/locale';
+
+const pastDate = new Date(Date.now() - 2 * 60 * 60 * 1000);
+const date = new Date();
 
 formatRelativeTime(pastDate, { locale: 'es' });  // "hace 2 horas"
 formatRelativeTime(pastDate, { locale: 'de' });  // "vor 2 Stunden"
@@ -303,9 +324,16 @@ clock, adapt the instant first with a timezone helper such as
 ```ts
 import { isWorkingTime, addWorkingDays, workingDaysBetween } from 'ts-time-utils/workingHours';
 
-isWorkingTime(date, config);
-addWorkingDays(date, 5, config);
-workingDaysBetween(start, end, config);
+const config = {
+  workingDays: [1, 2, 3, 4, 5],
+  hours: { start: 9, end: 17 },
+  breaks: [{ start: 12, end: 13 }]
+};
+const now = new Date();
+
+isWorkingTime(now, config);
+addWorkingDays(now, 5, config);
+workingDaysBetween(now, new Date('2025-12-31'), config);
 ```
 
 ### Serialization
@@ -463,12 +491,12 @@ leapSecondsBetween(date1, date2);  // Number of leap seconds
 Date parsing from various formats.
 
 ```ts
-import { parseDate, parseTime, autoDetectFormat } from 'ts-time-utils/parse';
+import { parseDate, parseTime, guessDateFormat } from 'ts-time-utils/parse';
 
 parseDate('Dec 25, 2025');
 parseDate('25/12/2025', 'DD/MM/YYYY');
 parseTime('2:30 PM');  // { hour: 14, minute: 30 }
-autoDetectFormat('2025-09-14');  // 'YYYY-MM-DD'
+guessDateFormat('2025-09-14');  // 'YYYY-MM-DD'
 ```
 
 ### Scheduling
@@ -484,7 +512,10 @@ import {
 // Generate 30-min slots for a day
 const slots = generateSlots(new Date(), {
   slotDuration: 30,
-  workingHours: { startTime: { hour: 9, minute: 0 }, endTime: { hour: 17, minute: 0 } }
+  workingHours: {
+    workingDays: [1, 2, 3, 4, 5],
+    hours: { start: 9, end: 17 }
+  }
 });
 
 // Find available slots (excluding existing bookings)
@@ -570,20 +601,19 @@ timeUntilDeadline(eventDate, deadline);  // Duration remaining
 Extend ChainedDate with custom functionality.
 
 ```ts
-import { chain, registerPlugin, createPlugin } from 'ts-time-utils/chain';
+import { chain, ChainedDate } from 'ts-time-utils/chain';
+import { extend } from 'ts-time-utils/plugins';
 
-const businessPlugin = createPlugin('business', {
-  addBusinessDays(days: number) {
+extend('business', {
+  addBusinessDays(this: ChainedDate, days: number) {
     // Implementation
     return this;
   },
-  isBusinessDay() {
+  isBusinessDay(this: ChainedDate) {
     const day = this.toDate().getDay();
     return day !== 0 && day !== 6;
   }
 });
-
-registerPlugin(businessPlugin);
 
 chain(new Date())
   .addBusinessDays(5)

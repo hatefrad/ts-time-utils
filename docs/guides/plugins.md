@@ -13,6 +13,9 @@ The plugin system allows you to extend `ChainedDate` with custom methods tailore
 
 ## Quick Start
 
+Prefer the dedicated subpaths for plugin work: `ts-time-utils/plugins` for
+registration and `ts-time-utils/chain` for the fluent API.
+
 ```ts
 import { extend } from 'ts-time-utils/plugins';
 import { chain, ChainedDate } from 'ts-time-utils/chain';
