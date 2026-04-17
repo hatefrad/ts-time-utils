@@ -20,6 +20,12 @@ function normalizeHourValue(hour: number): number {
 function expandUtcHourIntervals(startUTC: number, endUTC: number): HourInterval[] {
   const duration = endUTC - startUTC;
   if (duration <= 0) return [];
+  if (duration >= DAY_HOURS) {
+    return [
+      { start: 0, end: DAY_HOURS },
+      { start: DAY_HOURS, end: DAY_HOURS * 2 }
+    ];
+  }
 
   const normalizedStart = normalizeHourValue(startUTC);
   const baseInterval = { start: normalizedStart, end: normalizedStart + duration };
@@ -214,7 +220,8 @@ export function getNextDSTTransition(date: Date, zone: string): Date | null {
  * @param workHoursStart - work hours start (0-24)
  * @param workHoursEnd - work hours end (0-24)
  * @param date - reference date (default: today)
- * @returns overlapping UTC clock hours; wrapped overlaps are returned with
+ * @returns overlapping UTC clock hours; a full-day overlap is returned as
+ * `{ startUTC: 0, endUTC: 24 }`, and wrapped overlaps are returned with
  * `endUTC` normalized back into the 0-24 range and may be less than `startUTC`
  */
 export function findCommonWorkingHours(
@@ -261,6 +268,10 @@ export function findCommonWorkingHours(
   overlaps.sort((a, b) => a.start - b.start);
   const overlap = overlaps[0];
   const duration = overlap.end - overlap.start;
+  if (duration >= DAY_HOURS) {
+    return { startUTC: 0, endUTC: DAY_HOURS };
+  }
+
   const startUTC = normalizeHourValue(overlap.start);
   const endUTC = normalizeHourValue(overlap.start + duration);
 

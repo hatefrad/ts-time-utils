@@ -139,6 +139,8 @@ isDST(new Date('2025-07-14'), 'America/New_York');  // true
 convertTimezone(date, 'UTC', 'Asia/Tokyo');
 ```
 
+`isDST()` uses a yearly-offset heuristic rather than authoritative transition metadata.
+
 ### Calendar
 
 ISO weeks, quarters, holidays, and calendar grids.

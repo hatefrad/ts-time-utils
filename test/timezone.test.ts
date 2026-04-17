@@ -151,6 +151,17 @@ describe('timezone utilities', () => {
 
       expect(result).toEqual({ startUTC: 11, endUTC: 12 });
     });
+
+    it('preserves an unambiguous full-day overlap', () => {
+      const result = findCommonWorkingHours(
+        ['UTC', 'America/New_York'],
+        0,
+        24,
+        new Date('2025-01-15T00:00:00Z')
+      );
+
+      expect(result).toEqual({ startUTC: 0, endUTC: 24 });
+    });
   });
 
   describe('getTimezoneAbbreviation', () => {
