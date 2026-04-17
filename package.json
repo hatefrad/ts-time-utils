@@ -187,6 +187,7 @@
     "lint": "eslint src",
     "size": "size-limit",
     "size:check": "size-limit --json > docs/bundle-sizes.json",
+    "release:verify": "npm run lint && npm test && npm run build && npm run test:package && npm run size",
     "prepublishOnly": "npm run build"
   },
   "keywords": [
