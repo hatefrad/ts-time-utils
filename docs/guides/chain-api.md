@@ -7,9 +7,6 @@ Fluent interface for date operations, similar to day.js/moment.js syntax.
 ```ts
 // Import the chain function
 import { chain } from 'ts-time-utils/chain';
-
-// Or from main package
-import { chain } from 'ts-time-utils';
 ```
 
 ## Basic Usage
@@ -199,10 +196,9 @@ Import from `ts-time-utils/chain` for optimal bundle size:
 ```ts
 // Good - only imports chain module
 import { chain } from 'ts-time-utils/chain';
-
-// Less optimal - imports everything
-import { chain } from 'ts-time-utils';
 ```
+
+There is no root-package `chain` export; use the subpath import above.
 
 ## Comparison with day.js
 

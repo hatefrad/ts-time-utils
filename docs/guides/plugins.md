@@ -13,6 +13,9 @@ The plugin system allows you to extend `ChainedDate` with custom methods tailore
 
 ## Quick Start
 
+Prefer the dedicated subpaths for plugin work: `ts-time-utils/plugins` for
+registration and `ts-time-utils/chain` for the fluent API.
+
 ```ts
 import { extend } from 'ts-time-utils/plugins';
 import { chain, ChainedDate } from 'ts-time-utils/chain';
@@ -36,6 +39,8 @@ extend('businessDays', {
 const result = chain('2025-01-17').addBusinessDays(5).format('YYYY-MM-DD');
 console.log(result); // "2025-01-24"
 ```
+
+`ts-time-utils/plugins` now imports the chain class directly, so you can load `plugins` before or after `chain` without a hidden global handshake.
 
 ## Creating a Plugin
 

@@ -60,6 +60,11 @@ describe('NaturalLanguage', () => {
       const result = parseNaturalDate('not a date');
       expect(result).toBeNull();
     });
+
+    it('should reject fallback date parsing in strict mode', () => {
+      expect(parseNaturalDate('2024-01-15')).not.toBeNull();
+      expect(parseNaturalDate('2024-01-15', { strict: true })).toBeNull();
+    });
   });
 
   describe('parseRelativePhrase', () => {
@@ -173,6 +178,15 @@ describe('NaturalLanguage', () => {
       expect(dates.length).toBeGreaterThanOrEqual(2);
       expect(dates[0].index).toBeLessThan(dates[1].index);
     });
+
+    it('should skip fallback-only date matches in strict mode', () => {
+      const text = 'Report due 2024-01-15';
+      const looseDates = extractDatesFromText(text);
+      const strictDates = extractDatesFromText(text, { strict: true });
+
+      expect(looseDates.length).toBeGreaterThan(0);
+      expect(strictDates).toEqual([]);
+    });
   });
 
   describe('suggestDateFromContext', () => {
@@ -228,6 +242,14 @@ describe('NaturalLanguage', () => {
       const suggestions = suggestDateFromContext('meeting tomorrow and next week');
 
       expect(suggestions.length).toBeGreaterThan(0);
+    });
+
+    it('should skip fallback-only context suggestions in strict mode', () => {
+      const suggestions = suggestDateFromContext('report due 2024-01-15', {
+        strict: true
+      });
+
+      expect(suggestions).toEqual([]);
     });
 
     it('should sort suggestions by confidence', () => {

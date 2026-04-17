@@ -32,7 +32,7 @@ m.add(1, 'day'); // Mutates m!
 **ts-time-utils returns new values:**
 ```ts
 const date = new Date();
-const tomorrow = addDays(date, 1); // date unchanged
+const tomorrow = addTime(date, 1, 'days'); // date unchanged
 ```
 
 ## Function Mapping
@@ -63,9 +63,9 @@ parseDate('2025-01-15');
 |-----------|---------------|
 | `.format('YYYY-MM-DD')` | `formatDate(date, 'YYYY-MM-DD')` |
 | `.format('LLL')` | `formatDateLocale(date, locale)` |
-| `.fromNow()` | `formatTimeAgo(date)` |
-| `.toNow()` | `formatTimeAgo(date)` |
-| `.calendar()` | `formatTimeAgo(date)` |
+| `.fromNow()` | `timeAgo(date)` |
+| `.toNow()` | `timeAgo(date)` |
+| `.calendar()` | `formatCalendarDate(date)` |
 
 ```ts
 // Moment
@@ -73,20 +73,20 @@ moment(date).format('MMMM Do YYYY');
 moment(date).fromNow();
 
 // ts-time-utils
-import { formatDate, formatTimeAgo } from 'ts-time-utils/format';
+import { formatDate, timeAgo } from 'ts-time-utils/format';
 formatDate(date, 'MMMM Do YYYY');
-formatTimeAgo(date);
+timeAgo(date);
 ```
 
 ### Arithmetic
 
 | Moment.js | ts-time-utils |
 |-----------|---------------|
-| `.add(1, 'days')` | `addDays(date, 1)` |
-| `.add(2, 'months')` | `addMonths(date, 2)` |
-| `.add(1, 'years')` | `addYears(date, 1)` |
-| `.subtract(3, 'days')` | `addDays(date, -3)` |
-| `.diff(other, 'days')` | `differenceInDays(date, other)` |
+| `.add(1, 'days')` | `addTime(date, 1, 'days')` |
+| `.add(2, 'months')` | `addTime(date, 2, 'months')` |
+| `.add(1, 'years')` | `addTime(date, 1, 'years')` |
+| `.subtract(3, 'days')` | `subtractTime(date, 3, 'days')` |
+| `.diff(other, 'days')` | `differenceInUnits(date, other, 'days')` |
 
 ```ts
 // Moment (mutates!)
@@ -95,8 +95,8 @@ m.add(5, 'days');
 m.subtract(2, 'months');
 
 // ts-time-utils (immutable)
-import { addDays, addMonths } from 'ts-time-utils/calculate';
-const result = addMonths(addDays(date, 5), -2);
+import { addTime, subtractTime } from 'ts-time-utils/calculate';
+const result = subtractTime(addTime(date, 5, 'days'), 2, 'months');
 ```
 
 ### Getters/Setters
@@ -116,11 +116,11 @@ Use native Date methods - no wrapper needed.
 
 | Moment.js | ts-time-utils |
 |-----------|---------------|
-| `.isBefore(other)` | `isBefore(date, other)` |
-| `.isAfter(other)` | `isAfter(date, other)` |
+| `.isBefore(other)` | `date.getTime() < other.getTime()` |
+| `.isAfter(other)` | `date.getTime() > other.getTime()` |
 | `.isSame(other)` | `isSameDay(date, other)` |
 | `.isSame(other, 'month')` | `isSameMonth(date, other)` |
-| `.isBetween(a, b)` | `isWithinRange(date, a, b)` |
+| `.isBetween(a, b)` | `isBetween(date, a, b)` |
 | `.isValid()` | `isValidDate(date)` |
 
 ```ts
@@ -129,28 +129,28 @@ moment(date).isBefore(other);
 moment(date).isBetween(start, end);
 
 // ts-time-utils
-import { isBefore, isWithinRange } from 'ts-time-utils/validate';
-isBefore(date, other);
-isWithinRange(date, start, end);
+import { isBetween } from 'ts-time-utils/calculate';
+date.getTime() < other.getTime();
+isBetween(date, start, end);
 ```
 
 ### Start/End
 
 | Moment.js | ts-time-utils |
 |-----------|---------------|
-| `.startOf('day')` | `startOfDay(date)` |
-| `.endOf('day')` | `endOfDay(date)` |
-| `.startOf('month')` | `startOfMonth(date)` |
-| `.startOf('week')` | `startOfWeek(date)` |
-| `.startOf('quarter')` | `startOfQuarter(date)` |
+| `.startOf('day')` | `startOf(date, 'day')` |
+| `.endOf('day')` | `endOf(date, 'day')` |
+| `.startOf('month')` | `startOf(date, 'month')` |
+| `.startOf('week')` | `startOf(date, 'week')` |
+| `.startOf('quarter')` | `getStartOfQuarter(date)` |
 
 ```ts
 // Moment (mutates!)
 moment(date).startOf('month');
 
 // ts-time-utils (returns new Date)
-import { startOfMonth } from 'ts-time-utils/calculate';
-const result = startOfMonth(date);
+import { startOf, endOf } from 'ts-time-utils/calculate';
+const result = endOf(startOf(date, 'month'), 'day');
 ```
 
 ### Duration
@@ -179,8 +179,8 @@ d.toString();
 
 | Moment.js | ts-time-utils |
 |-----------|---------------|
-| `.tz('America/New_York')` | `formatInTimezone(date, tz)` |
-| `.utcOffset()` | `getTimezoneOffset(date, tz)` |
+| `.tz('America/New_York')` | `formatInTimeZone(date, tz)` |
+| `.utcOffset()` | `getTimezoneOffset(tz, date)` |
 | `moment.tz.names()` | `COMMON_TIMEZONES` |
 
 ```ts
@@ -188,8 +188,8 @@ d.toString();
 moment(date).tz('America/New_York').format();
 
 // ts-time-utils
-import { formatInTimezone } from 'ts-time-utils/timezone';
-formatInTimezone(date, 'America/New_York');
+import { formatInTimeZone } from 'ts-time-utils/timezone';
+formatInTimeZone(date, 'America/New_York');
 ```
 
 ### Locale
@@ -206,7 +206,7 @@ moment(date).format('LLLL');
 
 // ts-time-utils (explicit locale)
 import { formatDateLocale } from 'ts-time-utils/locale';
-formatDateLocale(date, 'fr-FR', { dateStyle: 'full' });
+formatDateLocale(date, 'fr-FR', 'full');
 ```
 
 ## Common Patterns
@@ -242,11 +242,11 @@ moment()
   .format('YYYY-MM-DD');
 
 // ts-time-utils
-import { addMonths, addDays, startOfMonth } from 'ts-time-utils/calculate';
+import { addTime, startOf } from 'ts-time-utils/calculate';
 import { formatDate } from 'ts-time-utils/format';
 
 const result = formatDate(
-  addDays(startOfMonth(addMonths(new Date(), 1)), 14),
+  addTime(startOf(addTime(new Date(), 1, 'months'), 'month'), 14, 'days'),
   'YYYY-MM-DD'
 );
 ```
@@ -256,24 +256,24 @@ const result = formatDate(
 ### Holidays
 
 ```ts
-import { getHolidaysForYear, isHoliday } from 'ts-time-utils/holidays';
+import { getHolidays, isHoliday } from 'ts-time-utils/holidays';
 
-getHolidaysForYear(2025, 'US');
+getHolidays(2025, 'US');
 isHoliday(new Date(), 'UK');
 ```
 
 ### Fiscal Years
 
 ```ts
-import { getFiscalYear, FISCAL_PRESETS } from 'ts-time-utils/fiscal';
+import { getFiscalYear } from 'ts-time-utils/fiscal';
 
-getFiscalYear(new Date(), FISCAL_PRESETS.UK);
+getFiscalYear(new Date(), { startMonth: 4 });
 ```
 
 ### Cron
 
 ```ts
-import { parseCron, getNextCronDate } from 'ts-time-utils/cron';
+import { parseCronExpression, getNextCronDate } from 'ts-time-utils/cron';
 
 getNextCronDate('0 9 * * 1-5');
 ```
@@ -281,30 +281,33 @@ getNextCronDate('0 9 * * 1-5');
 ### Working Hours
 
 ```ts
-import { isWithinWorkingHours, workingDaysBetween } from 'ts-time-utils/workingHours';
+import { isWorkingTime, workingDaysBetween } from 'ts-time-utils/workingHours';
 
-isWithinWorkingHours(new Date(), config);
+isWorkingTime(new Date(), {
+  workingDays: [1, 2, 3, 4, 5],
+  hours: { start: 9, end: 17 }
+});
 ```
 
 ### Recurrence
 
 ```ts
-import { generateRecurrenceDates } from 'ts-time-utils/recurrence';
+import { createRecurrence } from 'ts-time-utils/recurrence';
 
-generateRecurrenceDates({
+createRecurrence({
   frequency: 'monthly',
-  byMonthDay: [1, 15],
-  count: 10
-}, new Date());
+  startDate: new Date(),
+  byMonthDay: [1, 15]
+}).getAllOccurrences(10);
 ```
 
 ### Natural Language
 
 ```ts
-import { parseNaturalLanguageDate } from 'ts-time-utils/naturalLanguage';
+import { parseNaturalDate } from 'ts-time-utils/naturalLanguage';
 
-parseNaturalLanguageDate('next Monday');
-parseNaturalLanguageDate('in 3 weeks');
+parseNaturalDate('next Monday');
+parseNaturalDate('in 3 weeks');
 ```
 
 ## Bundle Size Reduction
@@ -314,8 +317,8 @@ Moment.js: ~300KB (with locales)
 ts-time-utils imports:
 ```ts
 // Only what you need - about 5KB total
-import { formatDate, formatTimeAgo } from 'ts-time-utils/format';
-import { addDays, startOfMonth } from 'ts-time-utils/calculate';
+import { formatDate, timeAgo } from 'ts-time-utils/format';
+import { addTime, startOf } from 'ts-time-utils/calculate';
 import { parseDate } from 'ts-time-utils/parse';
 ```
 
@@ -328,9 +331,9 @@ You can migrate incrementally:
 import moment from 'moment';
 
 // Use ts-time-utils for new code
-import { addDays } from 'ts-time-utils/calculate';
+import { addTime } from 'ts-time-utils/calculate';
 
 // Interop
-const date = addDays(new Date(), 5);
+const date = addTime(new Date(), 5, 'days');
 const m = moment(date); // Works fine
 ```

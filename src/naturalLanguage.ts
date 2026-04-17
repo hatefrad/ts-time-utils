@@ -14,9 +14,7 @@ export interface NaturalParseOptions {
   referenceDate?: Date;
   /** Preferred time for dates without time specified */
   defaultTime?: { hour: number; minute: number; second?: number };
-  /** Locale for language-specific parsing */
-  locale?: string;
-  /** Whether to use strict parsing */
+  /** Whether to skip permissive fallback parsing */
   strict?: boolean;
 }
 
@@ -58,7 +56,7 @@ export interface ExtractedDate {
  * ```
  */
 export function parseNaturalDate(input: string, options: NaturalParseOptions = {}): Date | null {
-  const { referenceDate = new Date(), defaultTime } = options;
+  const { referenceDate = new Date(), defaultTime, strict = false } = options;
   const normalized = input.toLowerCase().trim();
   
   // Try relative phrase parser first (handles "next week", "last month", etc.)
@@ -94,6 +92,10 @@ export function parseNaturalDate(input: string, options: NaturalParseOptions = {
     if (match) {
       return parseMatchedPattern(match, referenceDate, defaultTime);
     }
+  }
+
+  if (strict) {
+    return null;
   }
   
   // Try standard Date parsing as fallback
@@ -234,7 +236,11 @@ export function extractDatesFromText(
       processed.add(`${index}-${matchedText}`);
       
       // Try to parse the matched text
-      const parsed = parseNaturalDate(matchedText, { referenceDate });
+      const parsed = parseNaturalDate(matchedText, {
+        referenceDate,
+        defaultTime: options.defaultTime,
+        strict: options.strict
+      });
       
       if (parsed) {
         results.push({

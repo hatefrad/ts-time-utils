@@ -48,19 +48,17 @@ export function createRecurrence(rule: RecurrenceRule) {
     isRecurrenceDate: (date: DateInput) => isRecurrenceDate(date, rule),
     getAllOccurrences: (limit = 100) => {
       const occurrences: Date[] = [];
-      let current = new Date(startDate);
-      let count = 0;
+      let current = new Date(startDate.getTime() - 1);
       
-      while (count < limit) {
+      while (occurrences.length < limit) {
         if (rule.until && current > new Date(rule.until)) break;
-        if (rule.count && count >= rule.count) break;
-        
+        if (rule.count && occurrences.length >= rule.count) break;
+
         const next = getNextOccurrence(rule, current);
         if (!next) break;
         
         occurrences.push(next);
         current = new Date(next.getTime() + 1);
-        count++;
       }
       
       return occurrences;

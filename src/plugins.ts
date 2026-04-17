@@ -20,37 +20,18 @@
  * ```
  */
 
-// Import ChainedDate class directly - safe because chain.js doesn't import plugins.js
-// We need the actual class (not just the type) to modify its prototype
-let ChainedDateConstructor: any = null;
+import { ChainedDate } from './chain.js';
 
 /**
- * Get ChainedDate class lazily to ensure it's fully initialized
+ * Get ChainedDate class for prototype mutation.
+ * Importing `plugins` now brings in `chain` directly, so the class is available
+ * without a hidden global handshake.
  */
 function getChainedDate() {
-  if (!ChainedDateConstructor) {
-    // Use dynamic import that works in both CJS and ESM
-    try {
-      // Try ESM import path first
-      ChainedDateConstructor = (globalThis as any).__chainedDateClass;
-      if (!ChainedDateConstructor) {
-        // Fallback: The class will be set by chain.js when it loads
-        throw new Error('ChainedDate not yet loaded. Import chain.js before using plugins.');
-      }
-    } catch (e) {
-      throw new Error('ChainedDate class not available. Ensure chain.js is imported before registering plugins.');
-    }
+  if (!ChainedDate) {
+    throw new Error('ChainedDate export is not available yet. Import chain.js before registering plugins.');
   }
-  return ChainedDateConstructor;
-}
-
-/**
- * Initialize the plugin system with ChainedDate class
- * This is called automatically when chain.js is imported
- * @internal
- */
-export function __initPluginSystem(ChainedDateClass: any) {
-  ChainedDateConstructor = ChainedDateClass;
+  return ChainedDate;
 }
 
 /**
@@ -71,11 +52,17 @@ export interface Plugin {
 interface PluginRegistry {
   [pluginName: string]: {
     plugin: Plugin;
-    originalMethods: Map<string, Function>;
   };
 }
 
 const registry: PluginRegistry = {};
+
+interface MethodState {
+  original?: Function;
+  owners: string[];
+}
+
+const methodStates: Record<string, MethodState> = {};
 
 /**
  * Extend ChainedDate with custom methods
@@ -107,25 +94,25 @@ export function extend(pluginName: string, methods: Plugin): void {
     throw new Error(`Plugin "${pluginName}" is already registered. Use a different name or uninstall first.`);
   }
 
-  // Get ChainedDate class and save original methods before overwriting
   const ChainedDateClass = getChainedDate();
-  const originalMethods = new Map<string, Function>();
 
   Object.entries(methods).forEach(([methodName, fn]) => {
-    // Save original method if it exists
+    const current = (ChainedDateClass.prototype as any)[methodName];
+    if (!methodStates[methodName]) {
+      methodStates[methodName] = {
+        original: typeof current === 'function' ? current : undefined,
+        owners: []
+      };
+    }
     if (methodName in ChainedDateClass.prototype) {
-      const original = (ChainedDateClass.prototype as any)[methodName];
-      if (typeof original === 'function') {
-        originalMethods.set(methodName, original);
-      }
       console.warn(`Method "${methodName}" already exists on ChainedDate and will be overwritten`);
     }
+    methodStates[methodName].owners.push(pluginName);
     // Add the plugin method
     (ChainedDateClass.prototype as any)[methodName] = fn;
   });
 
-  // Register the plugin with its original methods
-  registry[pluginName] = { plugin: methods, originalMethods };
+  registry[pluginName] = { plugin: methods };
 }
 
 /**
@@ -144,20 +131,36 @@ export function uninstall(pluginName: string): void {
     throw new Error(`Plugin "${pluginName}" is not registered`);
   }
 
-  // Get ChainedDate class and restore/remove methods
   const ChainedDateClass = getChainedDate();
   Object.keys(entry.plugin).forEach((methodName) => {
-    // If there was an original method, restore it
-    const original = entry.originalMethods.get(methodName);
-    if (original) {
-      (ChainedDateClass.prototype as any)[methodName] = original;
+    const state = methodStates[methodName];
+    if (!state) {
+      delete (ChainedDateClass.prototype as any)[methodName];
+      return;
+    }
+
+    state.owners = state.owners.filter((owner) => owner !== pluginName);
+
+    const nextOwner = state.owners[state.owners.length - 1];
+    if (nextOwner) {
+      const nextPlugin = registry[nextOwner];
+      if (nextPlugin && methodName in nextPlugin.plugin) {
+        (ChainedDateClass.prototype as any)[methodName] = nextPlugin.plugin[methodName];
+        return;
+      }
+      delete (ChainedDateClass.prototype as any)[methodName];
+      return;
+    }
+
+    if (state.original) {
+      (ChainedDateClass.prototype as any)[methodName] = state.original;
     } else {
-      // Otherwise, delete the method entirely
       delete (ChainedDateClass.prototype as any)[methodName];
     }
+
+    delete methodStates[methodName];
   });
 
-  // Remove from registry
   delete registry[pluginName];
 }
 

@@ -75,6 +75,22 @@ describe('timezone utilities', () => {
       // UTC doesn't observe DST
       expect(isDST(new Date(), 'UTC')).toBe(false);
     });
+
+    it('tracks DST boundaries in a northern hemisphere zone', () => {
+      const before = new Date('2025-03-09T06:59:59Z');
+      const after = new Date('2025-03-09T07:00:00Z');
+
+      expect(isDST(before, 'America/New_York')).toBe(false);
+      expect(isDST(after, 'America/New_York')).toBe(true);
+    });
+
+    it('tracks DST boundaries in a southern hemisphere zone', () => {
+      const before = new Date('2025-04-05T15:59:59Z');
+      const after = new Date('2025-04-05T16:00:00Z');
+
+      expect(isDST(before, 'Australia/Sydney')).toBe(true);
+      expect(isDST(after, 'Australia/Sydney')).toBe(false);
+    });
   });
 
   describe('getNextDSTTransition', () => {
@@ -84,6 +100,16 @@ describe('timezone utilities', () => {
 
     it('returns null for invalid timezone', () => {
       expect(getNextDSTTransition(new Date(), 'Invalid/Zone')).toBeNull();
+    });
+
+    it('finds the exact spring transition in New York', () => {
+      const transition = getNextDSTTransition(new Date('2025-03-01T00:00:00Z'), 'America/New_York');
+      expect(transition?.toISOString()).toBe('2025-03-09T07:00:00.000Z');
+    });
+
+    it('finds the exact autumn transition in Sydney', () => {
+      const transition = getNextDSTTransition(new Date('2025-03-20T00:00:00Z'), 'Australia/Sydney');
+      expect(transition?.toISOString()).toBe('2025-04-05T16:00:00.000Z');
     });
   });
 
@@ -103,6 +129,51 @@ describe('timezone utilities', () => {
     it('returns null for invalid timezone', () => {
       expect(findCommonWorkingHours(['Invalid/Zone'])).toBeNull();
     });
+
+    it('handles fractional offsets and wraparound across midnight', () => {
+      const result = findCommonWorkingHours(
+        ['Australia/Adelaide', 'Asia/Kolkata'],
+        22,
+        4,
+        new Date('2025-01-15T00:00:00Z')
+      );
+
+      expect(result).toEqual({ startUTC: 16.5, endUTC: 17.5 });
+    });
+
+    it('finds overlap when only some UTC ranges land on the adjacent day', () => {
+      const result = findCommonWorkingHours(
+        ['America/Los_Angeles', 'Pacific/Auckland'],
+        0,
+        4,
+        new Date('2025-01-15T00:00:00Z')
+      );
+
+      expect(result).toEqual({ startUTC: 11, endUTC: 12 });
+    });
+
+    it('preserves an unambiguous full-day overlap', () => {
+      const result = findCommonWorkingHours(
+        ['UTC', 'America/New_York'],
+        0,
+        24,
+        new Date('2025-01-15T00:00:00Z')
+      );
+
+      expect(result).toEqual({ startUTC: 0, endUTC: 24 });
+    });
+
+    it('returns the single longest contiguous overlap window when UTC overlap splits', () => {
+      const result = findCommonWorkingHours(
+        ['UTC', 'Australia/Adelaide'],
+        0,
+        14,
+        new Date('2025-01-15T00:00:00Z')
+      );
+
+      expect(result).toEqual({ startUTC: 0, endUTC: 3.5 });
+    });
+
   });
 
   describe('getTimezoneAbbreviation', () => {
