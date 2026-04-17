@@ -58,6 +58,7 @@ const after = addHours(before, 2); // 4:30 AM (not 3:30 AM)
 
 Timezone helpers depend on the host `Intl` implementation and its tzdata.
 Exact transition instants are stable when the runtime ships current zone data, but older ICU databases can lag behind rule changes.
+`findCommonWorkingHours()` returns one contiguous UTC overlap window, not every possible overlap slice. A true all-day overlap is represented as `{ startUTC: 0, endUTC: 24 }`.
 Working-hour overlap calculations also normalize local windows that cross midnight before converting them to UTC.
 
 ---

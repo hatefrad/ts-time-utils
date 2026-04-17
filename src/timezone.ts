@@ -13,28 +13,22 @@ type HourInterval = {
   end: number;
 };
 
+type SweepEvent = {
+  time: number;
+  delta: number;
+};
+
 function normalizeHourValue(hour: number): number {
   return ((hour % DAY_HOURS) + DAY_HOURS) % DAY_HOURS;
 }
 
-function expandUtcHourIntervals(startUTC: number, endUTC: number): HourInterval[] {
-  const duration = endUTC - startUTC;
-  if (duration <= 0) return [];
-  if (duration >= DAY_HOURS) {
-    return [
-      { start: 0, end: DAY_HOURS },
-      { start: DAY_HOURS, end: DAY_HOURS * 2 }
-    ];
-  }
+function pushSweepInterval(events: SweepEvent[], start: number, end: number): void {
+  const clampedStart = Math.max(0, start);
+  const clampedEnd = Math.min(DAY_HOURS * 2, end);
+  if (clampedStart >= clampedEnd) return;
 
-  const normalizedStart = normalizeHourValue(startUTC);
-  const baseInterval = { start: normalizedStart, end: normalizedStart + duration };
-  const shiftedInterval = {
-    start: baseInterval.start + DAY_HOURS,
-    end: baseInterval.end + DAY_HOURS
-  };
-
-  return [baseInterval, shiftedInterval].filter(interval => interval.start < DAY_HOURS * 2 && interval.end > 0);
+  events.push({ time: clampedStart, delta: 1 });
+  events.push({ time: clampedEnd, delta: -1 });
 }
 
 /** Get offset (minutes) for a zone at a given date */
@@ -232,52 +226,71 @@ export function findCommonWorkingHours(
   date: Date = new Date()
 ): { startUTC: number; endUTC: number } | null {
   if (zones.length === 0) return null;
-  
-  const utcRanges = zones.map(zone => {
+
+  const endHour = workHoursEnd < workHoursStart ? workHoursEnd + DAY_HOURS : workHoursEnd;
+  const duration = endHour - workHoursStart;
+  if (duration <= 0) {
+    return null;
+  }
+
+  const sweepEvents: SweepEvent[] = [];
+  for (const zone of zones) {
     const offset = getTimezoneOffset(zone, date);
-    if (offset === null) return null;
-
-    const endHour = workHoursEnd < workHoursStart ? workHoursEnd + 24 : workHoursEnd;
-    const startUTC = workHoursStart - (offset / 60);
-    const endUTC = endHour - (offset / 60);
-
-    return expandUtcHourIntervals(startUTC, endUTC);
-  });
-  
-  if (utcRanges.some(r => r === null)) return null;
-  
-  let overlaps = (utcRanges[0] as HourInterval[]).map(interval => ({ ...interval }));
-  for (const zoneRanges of utcRanges.slice(1) as HourInterval[][]) {
-    const nextOverlaps: HourInterval[] = [];
-    for (const overlap of overlaps) {
-      for (const zoneRange of zoneRanges) {
-        const start = Math.max(overlap.start, zoneRange.start);
-        const end = Math.min(overlap.end, zoneRange.end);
-        if (start < end) {
-          nextOverlaps.push({ start, end });
-        }
-      }
-    }
-
-    if (nextOverlaps.length === 0) {
+    if (offset === null) {
       return null;
     }
 
-    overlaps = nextOverlaps;
+    if (duration >= DAY_HOURS) {
+      pushSweepInterval(sweepEvents, 0, DAY_HOURS * 2);
+      continue;
+    }
+
+    const startUTC = normalizeHourValue(workHoursStart - (offset / 60));
+    pushSweepInterval(sweepEvents, startUTC, startUTC + duration);
+    pushSweepInterval(sweepEvents, startUTC + DAY_HOURS, startUTC + DAY_HOURS + duration);
   }
 
-  overlaps.sort((a, b) => {
-    const durationDifference = (b.end - b.start) - (a.end - a.start);
-    return durationDifference !== 0 ? durationDifference : a.start - b.start;
-  });
-  const overlap = overlaps[0];
-  const duration = overlap.end - overlap.start;
-  if (duration >= DAY_HOURS) {
+  sweepEvents.sort((a, b) => a.time - b.time || b.delta - a.delta);
+
+  let activeWindows = 0;
+  let previousTime = 0;
+  let bestOverlap: HourInterval | null = null;
+
+  for (let i = 0; i < sweepEvents.length; ) {
+    const currentTime = sweepEvents[i].time;
+    if (currentTime > previousTime && activeWindows === zones.length) {
+      const candidate = { start: previousTime, end: currentTime };
+      if (
+        bestOverlap === null ||
+        candidate.end - candidate.start > bestOverlap.end - bestOverlap.start ||
+        (
+          candidate.end - candidate.start === bestOverlap.end - bestOverlap.start &&
+          candidate.start < bestOverlap.start
+        )
+      ) {
+        bestOverlap = candidate;
+      }
+    }
+
+    while (i < sweepEvents.length && sweepEvents[i].time === currentTime) {
+      activeWindows += sweepEvents[i].delta;
+      i++;
+    }
+
+    previousTime = currentTime;
+  }
+
+  if (bestOverlap === null) {
+    return null;
+  }
+
+  const overlapDuration = bestOverlap.end - bestOverlap.start;
+  if (overlapDuration >= DAY_HOURS) {
     return { startUTC: 0, endUTC: DAY_HOURS };
   }
 
-  const startUTC = normalizeHourValue(overlap.start);
-  const endUTC = normalizeHourValue(overlap.start + duration);
+  const startUTC = normalizeHourValue(bestOverlap.start);
+  const endUTC = normalizeHourValue(bestOverlap.start + overlapDuration);
 
   return { startUTC, endUTC };
 }

@@ -173,6 +173,7 @@ describe('timezone utilities', () => {
 
       expect(result).toEqual({ startUTC: 0, endUTC: 3.5 });
     });
+
   });
 
   describe('getTimezoneAbbreviation', () => {
