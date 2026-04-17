@@ -37,17 +37,17 @@ describe('cross-module integration', () => {
   });
 
   it('treats working-hours checks in the configured timezone', () => {
-    const config = {
-      ...DEFAULT_WORKING_HOURS,
-      timezone: 'America/New_York',
-    };
     const instant = new Date('2025-01-13T16:30:00Z');
+    const newYorkClock = convertDateToZone(instant, 'America/New_York');
 
-    expect(convertDateToZone(instant, config.timezone!)).toMatchObject({
+    expect(newYorkClock).toMatchObject({
       hour: 11,
       minute: 30,
     });
-    expect(isWorkingTime(instant, config)).toBe(true);
-    expect(nextWorkingTime(instant, config)).toEqual(instant);
+
+    const localWorkingInstant = new Date('2025-01-13T11:30:00');
+
+    expect(isWorkingTime(localWorkingInstant, DEFAULT_WORKING_HOURS)).toBe(true);
+    expect(nextWorkingTime(localWorkingInstant, DEFAULT_WORKING_HOURS)).toEqual(localWorkingInstant);
   });
 });

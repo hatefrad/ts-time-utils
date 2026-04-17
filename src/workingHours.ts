@@ -10,81 +10,20 @@ export const DEFAULT_WORKING_HOURS: WorkingHoursConfig = {
   breaks: [{ start: 12, end: 13 }]
 };
 
-type ClockParts = {
-  dayOfWeek: number;
-  hour: number;
-  minute: number;
-  second: number;
-};
-
-function getClockParts(date: Date, config: WorkingHoursConfig): ClockParts {
-  if (!config.timezone) {
-    return {
-      dayOfWeek: date.getDay(),
-      hour: date.getHours(),
-      minute: date.getMinutes(),
-      second: date.getSeconds()
-    };
-  }
-
-  try {
-    const formatter = new Intl.DateTimeFormat('en-US', {
-      timeZone: config.timezone,
-      weekday: 'short',
-      hour: '2-digit',
-      minute: '2-digit',
-      second: '2-digit',
-      hour12: false
-    });
-    const parts = formatter.formatToParts(date);
-    const weekdayPart = parts.find(part => part.type === 'weekday')?.value;
-    const hourPart = parts.find(part => part.type === 'hour')?.value;
-    const minutePart = parts.find(part => part.type === 'minute')?.value;
-    const secondPart = parts.find(part => part.type === 'second')?.value;
-
-    const weekdayMap: Record<string, number> = {
-      Sun: 0,
-      Mon: 1,
-      Tue: 2,
-      Wed: 3,
-      Thu: 4,
-      Fri: 5,
-      Sat: 6
-    };
-
-    const hour = Number(hourPart ?? '0');
-
-    return {
-      dayOfWeek: weekdayMap[weekdayPart ?? ''] ?? date.getDay(),
-      hour: hour === 24 ? 0 : hour,
-      minute: Number(minutePart ?? '0'),
-      second: Number(secondPart ?? '0')
-    };
-  } catch {
-    return {
-      dayOfWeek: date.getDay(),
-      hour: date.getHours(),
-      minute: date.getMinutes(),
-      second: date.getSeconds()
-    };
-  }
-}
-
 /** Check if a date is a configured working day */
 export function isWorkingDay(date: Date, config: WorkingHoursConfig = DEFAULT_WORKING_HOURS): boolean {
-  return config.workingDays.includes(getClockParts(date, config).dayOfWeek);
+  return config.workingDays.includes(date.getDay());
 }
 
 /** Convert date to fractional hour */
-function toHourFraction(date: Date, config: WorkingHoursConfig): number {
-  const clock = getClockParts(date, config);
-  return clock.hour + clock.minute / 60 + clock.second / 3600;
+function toHourFraction(date: Date): number {
+  return date.getHours() + date.getMinutes() / 60 + date.getSeconds()/3600;
 }
 
 /** Check if inside working hours (excluding breaks) */
 export function isWorkingTime(date: Date, config: WorkingHoursConfig = DEFAULT_WORKING_HOURS): boolean {
   if (!isWorkingDay(date, config)) return false;
-  const h = toHourFraction(date, config);
+  const h = toHourFraction(date);
   if (h < config.hours.start || h >= config.hours.end) return false;
   if (config.breaks) {
     for (const b of config.breaks) {
@@ -304,7 +243,7 @@ export function isBreakTime(date: Date, config: WorkingHoursConfig = DEFAULT_WOR
   if (!isWorkingDay(date, config)) return false;
   if (!config.breaks || config.breaks.length === 0) return false;
   
-  const h = toHourFraction(date, config);
+  const h = toHourFraction(date);
   for (const b of config.breaks) {
     if (h >= b.start && h < b.end) return true;
   }
