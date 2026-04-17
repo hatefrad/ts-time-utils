@@ -13,43 +13,28 @@ All notable changes to `ts-time-utils` are recorded here.
 
 ## [Unreleased]
 
-### Docs
+No unreleased changes.
 
-- Release notes and workflow alignment updates for the `v4.4.0` productization pass.
-
-## [v4.2.0] - 2026-04-16
-
-### Docs
-
-- Added release hygiene documentation and maintenance scaffolding.
-- Aligned README, contributing guidance, and update checklist with the current 32-module export surface.
-- Documented the package-contract verification step now enforced by CI and publish workflows.
-
-## [v4.3.0] - 2026-04-17
+## [v4.4.0] - 2026-04-17
 
 ### Fixed
 
 - Corrected timezone overlap handling for wrapped, mixed-day, and full-day working-window cases.
 - Ensured recurrence generators include the configured `startDate` when collecting all occurrences.
-- Narrowed the working-hours public contract to match the implemented local-clock semantics.
+- Tightened the natural-language option surface to match the implemented parser behavior.
+- Removed the unsupported `WorkingHoursConfig.timezone` contract from the public type surface.
 
 ### Changed
 
+- Replaced hidden global plugin registration with an explicit module-level contract.
 - Added deterministic cross-module and built-package integration coverage for real consumer import paths.
-- Tightened the public type surface by removing the unsupported `WorkingHoursConfig.timezone` field.
+- Standardized CI and publish workflows around the shared `npm run release:verify` sequence.
 
 ### Docs
 
-- Clarified timezone edge-case semantics and the single-window overlap contract.
-
-## [v4.4.0] - 2026-04-17
-
-### Docs
-
+- Added release hygiene documentation and maintenance scaffolding.
+- Aligned README, contributing guidance, and update checklist with the current 32-module export surface.
+- Clarified timezone overlap semantics and consumer-facing working-hours expectations.
 - Refreshed framework guides and migration docs to use exported APIs only.
 - Added module-selection guidance and a brief “when not to use this library” section to the README.
 - Added versioned release notes for `v4.2.0`, `v4.3.0`, and `v4.4.0`.
-
-### Changed
-
-- Standardized CI and publish workflows around the shared `npm run release:verify` sequence.
