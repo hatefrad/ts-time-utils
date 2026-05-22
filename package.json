@@ -234,7 +234,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/hatefrad/ts-time-utils.git"
+    "url": "git+https://github.com/hatefrad/ts-time-utils.git"
   },
   "homepage": "https://github.com/hatefrad/ts-time-utils#readme",
   "bugs": {
