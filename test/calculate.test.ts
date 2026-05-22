@@ -1,6 +1,7 @@
 import { describe, it, expect } from "vitest";
 import {
   differenceInUnits,
+  differenceInCalendarDays,
   addTime,
   subtractTime,
   startOf,
@@ -22,6 +23,16 @@ describe("Calculate utilities", () => {
       const d2 = new Date("2025-09-02T06:00:00");
       expect(differenceInUnits(d1, d2, "days", false)).toBe(0);
       expect(differenceInUnits(d1, d2, "days", true)).toBeCloseTo(0.75);
+    });
+  });
+
+  describe("differenceInCalendarDays", () => {
+    it("counts date boundaries instead of partial elapsed days", () => {
+      const today = new Date(2026, 4, 22, 21, 17);
+      const target = new Date(2026, 4, 24, 0, 0);
+
+      expect(differenceInUnits(target, today, "days", true)).toBeCloseTo(1.113, 3);
+      expect(differenceInCalendarDays(target, today)).toBe(2);
     });
   });
 

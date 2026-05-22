@@ -85,9 +85,10 @@ parseDuration('1h 30m');                  // 5400000 (ms)
 Date arithmetic, differences, and business day calculations.
 
 ```ts
-import { differenceInUnits, addTime, startOf, endOf } from 'ts-time-utils/calculate';
+import { differenceInUnits, differenceInCalendarDays, addTime, startOf, endOf } from 'ts-time-utils/calculate';
 
 differenceInUnits(date1, date2, 'days');  // 10
+differenceInCalendarDays(date1, date2);   // Calendar date boundary count
 addTime(new Date(), 5, 'hours');          // 5 hours from now
 startOf(new Date(), 'day');               // 00:00:00 today
 endOf(new Date(), 'month');               // Last moment of month

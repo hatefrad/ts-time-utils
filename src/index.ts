@@ -20,6 +20,7 @@ export {
 // Calculation utilities
 export {
   differenceInUnits,
+  differenceInCalendarDays,
   addTime,
   subtractTime,
   startOf,

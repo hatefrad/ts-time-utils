@@ -1,4 +1,4 @@
-import { describe, it, expect } from "vitest";
+import { describe, it, expect, vi } from "vitest";
 import { 
   formatDuration, 
   timeAgo, 
@@ -40,7 +40,7 @@ describe("Format utilities", () => {
       expect(timeAgo(past)).toMatch(/5 minutes ago/);
     });
     it("handles future dates", () => {
-      const future = new Date(Date.now() + 1000 * 60 * 30); // 30 minutes from now
+      const future = new Date(Date.now() + 1000 * 60 * 30 + 1000); // 30 minutes from now
       expect(timeAgo(future)).toMatch(/in 30 minutes/);
     });
     it("supports short format", () => {
@@ -190,6 +190,17 @@ describe("Format utilities", () => {
       const inThreeDays = new Date();
       inThreeDays.setDate(inThreeDays.getDate() + 3);
       expect(formatCalendarDate(inThreeDays)).toMatch(/Monday|Tuesday|Wednesday|Thursday|Friday|Saturday|Sunday/);
+    });
+
+    it("uses calendar days for near-future dates", () => {
+      vi.useFakeTimers();
+      try {
+        vi.setSystemTime(new Date(2026, 4, 22, 21, 17));
+
+        expect(formatCalendarDate(new Date(2026, 4, 24))).toBe('Sunday');
+      } finally {
+        vi.useRealTimers();
+      }
     });
   });
 });

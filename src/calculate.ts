@@ -58,6 +58,19 @@ export function differenceInUnits(
 }
 
 /**
+ * Calculate the difference in local calendar days between two dates.
+ *
+ * Unlike differenceInUnits(date1, date2, 'days'), this ignores the time of day
+ * and counts date boundaries, so late today to midnight two dates from now is 2.
+ */
+export function differenceInCalendarDays(date1: Date, date2: Date): number {
+  const start1 = Date.UTC(date1.getFullYear(), date1.getMonth(), date1.getDate());
+  const start2 = Date.UTC(date2.getFullYear(), date2.getMonth(), date2.getDate());
+
+  return Math.round(Math.abs(start1 - start2) / MILLISECONDS_PER_DAY);
+}
+
+/**
  * Add time to a date
  * @param date - base date
  * @param amount - amount to add

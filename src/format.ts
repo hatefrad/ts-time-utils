@@ -8,6 +8,7 @@ import {
   MILLISECONDS_PER_YEAR,
   FormatOptions
 } from './constants.js';
+import { differenceInCalendarDays } from './calculate.js';
 import type { DateInput } from './types.js';
 
 /**
@@ -452,9 +453,8 @@ export function formatDurationCompact(ms: number, showHours: boolean = true): st
  */
 export function formatCalendarDate(date: Date): string {
   const now = new Date();
-  const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
-  const dateOnly = new Date(date.getFullYear(), date.getMonth(), date.getDate());
-  const diffDays = Math.round((dateOnly.getTime() - today.getTime()) / MILLISECONDS_PER_DAY);
+  const dayDistance = differenceInCalendarDays(date, now);
+  const diffDays = date.getTime() >= now.getTime() ? dayDistance : -dayDistance;
   
   if (diffDays === 0) return 'Today';
   if (diffDays === -1) return 'Yesterday';
