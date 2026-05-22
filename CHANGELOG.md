@@ -15,6 +15,17 @@ All notable changes to `ts-time-utils` are recorded here.
 
 No unreleased changes.
 
+## [v4.4.1] - 2026-05-22
+
+### Added
+
+- Added `differenceInCalendarDays()` for local calendar-date boundary counts.
+
+### Fixed
+
+- Updated calendar-style date formatting to avoid showing elapsed-duration day counts for date-only comparisons.
+- Tightened a flaky future `timeAgo()` test assertion.
+
 ## [v4.4.0] - 2026-04-17
 
 ### Fixed
